@@ -638,6 +638,12 @@ ul.chk .ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--line-
 ul.chk li.d .ck{background:var(--ok);border-color:var(--ok)}
 ul.chk li.d a{color:var(--ink-3);text-decoration:line-through}
 
+/* account with several hats (user form) */
+.hats{border:1px solid var(--line-2);border-radius:var(--r-md,12px);padding:12px 16px 6px;margin:6px 0 10px;background:var(--surface-2,#f7f8fb)}
+.hats legend{padding:0 6px;font-weight:600}
+.hats .check{align-items:flex-start;margin:6px 0}
+.hats .check .help{display:block;margin-top:2px}
+
 </style>
 <style id="theme-vars"></style>
 </head>
@@ -1804,18 +1810,22 @@ const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.s
 const TEMPLATE_SHEET = 'ผู้ใช้';
 const USER_COLS = ['อีเมล*', 'รหัสผ่าน', 'ชื่อ-นามสกุล*', 'บทบาท', 'รหัสประจำตัว', 'กลุ่ม/ห้อง', 'โรงเรียน/หน่วยงาน'];
 const ROLE_LABELS = { student: 'นักเรียน', teacher: 'ครูผู้สอน', admin: 'ผู้ดูแลระบบ' };
+// role cell: one hat ("ครูผู้สอน") or several joined with "+" ("ผู้ดูแลระบบ+ครูผู้สอน")
+const roleCell = u => hatsOf(u).map(r => ROLE_LABELS[r] || 'นักเรียน').join('+');
+const ROLE_CHOICES = ['นักเรียน', 'ครูผู้สอน', 'ผู้ดูแลระบบ', 'ผู้ดูแลระบบ+ครูผู้สอน', 'ครูผู้สอน+นักเรียน', 'ผู้ดูแลระบบ+นักเรียน', 'ผู้ดูแลระบบ+ครูผู้สอน+นักเรียน'];
 function templateXlsx() {
   const ex = [
     ['student01@example.com', '123456', 'สมชาย ใจดี', 'นักเรียน', '10234', 'ม.1/1', 'โรงเรียนตัวอย่าง'],
     ['student02@example.com', '', 'สมหญิง รักเรียน', 'นักเรียน', '10235', 'ม.1/2', 'โรงเรียนตัวอย่าง'],
-    ['teacher01@example.com', 'Teach2026', 'ครูใจดี สอนดี', 'ครูผู้สอน', '', '', 'โรงเรียนตัวอย่าง']
+    ['teacher01@example.com', 'Teach2026', 'ครูใจดี สอนดี', 'ครูผู้สอน', '', '', 'โรงเรียนตัวอย่าง'],
+    ['admin01@example.com', 'Admin2026x', 'ผู้ดูแล สอนเอง', 'ผู้ดูแลระบบ+ครูผู้สอน', '', '', 'โรงเรียนตัวอย่าง']   // example of several roles in one cell
   ];
   const help = [
     ['คอลัมน์', 'จำเป็น?', 'คำอธิบาย', 'ตัวอย่าง'],
     ['อีเมล', 'จำเป็น', 'ใช้เป็นชื่อผู้ใช้ตอนเข้าสู่ระบบ ไม่ซ้ำกัน (ไม่ต้องเป็นอีเมลที่ใช้งานจริงก็ได้ แต่ต้องมีรูปแบบ ชื่อ@โดเมน)', 'student01@school.ac.th'],
     ['รหัสผ่าน', 'ไม่บังคับ', 'รหัสที่ผู้ใช้ใช้เข้าสู่ระบบ ถ้าเว้นว่าง ระบบจะใช้ "รหัสประจำตัว" แทน และถ้าไม่มีรหัสประจำตัวด้วย ระบบจะสุ่มรหัสให้ (ดาวน์โหลดรายชื่อพร้อมรหัสได้หลังนำเข้า)', '123456'],
     ['ชื่อ-นามสกุล', 'จำเป็น', 'ชื่อที่จะพิมพ์บนเกียรติบัตร ผู้เรียนแก้เองไม่ได้ กรอกให้ตรงตามทะเบียน', 'สมชาย ใจดี'],
-    ['บทบาท', 'ไม่บังคับ', 'เลือกจากรายการ: นักเรียน / ครูผู้สอน / ผู้ดูแลระบบ — เว้นว่าง = นักเรียน', 'นักเรียน'],
+    ['บทบาท', 'ไม่บังคับ', 'เลือกจากรายการ: นักเรียน / ครูผู้สอน / ผู้ดูแลระบบ — เว้นว่าง = นักเรียน · สวมหลายบทบาทได้โดยคั่นด้วย + เช่น ผู้ดูแลระบบ+ครูผู้สอน (ผู้ดูแลที่สอนเองด้วย) หรือ ครูผู้สอน+นักเรียน (ครูที่เรียนคอร์สอื่นด้วย)', 'ผู้ดูแลระบบ+ครูผู้สอน'],
     ['รหัสประจำตัว', 'ไม่บังคับ', 'เลขประจำตัวนักเรียน/เลขที่พนักงาน (พิมพ์เป็นข้อความ เลข 0 นำหน้าจะไม่หาย)', '10234'],
     ['กลุ่ม/ห้อง', 'ไม่บังคับ', 'ใช้กำหนดสิทธิ์เข้าเรียนบางคอร์สให้เฉพาะกลุ่ม ถ้าอยู่หลายกลุ่มให้คั่นด้วยจุลภาค เช่น ม.1/1, ชมรมคอมพิวเตอร์', 'ม.1/1'],
     ['โรงเรียน/หน่วยงาน', 'ไม่บังคับ', 'แสดงในรายงานผลการเรียน', 'โรงเรียนตัวอย่าง'],
@@ -1827,13 +1837,13 @@ function templateXlsx() {
     ['4) กด "ดาวน์โหลด index.html" แล้วอัปโหลดขึ้น GitHub เพื่อให้บัญชีใช้งานได้บนเว็บจริง']
   ];
   return xlsxBuild([
-    { name: TEMPLATE_SHEET, header: true, rows: [USER_COLS].concat(ex), widths: [30, 16, 26, 14, 16, 18, 26], colStyle: 2, styles: { 1: 3, 2: 3, 3: 3 }, validations: [{ ref: 'D2:D2000', list: ['นักเรียน', 'ครูผู้สอน', 'ผู้ดูแลระบบ'] }] },
+    { name: TEMPLATE_SHEET, header: true, rows: [USER_COLS].concat(ex), widths: [30, 16, 26, 14, 16, 18, 26], colStyle: 2, styles: { 1: 3, 2: 3, 3: 3, 4: 3 }, validations: [{ ref: 'D2:D2000', list: ROLE_CHOICES }] },
     { name: 'วิธีกรอก', rows: help, widths: [20, 12, 90, 26], styles: { 0: 5, 9: 5 }, cellStyle: 4 }
   ]);
 }
 function usersXlsx(users) {
-  const rows = [USER_COLS].concat(users.map(u => [u.email, u.password, u.name, ROLE_LABELS[u.role] || 'นักเรียน', u.sid, u.group, u.org]));
-  return xlsxBuild([{ name: TEMPLATE_SHEET, header: true, rows, widths: [30, 16, 26, 14, 16, 18, 26], colStyle: 2, validations: [{ ref: 'D2:D5000', list: ['นักเรียน', 'ครูผู้สอน', 'ผู้ดูแลระบบ'] }] }]);
+  const rows = [USER_COLS].concat(users.map(u => [u.email, u.password, u.name, roleCell(u), u.sid, u.group, u.org]));
+  return xlsxBuild([{ name: TEMPLATE_SHEET, header: true, rows, widths: [30, 16, 26, 14, 16, 18, 26], colStyle: 2, validations: [{ ref: 'D2:D5000', list: ROLE_CHOICES }] }]);
 }
 const hdrKey = s => String(s || '').toLowerCase().replace(/[\s*＊_\-–—‑/\\().:]/g, '');
 const HDR_RULES = [   // order matters: more specific first
@@ -1853,12 +1863,19 @@ function mapHeader(row) {
   });
   return map;
 }
-function parseRole(v) {
-  const t = hdrKey(v);
+function parseRole1(t) {
+  t = hdrKey(t);
   if (!t || /^(นักเรียน|นักศึกษา|ผู้เรียน|student|learner)$/.test(t)) return 'student';
   if (/^(ครู|ครูผู้สอน|ผู้สอน|อาจารย์|teacher|instructor)$/.test(t)) return 'teacher';
   if (/^(ผู้ดูแล|ผู้ดูแลระบบ|แอดมิน|admin|administrator)$/.test(t)) return 'admin';
   return null;
+}
+// "ผู้ดูแลระบบ+ครูผู้สอน" / "ครู, นักเรียน" / "admin/teacher" → { role: highest hat, also: [...] }, or null when a word is not understood
+function parseRoles(v) {
+  const parts = String(v == null ? '' : v).split(/\s*(?:\+|,|&|\/|;|、|และ)\s*/).filter(x => x.trim() !== '');
+  if (!parts.length) return { role: 'student', also: [] };
+  const rs = parts.map(parseRole1); if (rs.some(r => r === null)) return null;
+  return normHats(rs[0], rs.slice(1));
 }
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // rows (array of arrays incl. header) → { items:[{line,user,errors:[],skipped}], missing:[...columns] }
@@ -1871,13 +1888,14 @@ function parseUserRows(rows) {
   const items = [], seen = new Set();
   for (let i = hi + 1; i < rows.length; i++) {
     const r = rows[i]; if (!r || r.every(x => String(x == null ? '' : x).trim() === '')) continue;
-    const u = { email: normEmail(cell(r, 'email')), password: cell(r, 'password'), name: cell(r, 'name').replace(/\s+/g, ' '), role: parseRole(cell(r, 'role')), sid: cell(r, 'sid'), group: cell(r, 'group'), org: cell(r, 'org') };
+    const pr = parseRoles(cell(r, 'role'));
+    const u = { email: normEmail(cell(r, 'email')), password: cell(r, 'password'), name: cell(r, 'name').replace(/\s+/g, ' '), role: pr ? pr.role : null, also: pr ? pr.also : [], sid: cell(r, 'sid'), group: cell(r, 'group'), org: cell(r, 'org') };
     const it = { line: i + 1, user: u, errors: [], skipped: false, gen: false };
     if (/@example\.com$/.test(u.email)) { it.skipped = true; items.push(it); continue; }
     if (!u.email) it.errors.push('ไม่มีอีเมล'); else if (!EMAIL_RE.test(u.email)) it.errors.push('รูปแบบอีเมลไม่ถูกต้อง');
     else if (seen.has(u.email)) it.errors.push('อีเมลซ้ำในไฟล์'); else seen.add(u.email);
     if (u.name.length < 2) it.errors.push('ไม่มีชื่อ-นามสกุล');
-    if (u.role === null) { it.errors.push('บทบาทไม่ถูกต้อง (ใช้ นักเรียน / ครูผู้สอน / ผู้ดูแลระบบ)'); u.role = 'student'; }
+    if (u.role === null) { it.errors.push('บทบาทไม่ถูกต้อง (ใช้ นักเรียน / ครูผู้สอน / ผู้ดูแลระบบ หรือรวมกันด้วย + เช่น ผู้ดูแลระบบ+ครูผู้สอน)'); u.role = 'student'; }
     if (!u.password) { if (u.sid) u.password = u.sid; else it.gen = true; }
     if (u.password && u.password.length < 4) it.errors.push('รหัสผ่านสั้นเกินไป (อย่างน้อย 4 ตัวอักษร)');
     items.push(it);
@@ -2150,6 +2168,11 @@ function loadSession() {
 function isAdmin() { return !!SESS && SESS.role === 'admin'; }
 function isTeacher() { return !!SESS && SESS.role === 'teacher'; }
 function isStaff() { return isAdmin() || isTeacher(); }
+// One account may wear several hats: `role` is the main (highest) one, `also` lists the others (e.g. admin + teacher, teacher + student).
+// An administrator can already do everything a teacher can; the "teacher" hat on an admin marks them as a course author
+// (listed as an instructor, can own courses, counted in teacher statistics). The "student" hat makes their own learning count like a student's.
+const sessHas = r => !!SESS && (SESS.role === r || (Array.isArray(SESS.also) && SESS.also.indexOf(r) >= 0));
+const isInstructor = () => sessHas('teacher');
 const splitList = s => String(s || '').split(/[,;\n、]+/).map(x => x.trim().toLowerCase()).filter(Boolean);
 // published files carry a course owner as 'h:<account id>' (a hash), never as an e-mail address
 function ownsCourse(c) { return !!SESS && !!c.owner && (normEmail(c.owner) === normEmail(SESS.email) || c.owner === 'h:' + SESS.id); }
@@ -2194,16 +2217,28 @@ const needLogin = () => !!DATA.auth.setup && !DATA.settings.allowGuests;
 const hasRoster = () => Array.isArray(DATA.users);
 function ensureRoster() { if (!Array.isArray(DATA.users)) DATA.users = []; if (!DATA.fp || typeof DATA.fp !== 'object') DATA.fp = {}; }
 const ROLES = ['student', 'teacher', 'admin'];
+const ROLE_RANK = { student: 0, teacher: 1, admin: 2 };
+function normHats(role, also) {   // → { role: highest hat, also: the other hats, highest first }
+  const set = new Set([ROLES.includes(role) ? role : 'student']);
+  (Array.isArray(also) ? also : String(also || '').split(',')).forEach(r => { r = String(r).trim(); if (ROLES.includes(r)) set.add(r); });
+  const all = Array.from(set).sort((a, b) => ROLE_RANK[b] - ROLE_RANK[a]);
+  return { role: all[0], also: all.slice(1) };
+}
+const hasRole = (u, r) => !!u && (u.role === r || (Array.isArray(u.also) && u.also.indexOf(r) >= 0));
+const hatsOf = u => [u.role].concat(Array.isArray(u.also) ? u.also : []);
+const rolesText = (u, sep) => hatsOf(u).map(r => ROLE_TH[r] || r).join(sep || ' + ');
 function normUser(u) {
-  return { email: normEmail(u.email), name: String(u.name || '').trim().replace(/\s+/g, ' '), role: ROLES.includes(u.role) ? u.role : 'student', password: String(u.password || '').trim(), sid: String(u.sid || '').trim(), group: String(u.group || '').trim(), org: String(u.org || '').trim() };
+  const h = normHats(u.role, u.also);
+  return { email: normEmail(u.email), name: String(u.name || '').trim().replace(/\s+/g, ' '), role: h.role, also: h.also, password: String(u.password || '').trim(), sid: String(u.sid || '').trim(), group: String(u.group || '').trim(), org: String(u.org || '').trim() };
 }
 function genPassword() { const abc = 'abcdefghjkmnpqrstuvwxyz23456789', r = randBytes(6); let s = ''; for (let i = 0; i < 6; i++) s += abc[r[i] % abc.length]; return s; }
-const userFp = u => fnv([u.email, u.password, u.name, u.role, u.sid, u.group, u.org].join('\u0001'));
+const userFp = u => fnv([u.email, u.password, u.name, u.role, u.sid, u.group, u.org].join('\u0001') + (u.also && u.also.length ? '\u0001' + u.also.join(',') : ''));
 const findUser = email => (DATA.users || []).find(u => u.email === normEmail(email)) || null;
 function upsertUser(u) {
   ensureRoster(); u = normUser(u);
   const i = DATA.users.findIndex(x => x.email === u.email);
   if (i >= 0) DATA.users[i] = Object.assign({}, DATA.users[i], u); else DATA.users.push(Object.assign({ createdAt: Date.now() }, u));
+  if (SESS && u.email === normEmail(SESS.email)) { SESS.also = u.also.slice(); store.set(LS.sess, SESS); }   // the admin editing their own account sees new hats at once
   return u;
 }
 function removeUser(email) { ensureRoster(); DATA.users = DATA.users.filter(u => u.email !== normEmail(email)); }
@@ -2216,7 +2251,7 @@ async function syncAccounts(progress) {   // roster → encrypted accounts (only
   for (const u of DATA.users) {
     const id = acctIdOf(u.email, A.salt), fp = userFp(u); keep.add(id);
     if (!byId[id] || DATA.fp[id] !== fp) {
-      byId[id] = sealAccount({ v: 1, e: u.email, n: u.name, r: u.role, g: u.group, o: u.org, s: u.sid }, u.password, id, KDF_ITER);
+      byId[id] = sealAccount(Object.assign({ v: 1, e: u.email, n: u.name, r: u.role, g: u.group, o: u.org, s: u.sid }, u.also && u.also.length ? { x: u.also.join(',') } : {}), u.password, id, KDF_ITER);
       DATA.fp[id] = fp; n++;
       if (progress) progress(n, todo);
       if (n % 3 === 0) await tick();
@@ -2227,11 +2262,12 @@ async function syncAccounts(progress) {   // roster → encrypted accounts (only
   if (typeof dbQueuePush === 'function') dbQueuePush();
 }
 const countByRole = () => { const o = { admin: 0, teacher: 0, student: 0 }; (DATA.users || []).forEach(u => { o[u.role] = (o[u.role] || 0) + 1; }); return o; };
+const instructorUsers = () => (DATA.users || []).filter(u => hasRole(u, 'teacher'));   // teachers + admins who also teach
 
 /* ---------- sign in / out ---------- */
 function upsertAccountProfile() {
   const id = 'a:' + SESS.id, p = PROFILES.find(x => x.id === id);
-  const d = { id, account: true, name: SESS.name, email: SESS.email, extra: SESS.org, group: SESS.group, sid: SESS.sid, role: SESS.role };
+  const d = { id, account: true, name: SESS.name, email: SESS.email, extra: SESS.org, group: SESS.group, sid: SESS.sid, role: SESS.role, also: (SESS.also || []).slice() };
   if (p) Object.assign(p, d); else PROFILES.push(Object.assign({ createdAt: Date.now(), certName: '' }, d));
   saveProfiles();
 }
@@ -2247,7 +2283,8 @@ async function login(email, password, retried) {
     if (!retried && typeof siteFetch === 'function' && siteLive() && Date.now() - SITE.last > 15000 && (await siteFetch({ noRender: true })) === 'new') return login(email, password, true);
     await sleep(500); return { ok: false, msg: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' };
   }
-  SESS = { id: acc.i, email: prof.e, name: prof.n, role: prof.r, group: prof.g || '', org: prof.o || '', sid: prof.s || '', at: Date.now() };
+  const hats = normHats(prof.r, prof.x);
+  SESS = { id: acc.i, email: prof.e, name: prof.n, role: hats.role, also: hats.also, group: prof.g || '', org: prof.o || '', sid: prof.s || '', at: Date.now() };
   store.set(LS.sess, SESS); upsertAccountProfile(); reloadForSession();
   return { ok: true, sess: SESS };
 }
@@ -2261,7 +2298,7 @@ async function setupFirstAdmin(d) {
 async function changeMyPassword(oldPw, newPw) {
   const acc = DATA.auth.accounts.find(a => a.i === SESS.id);
   if (!acc || !openAccount(acc, String(oldPw).trim())) return false;
-  const u = findUser(SESS.email) || { email: SESS.email, name: SESS.name, role: SESS.role, sid: SESS.sid, group: SESS.group, org: SESS.org };
+  const u = findUser(SESS.email) || { email: SESS.email, name: SESS.name, role: SESS.role, also: SESS.also || [], sid: SESS.sid, group: SESS.group, org: SESS.org };
   upsertUser(Object.assign({}, u, { password: newPw })); await syncAccounts(); saveData();
   return true;
 }
@@ -2647,7 +2684,7 @@ function loginView() {
   if (SESS) {
     return {
       title: 'เข้าสู่ระบบ', html: `<div class="wrap" style="max-width:520px"><div class="panel mt center"><div class="avatar" style="margin:0 auto 12px;width:56px;height:56px;font-size:1.4rem">${esc(SESS.name.slice(0, 1).toUpperCase())}</div>
-      <h2>คุณเข้าสู่ระบบอยู่แล้ว</h2><p class="muted">${esc(SESS.name)} · ${ROLE_TH[SESS.role]}</p>
+      <h2>คุณเข้าสู่ระบบอยู่แล้ว</h2><p class="muted">${esc(SESS.name)} · ${esc(rolesText(SESS))}</p>
       <div class="row" style="justify-content:center">${isStaff() ? `<a class="btn primary" href="#/admin">ไปหน้าจัดการระบบ</a>` : ''}<a class="btn ${isStaff() ? '' : 'primary'}" href="#/">ดูคอร์สทั้งหมด</a><button class="btn" data-action="logout">ออกจากระบบ</button></div></div></div>`
     };
   }
@@ -2685,7 +2722,7 @@ actions['account-menu'] = async () => {
   if (!SESS) return;
   const v = await openModal({
     title: SESS.name,
-    body: `<p class="mb-0"><span class="tag ${SESS.role === 'admin' ? 'gold' : SESS.role === 'teacher' ? '' : 'gray'}">${ROLE_TH[SESS.role]}</span></p>
+    body: `<p class="mb-0 row" style="gap:6px"><span class="tag ${SESS.role === 'admin' ? 'gold' : SESS.role === 'teacher' ? '' : 'gray'}">${ROLE_TH[SESS.role]}</span>${(SESS.also || []).map(r => `<span class="tag gray">+ ${ROLE_TH[r]}</span>`).join('')}</p>
     <p class="muted small mt-s">${esc([SESS.email, SESS.group, SESS.org].filter(Boolean).join(' · '))}</p>
     <div style="display:grid;gap:8px">
       ${isStaff() ? `<button class="btn primary" data-m="admin">${icon('sliders', 18)} ไปหน้าจัดการระบบ</button>` : ''}
@@ -3380,7 +3417,7 @@ function onBind(e) {
 hooks.theme = () => applyTheme(DATA.settings);
 hooks.owner = (el, root, path, v) => { const u = findUser(v); root.ownerName = u ? u.name : ''; if (u && !root.instructor) root.instructor = u.name; };
 function ownerField(c) {
-  const teachers = (DATA.users || []).filter(u => u.role === 'teacher');
+  const teachers = instructorUsers();   // teachers + admins who also teach
   if (!hasRoster() && !teachers.length) return fld.text('อีเมลของครูเจ้าของคอร์ส', 'c.owner', c.owner, { type: 'email', help: 'เว้นว่าง = คอร์สส่วนกลาง (ไม่มีครูเจ้าของ) ครูเจ้าของคอร์สแก้ไขคอร์สนี้ได้เมื่อเข้าสู่ระบบด้วยอีเมลนี้' });
   const opts = [['', 'ไม่มีเจ้าของ (คอร์สส่วนกลาง)']].concat(teachers.map(u => [u.email, `${u.name} (${u.email})`]));
   if (c.owner && !teachers.some(u => u.email === normEmail(c.owner))) opts.push([c.owner, /^h:/.test(c.owner) ? `${c.ownerName || 'ครูเจ้าของ'} (ไม่พบในรายชื่อของเครื่องนี้)` : c.ownerName ? `${c.ownerName} (${c.owner})` : c.owner]);
@@ -3416,6 +3453,12 @@ function courseRow(c, i) {
     ${admin ? `<button class="icon-btn" title="เลื่อนขึ้น" aria-label="เลื่อนขึ้น" data-action="course-up" data-i="${i}">${icon('up', 18)}</button><button class="icon-btn" title="เลื่อนลง" aria-label="เลื่อนลง" data-action="course-down" data-i="${i}">${icon('down', 18)}</button>` : `<button class="btn sm" data-action="pkg-send" data-id="${c.id}">${icon('upload', 16)} ส่งให้ผู้ดูแล</button>`}
     <button class="icon-btn" title="ทำสำเนา" aria-label="ทำสำเนา" data-action="course-dup" data-id="${c.id}">${icon('copy', 18)}</button>${canDel ? `<button class="icon-btn" title="ลบ" aria-label="ลบคอร์ส" data-action="course-del" data-id="${c.id}" style="color:var(--bad)">${icon('trash', 18)}</button>` : ''}</div></div>`;
 }
+const ADM = { mine: false };   // admin who also teaches: show only my own courses
+function courseFilterHtml() {
+  const n = DATA.courses.filter(ownsCourse).length;
+  return `<div class="cats" style="margin-top:0" role="group" aria-label="กรองคอร์ส"><button class="cat ${ADM.mine ? '' : 'on'}" data-action="course-filter" data-v="all" aria-pressed="${!ADM.mine}">ทุกคอร์ส (${DATA.courses.length})</button><button class="cat ${ADM.mine ? 'on' : ''}" data-action="course-filter" data-v="mine" aria-pressed="${ADM.mine}">คอร์สของฉัน (${n})</button></div>`;
+}
+actions['course-filter'] = el => { ADM.mine = el.dataset.v === 'mine'; rerender(); };
 function dashboardHtml() {
   if (isTeacher()) {
     const mine = DATA.courses.filter(ownsCourse), unsent = mine.filter(c => courseState(c).k === 'draft').length;
@@ -3428,9 +3471,10 @@ function dashboardHtml() {
   const stat = (n, t, href) => `<a class="stat" href="${href}"><b>${n}</b><span>${t}</span></a>`;
   return `<div class="wrap mt">
     ${adminHelpHtml()}
-    <div class="stats">${stat(DATA.courses.length, 'คอร์สทั้งหมด', '#/admin')}${stat(hasRoster() ? rc.student : '–', 'นักเรียน', '#/admin/users')}${stat(hasRoster() ? rc.teacher : '–', 'ครูผู้สอน', '#/admin/users')}${stat(inbox, 'เรื่องจากครูรอตรวจ', '#/admin/inbox')}</div>
+    <div class="stats">${stat(DATA.courses.length, 'คอร์สทั้งหมด', '#/admin')}${stat(hasRoster() ? rc.student : '–', 'นักเรียน', '#/admin/users')}${stat(hasRoster() ? instructorUsers().length : '–', 'ครูผู้สอน', '#/admin/users')}${stat(inbox, 'เรื่องจากครูรอตรวจ', '#/admin/inbox')}</div>
     <div class="row between mb"><h1 class="mb-0">คอร์สทั้งหมด</h1><button class="btn primary" data-action="course-new">${icon('plus', 18)} สร้างคอร์สใหม่</button></div>
-    ${DATA.courses.map(courseRow).join('') || '<div class="empty"><div class="big">🌱</div><p>ยังไม่มีคอร์ส กดปุ่ม "สร้างคอร์สใหม่" เพื่อเริ่มต้น</p></div>'}
+    ${isInstructor() ? courseFilterHtml() : ''}
+    ${DATA.courses.map((c, i) => (ADM.mine && isInstructor() && !ownsCourse(c) ? '' : courseRow(c, i))).join('') || '<div class="empty"><div class="big">🌱</div><p>ยังไม่มีคอร์ส กดปุ่ม "สร้างคอร์สใหม่" เพื่อเริ่มต้น</p></div>'}
     ${pubPanelHtml()}
     <section class="panel mt"><h2>เผยแพร่ด้วยไฟล์ index.html และสำรองข้อมูล</h2>
       <ol class="muted" style="padding-left:1.3em"><li>แก้ไขคอร์ส/ผู้ใช้ให้เรียบร้อย (บันทึกอัตโนมัติในเบราว์เซอร์นี้)</li><li>กด <b>ดาวน์โหลด index.html</b> — ได้ไฟล์เดียวที่ฝังคอร์สและบัญชีผู้ใช้ล่าสุดไว้แล้ว (บัญชีถูกเข้ารหัส ไม่เห็นชื่อ/อีเมลในไฟล์)</li><li>ไปที่ GitHub → repository ของคุณ → <b>Add file → Upload files</b> → เลือกไฟล์ที่ได้ (ชื่อเดิม ทับไฟล์เดิม) → <b>Commit changes</b></li><li>รอ 1–2 นาที ผู้เรียนจะเห็นคอร์สใหม่และบัญชีที่เพิ่ม</li></ol>
@@ -3440,7 +3484,7 @@ function dashboardHtml() {
 actions['course-new'] = () => { location.hash = '#/admin/new'; };   // guided registration wizard (65_wizard.js)
 actions['course-blank'] = () => {
   const c = newCourse();
-  if (isTeacher()) { c.owner = SESS.email; c.ownerName = SESS.name; c.instructor = SESS.name; }
+  if (isTeacher() || (isAdmin() && isInstructor())) { c.owner = SESS.email; c.ownerName = SESS.name; c.instructor = SESS.name; }   // an admin who teaches owns what they create (can be changed in the course settings)
   DATA.courses.push(c); saveData(); location.hash = '#/admin/course/' + c.id;
 };
 actions['course-up'] = el => { if (isAdmin() && move(DATA.courses, +el.dataset.i, -1)) { saveData(); rerender(); } };
@@ -3806,6 +3850,7 @@ async function withProgress(title, fn, unit) {
   try { await tick(); return await fn(upd); } finally { wrap.remove(); if (!root.children.length) document.body.classList.remove('modal-open'); }
 }
 const roleTag = r => `<span class="tag ${r === 'admin' ? 'gold' : r === 'teacher' ? '' : 'gray'}">${ROLE_TH[r] || r}</span>`;
+const rolesTags = u => `<span class="row" style="gap:4px">${roleTag(u.role)}${(u.also || []).map(r => `<span class="tag gray" title="สวมบทบาทนี้ด้วย">+ ${ROLE_TH[r]}</span>`).join('')}</span>`;
 
 /* ---------- users page ---------- */
 route(/^\/admin\/users$/, () => staffGuard(() => ({ title: 'ผู้ใช้งาน', admin: true, html: usersPageHtml() }), { admin: true }));
@@ -3834,12 +3879,12 @@ function groupOptions() {
 }
 function usersTableHtml() {
   const q = UX.q.trim().toLowerCase(), order = { admin: 0, teacher: 1, student: 2 };
-  const list = (DATA.users || []).filter(u => (UX.role === 'all' || u.role === UX.role) && (UX.group === 'all' || splitList(u.group).includes(UX.group.toLowerCase())) && (!q || [u.name, u.email, u.sid, u.group, u.org].join(' ').toLowerCase().includes(q)))
+  const list = (DATA.users || []).filter(u => (UX.role === 'all' || hasRole(u, UX.role)) && (UX.group === 'all' || splitList(u.group).includes(UX.group.toLowerCase())) && (!q || [u.name, u.email, u.sid, u.group, u.org].join(' ').toLowerCase().includes(q)))
     .sort((a, b) => order[a.role] - order[b.role] || a.name.localeCompare(b.name, 'th'));
   if (!list.length) return `<div class="empty" style="border:0"><div class="big">👥</div><p>${(DATA.users || []).length ? 'ไม่พบผู้ใช้ที่ตรงกับตัวกรอง' : 'ยังไม่มีรายชื่อผู้ใช้ในเครื่องนี้'}</p></div>`;
   const shown = list.slice(0, UX.limit);
   return `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>ชื่อ / อีเมล</th><th>บทบาท</th><th>กลุ่ม/ห้อง</th><th>รหัสประจำตัว</th><th>รหัสผ่าน</th><th></th></tr></thead><tbody>
-    ${shown.map(u => `<tr><td><b>${esc(u.name)}</b><div class="small muted">${esc(u.email)}${u.org ? ' · ' + esc(u.org) : ''}</div></td><td>${roleTag(u.role)}</td><td>${esc(u.group)}</td><td>${esc(u.sid)}</td><td><span class="kbd">${UX.reveal ? esc(u.password) : '••••••'}</span></td>
+    ${shown.map(u => `<tr><td><b>${esc(u.name)}</b><div class="small muted">${esc(u.email)}${u.org ? ' · ' + esc(u.org) : ''}</div></td><td>${rolesTags(u)}</td><td>${esc(u.group)}</td><td>${esc(u.sid)}</td><td><span class="kbd">${UX.reveal ? esc(u.password) : '••••••'}</span></td>
     <td class="nowrap"><button class="icon-btn" title="แก้ไข" aria-label="แก้ไข ${esc(u.name)}" data-action="u-edit" data-email="${esc(u.email)}">${icon('edit', 18)}</button><button class="icon-btn" title="ลบ" aria-label="ลบ ${esc(u.name)}" data-action="u-del" data-email="${esc(u.email)}" style="color:var(--bad)">${icon('trash', 18)}</button></td></tr>`).join('')}</tbody></table></div>
     <div class="row between mt-s"><span class="small muted">แสดง ${shown.length} จาก ${list.length} คน</span>${list.length > shown.length ? `<button class="btn sm" data-action="u-more">แสดงเพิ่ม</button>` : ''}</div>`;
 }
@@ -3857,22 +3902,33 @@ async function userDialog(cur) {
     title: cur ? 'แก้ไขผู้ใช้' : 'เพิ่มผู้ใช้', wide: true,
     body: `<div class="grid2"><label class="field"><span class="lb">อีเมล (ชื่อผู้ใช้)</span><input type="email" id="uf-email" value="${esc(u.email || '')}" autocapitalize="off" spellcheck="false"></label>
       <label class="field"><span class="lb">ชื่อ–นามสกุล (พิมพ์บนเกียรติบัตร)</span><input type="text" id="uf-name" value="${esc(u.name || '')}"></label></div>
-      <div class="grid2"><label class="field"><span class="lb">บทบาท</span><select id="uf-role">${ROLES.map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${ROLE_TH[r]}</option>`).join('')}</select></label>
+      <div class="grid2"><label class="field"><span class="lb">บทบาทหลัก</span><select id="uf-role">${ROLES.map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${ROLE_TH[r]}</option>`).join('')}</select></label>
       <label class="field"><span class="lb">รหัสผ่าน</span><div class="passwrap"><input type="text" id="uf-pass" value="${esc(u.password || '')}" autocomplete="off" spellcheck="false"><button type="button" class="btn sm" id="uf-gen">สุ่มรหัส</button></div></label></div>
       <div class="grid3"><label class="field"><span class="lb">รหัสประจำตัว</span><input type="text" id="uf-sid" value="${esc(u.sid || '')}"></label>
       <label class="field"><span class="lb">กลุ่ม/ห้อง</span><input type="text" id="uf-group" value="${esc(u.group || '')}" placeholder="เช่น ม.1/1"><span class="help">หลายกลุ่มคั่นด้วย ,</span></label>
       <label class="field"><span class="lb">โรงเรียน/หน่วยงาน</span><input type="text" id="uf-org" value="${esc(u.org || '')}"></label></div>
+      <fieldset class="hats" id="uf-hats"><legend class="lb">สวมบทบาทเพิ่มด้วย <span class="muted small">(ไม่บังคับ)</span></legend>
+        <label class="check" data-for="admin"><input type="checkbox" id="uf-h-teacher" ${hasRole(u, 'teacher') && u.role !== 'teacher' ? 'checked' : ''}><span>เป็น <b>ครูผู้สอน</b> ด้วย<span class="help">ผู้ดูแลทำงานของครูได้ครบอยู่แล้ว ติ๊กเพื่อให้แสดงเป็นผู้สอน เลือกเป็นเจ้าของคอร์ส และนับในสถิติของครู</span></span></label>
+        <label class="check" data-for="admin teacher"><input type="checkbox" id="uf-h-student" ${hasRole(u, 'student') && u.role !== 'student' ? 'checked' : ''}><span>เรียนในฐานะ <b>นักเรียน</b> ด้วย<span class="help">ผลการเรียนและเกียรติบัตรของบัญชีนี้จะนับในสถิติผู้เรียนเหมือนนักเรียนทั่วไป (ปกติไม่นับผู้ดูแล/ครู)</span></span></label></fieldset>
       ${cur ? '<p class="help">เปลี่ยนอีเมล = ย้ายบัญชีไปใช้อีเมลใหม่ (ความคืบหน้าการเรียนของนักเรียนในเครื่องอื่นจะไม่ตามไป)</p>' : ''}`,
     actions: [{ label: 'ยกเลิก', value: null, cls: 'ghost' }, {
       label: cur ? 'บันทึก' : 'เพิ่มผู้ใช้', cls: 'primary', collect: m => {
-        const d = normUser({ email: $('#uf-email', m).value, name: $('#uf-name', m).value, role: $('#uf-role', m).value, password: $('#uf-pass', m).value, sid: $('#uf-sid', m).value, group: $('#uf-group', m).value, org: $('#uf-org', m).value });
+        const d = normUser({ email: $('#uf-email', m).value, name: $('#uf-name', m).value, role: $('#uf-role', m).value, also: ['teacher', 'student'].filter(r => $('#uf-h-' + r, m).checked && ($('#uf-h-' + r, m).closest('label').dataset['for'] || '').split(' ').indexOf($('#uf-role', m).value) >= 0), password: $('#uf-pass', m).value, sid: $('#uf-sid', m).value, group: $('#uf-group', m).value, org: $('#uf-org', m).value });
         const bad = !EMAIL_RE.test(d.email) ? 'รูปแบบอีเมลไม่ถูกต้อง' : d.name.length < 2 ? 'กรุณากรอกชื่อ–นามสกุล' : d.password.length < (d.role === 'admin' ? 8 : 4) ? `รหัสผ่านต้องมีอย่างน้อย ${d.role === 'admin' ? 8 : 4} ตัวอักษร` :
           findUser(d.email) && (!cur || cur.email !== d.email) ? 'อีเมลนี้มีอยู่ในระบบแล้ว' : '';
         if (bad) { toast(bad, 'bad'); return false; }
         return d;
       }
     }],
-    onMount(m) { $('#uf-gen', m).addEventListener('click', () => { $('#uf-pass', m).value = genPassword(); }); }
+    onMount(m) {
+      $('#uf-gen', m).addEventListener('click', () => { $('#uf-pass', m).value = genPassword(); });
+      const sync = () => {   // only offer the hats that make sense for the chosen main role
+        const role = $('#uf-role', m).value; let any = false;
+        $$('#uf-hats label', m).forEach(l => { const ok = l.dataset['for'].split(' ').indexOf(role) >= 0; l.style.display = ok ? '' : 'none'; if (!ok) l.querySelector('input').checked = false; any = any || ok; });
+        $('#uf-hats', m).style.display = any ? '' : 'none';
+      };
+      $('#uf-role', m).addEventListener('change', sync); sync();
+    }
   });
   return r;
 }
@@ -3910,7 +3966,7 @@ function importPreviewHtml(pr, plan) {
     ${plan.nErr ? `<div class="callout warn">${icon('alert')}<div class="small">แถวที่ผิดพลาดจะ<b>ไม่ถูกนำเข้า</b> — แก้ไขในไฟล์แล้วนำเข้าใหม่ได้ (ระบบอัปเดตตามอีเมล ไม่สร้างซ้ำ)</div></div>` : ''}
     ${plan.nGen ? `<div class="callout">${icon('info')}<div class="small">${plan.nGen} คนไม่มีทั้งรหัสผ่านและรหัสประจำตัว — ระบบจะ<b>สุ่มรหัสผ่านให้</b> และให้ดาวน์โหลดรายชื่อพร้อมรหัสหลังนำเข้า</div></div>` : ''}
     <div class="tbl-wrap" style="max-height:320px;overflow:auto"><table class="tbl"><thead><tr><th>แถว</th><th>ชื่อ / อีเมล</th><th>บทบาท</th><th>กลุ่ม</th><th>ผลตรวจ</th></tr></thead><tbody>
-    ${rows.map(i => `<tr><td>${i.line}</td><td><b>${esc(i.user.name)}</b><div class="small muted">${esc(i.user.email)}</div></td><td>${roleTag(i.user.role)}</td><td>${esc(i.user.group)}</td><td>${st(i)}</td></tr>`).join('')}</tbody></table></div>
+    ${rows.map(i => `<tr><td>${i.line}</td><td><b>${esc(i.user.name)}</b><div class="small muted">${esc(i.user.email)}</div></td><td>${rolesTags(i.user)}</td><td>${esc(i.user.group)}</td><td>${st(i)}</td></tr>`).join('')}</tbody></table></div>
     ${pr.items.length > rows.length ? `<p class="small muted mt-s">แสดง ${rows.length} จาก ${pr.items.length} แถว</p>` : ''}
     ${hasRoster() ? `<label class="check mt"><input type="checkbox" id="imp-replace"><span><b>ลบนักเรียนที่ไม่อยู่ในไฟล์นี้</b><span class="help">ใช้เมื่อไฟล์คือรายชื่อทั้งหมดของปีนี้ — ครูและผู้ดูแลระบบจะไม่ถูกลบ</span></span></label>` : ''}`;
 }
@@ -3982,10 +4038,10 @@ function inboxRow(it) {
 }
 function requestRow(it) {
   const r = it.req || {}, ex = findUser(r.email);
-  return `<div class="panel row between" style="gap:14px"><div style="min-width:0;flex:1 1 300px"><div class="row" style="gap:8px"><h3 class="mb-0">${esc(r.name)}</h3><span class="tag gold">${icon('edit', 13)} ขอสมัครเป็นครู</span>${ex ? `<span class="tag warn">มีบัญชีอยู่แล้ว (${esc(ROLE_TH[ex.role] || ex.role)})</span>` : ''}</div>
+  return `<div class="panel row between" style="gap:14px"><div style="min-width:0;flex:1 1 300px"><div class="row" style="gap:8px"><h3 class="mb-0">${esc(r.name)}</h3><span class="tag gold">${icon('edit', 13)} ขอสมัครเป็นครู</span>${ex ? `<span class="tag warn">มีบัญชีอยู่แล้ว (${esc(rolesText(ex))})</span>` : ''}</div>
     <div class="small muted mt-s">${esc(r.email)}${r.org ? ' · ' + esc(r.org) : ''}${r.phone ? ' · โทร ' + esc(r.phone) : ''} · รับเมื่อ ${fmtDT(it.at)}</div>
     ${r.subject ? `<div class="small mt-s"><b>จะสอน:</b> ${esc(r.subject)}</div>` : ''}${r.note ? `<div class="small muted">${esc(r.note)}</div>` : ''}</div>
-    <div class="row" style="gap:6px"><button class="btn primary sm" data-action="req-approve" data-id="${it.id}">${icon('check', 16)} อนุมัติเป็นครู</button><button class="icon-btn" title="ปฏิเสธ/ลบ" aria-label="ปฏิเสธคำขอ" data-action="inbox-del" data-id="${it.id}" style="color:var(--bad)">${icon('trash', 18)}</button></div></div>`;
+    <div class="row" style="gap:6px"><button class="btn primary sm" data-action="req-approve" data-id="${it.id}">${icon('check', 16)} ${ex && ex.role === 'admin' ? (hasRole(ex, 'teacher') ? 'ปิดคำขอ (เป็นครูอยู่แล้ว)' : 'เพิ่มบทบาทครู') : 'อนุมัติเป็นครู'}</button><button class="icon-btn" title="ปฏิเสธ/ลบ" aria-label="ปฏิเสธคำขอ" data-action="inbox-del" data-id="${it.id}" style="color:var(--bad)">${icon('trash', 18)}</button></div></div>`;
 }
 function inboxHtml() {
   const list = DATA.inbox || [], reqs = list.filter(x => !x.course), pk = list.filter(x => x.course);
@@ -4010,10 +4066,19 @@ actions['inbox-paste'] = async () => {
 actions['req-approve'] = async el => {
   const it = (DATA.inbox || []).find(x => x.id === el.dataset.id); if (!it || !it.req) return;
   const r = it.req, ex = findUser(r.email);
-  if (ex && ex.role === 'admin') return toast('อีเมลนี้เป็นผู้ดูแลระบบอยู่แล้ว', 'bad');
-  if (!(await confirmDlg(ex ? `อีเมล ${r.email} มีบัญชีอยู่แล้ว (${ROLE_TH[ex.role]}) — เปลี่ยนเป็นครูผู้สอน? (รหัสผ่านเดิมไม่เปลี่ยน)` : `สร้างบัญชีครูผู้สอนให้ ${r.name} (${r.email})?`, { ok: 'อนุมัติ' }))) return;
+  if (ex && ex.role === 'admin') {   // an administrator can already do everything a teacher can — approving adds the "teacher" hat (listed as an instructor, can own courses)
+    if (!hasRole(ex, 'teacher') && !(await confirmDlg(`${ex.name} (${r.email}) เป็นผู้ดูแลระบบอยู่แล้ว ซึ่งทำงานของครูได้ครบ (สร้าง/แก้ไข/เผยแพร่ทุกคอร์ส) — เพิ่มบทบาท "ครูผู้สอน" ให้บัญชีนี้ด้วยไหม? จะแสดงเป็นผู้สอน เลือกเป็นเจ้าของคอร์สได้ และนับในสถิติของครู · รหัสผ่านและสิทธิ์ผู้ดูแลเดิมไม่เปลี่ยน`, { ok: 'เพิ่มบทบาทครู' }))) return;
+    const had = hasRole(ex, 'teacher');
+    if (!had) upsertUser(Object.assign({}, ex, { also: (ex.also || []).concat('teacher') }));
+    DATA.inbox = DATA.inbox.filter(x => x.id !== it.id);
+    await withProgress('กำลังเข้ารหัสบัญชี…', upd => syncAccounts(upd)); saveData();
+    if (it.rid) dbMark(it.rid, 'approved').then(ok => { if (!ok) toast('เพิ่มบทบาทแล้ว แต่แจ้งสถานะ "อนุมัติ" ไปที่ฐานข้อมูลไม่สำเร็จ (คำขอจะไม่กลับมาซ้ำในเครื่องนี้)', 'bad', 7000); });
+    toast(had ? `ปิดคำขอแล้ว — ${ex.name} เป็นครูผู้สอนอยู่แล้ว` : `เพิ่มบทบาท "ครูผู้สอน" ให้ ${ex.name} แล้ว — ใช้รหัสผ่านและสิทธิ์ผู้ดูแลเดิม (กดเผยแพร่เพื่อให้มีผลบนเครื่องอื่น)`, 'ok', 7000);
+    return rerender();
+  }
+  if (!(await confirmDlg(ex ? `อีเมล ${r.email} มีบัญชีอยู่แล้ว (${ROLE_TH[ex.role]}) — เปลี่ยนเป็นครูผู้สอน${ex.role === 'student' ? ' (ยังเรียนในฐานะนักเรียนได้ด้วย)' : ''}? รหัสผ่านเดิมไม่เปลี่ยน` : `สร้างบัญชีครูผู้สอนให้ ${r.name} (${r.email})?`, { ok: 'อนุมัติ' }))) return;
   const pw = ex ? ex.password : genPassword();
-  upsertUser({ email: r.email, name: ex ? ex.name : r.name, role: 'teacher', password: pw, org: ex ? ex.org || r.org : r.org, sid: ex ? ex.sid : '', group: ex ? ex.group : '' });
+  upsertUser({ email: r.email, name: ex ? ex.name : r.name, role: 'teacher', also: ex ? (ex.role === 'student' ? ['student'] : ex.also || []) : [], password: pw, org: ex ? ex.org || r.org : r.org, sid: ex ? ex.sid : '', group: ex ? ex.group : '' });
   DATA.inbox = DATA.inbox.filter(x => x.id !== it.id);
   await withProgress('กำลังเข้ารหัสบัญชี…', upd => syncAccounts(upd)); saveData();
   if (it.rid) dbMark(it.rid, 'approved').then(ok => { if (!ok) toast('สร้างบัญชีแล้ว แต่แจ้งสถานะ "อนุมัติ" ไปที่ฐานข้อมูลไม่สำเร็จ (คำขอจะไม่กลับมาซ้ำในเครื่องนี้)', 'bad', 7000); });
@@ -4383,7 +4448,7 @@ async function dbSyncRequests(o) {
       let p; try { p = cleanReq(it.person); } catch (e) { continue; }
       if (!EMAIL_RE.test(p.email) || p.name.length < 2) continue;
       const ex = findUser(p.email);
-      if (ex && (ex.role === 'teacher' || ex.role === 'admin')) { dbMark(it.id, 'approved'); continue; }   // already a teacher: close the stale request
+      if (ex && hasRole(ex, 'teacher')) { dbMark(it.id, 'approved'); continue; }   // already a teacher (or an admin who teaches): close the stale request — an admin without the teacher hat stays in the inbox so it can be approved
       if (DATA.inbox.some(x => x.rid === it.id)) continue;
       const same = DATA.inbox.find(x => x.req && x.req.email === p.email);
       if (same) { same.rid = it.id; continue; }
@@ -4433,7 +4498,7 @@ function startDbWatch() {
 }
 
 /* ---------------- roster: save / load ---------------- */
-const dbRosterRows = () => (DATA.users || []).map(u => [u.email, u.password, u.name, ROLE_LABELS[u.role] || 'นักเรียน', u.sid, u.group, u.org]);
+const dbRosterRows = () => (DATA.users || []).map(u => [u.email, u.password, u.name, roleCell(u), u.sid, u.group, u.org]);
 function paintRosterStatus() { const e = $('#db-roster-stat'); if (e) e.innerHTML = rosterStatusHtml(); }
 function rosterStatusHtml() {
   if (!dbUrl() || dbKey().length < 8) return `<span class="tag gray">ยังไม่ได้เชื่อมต่อ</span> <span class="small muted">ตั้งค่า Webhook URL และรหัสลับที่ <a href="#/admin/settings">ตั้งค่าเว็บไซต์ → ฐานข้อมูล</a></span>`;
@@ -4681,10 +4746,11 @@ const cpRank = v => (v.completedAt ? 1e9 : 0) + cpUnits(v) * 1e3 + Math.min(999,
 function collectLearners() {
   const map = new Map();
   const put = (p, prog, src) => {
-    if (p.role === 'admin' || p.role === 'teacher') return;
+    const staffP = (p.role === 'admin' || p.role === 'teacher') && (p.also || []).indexOf('student') < 0;   // staff only count as learners when they also wear the "student" hat
     const key = lkey(p);
     let L = map.get(key);
-    if (!L) { L = { key, name: '', email: normEmail(p.email || ''), group: '', sid: '', org: '', courses: {}, src: {}, demo: !!p.demo }; map.set(key, L); }
+    if (!L) { L = { key, name: '', email: normEmail(p.email || ''), group: '', sid: '', org: '', courses: {}, src: {}, demo: !!p.demo, staff: staffP }; map.set(key, L); }
+    else L.staff = L.staff && staffP;
     L.name = L.name || p.name || ''; L.group = L.group || p.group || ''; L.sid = L.sid || p.sid || ''; L.org = L.org || p.extra || p.org || '';
     L.src[src] = true; if (!p.demo) L.demo = false;
     Object.keys(prog || {}).forEach(cid => { if (!prog[cid]) return; const n = fixCP(deep(prog[cid])), o = L.courses[cid]; if (!o || cpRank(n) >= cpRank(o)) L.courses[cid] = n; });
@@ -4693,7 +4759,8 @@ function collectLearners() {
   PROFILES.forEach(p => put(p, PROG[p.id], 'local'));
   map.forEach((L, k) => {
     const u = L.email && findUser(L.email);
-    if (u) { if (u.role !== 'student') { map.delete(k); return; } L.name = u.name; L.group = u.group || L.group; L.sid = u.sid || L.sid; L.org = u.org || L.org; }
+    if (u) { if (!hasRole(u, 'student')) { map.delete(k); return; } L.name = u.name; L.group = u.group || L.group; L.sid = u.sid || L.sid; L.org = u.org || L.org; }
+    if (!u && L.staff) { map.delete(k); return; }
     if (!L.name) L.name = L.email || 'ไม่ทราบชื่อ';
   });
   return map;
@@ -5279,7 +5346,7 @@ const WZ_STEPS = ['ข้อมูลคอร์ส', 'ลิงก์วิด
 let WZ = null;
 const newWZ = () => ({
   step: 0, max: 0,
-  c: { title: '', subtitle: '', description: '', category: '', level: '', duration: '', emoji: '📚', cover: '', instructor: SESS ? SESS.name : '', owner: '' },
+  c: { title: '', subtitle: '', description: '', category: '', level: '', duration: '', emoji: '📚', cover: '', instructor: SESS ? SESS.name : '', owner: SESS && isAdmin() && isInstructor() ? SESS.email : '' },
   lessonsText: '', pre: false, preText: '', post: true, postText: '', lq: {},
   cond: { sequential: true, completion: 'watch', watchPercent: 85, preRequired: false, lessonPass: 60, postPass: 60, maxAttempts: 0, cert: true, certTitle: 'เกียรติบัตร' }
 });
@@ -5331,7 +5398,7 @@ function wizardHtml() {
       ${last ? '' : `<button class="btn primary" data-action="wz-next">ถัดไป: ${WZ_STEPS[WZ.step + 1]} ${icon('right', 18)}</button>`}</div></div>`;
 }
 function wzStep1() {
-  const c = WZ.c, teachers = isAdmin() ? (DATA.users || []).filter(u => u.role === 'teacher') : [];
+  const c = WZ.c, teachers = isAdmin() ? instructorUsers() : [];
   return `<h2>1. ข้อมูลคอร์ส</h2><p class="muted">ข้อมูลที่ผู้เรียนจะเห็นในหน้ารวมคอร์ส</p>
     ${wzField('ชื่อคอร์ส <span class="req">*</span>', 'c.title', c.title, { ph: 'เช่น การใช้อินเทอร์เน็ตอย่างปลอดภัย' })}
     ${wzField('คำโปรยสั้น ๆ', 'c.subtitle', c.subtitle, { ph: 'ประโยคเดียวที่บอกว่าคอร์สนี้ได้อะไร' })}
