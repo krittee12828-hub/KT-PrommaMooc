@@ -103,7 +103,7 @@ main{min-height:60vh;padding-bottom:64px}
 .field{display:block;margin-bottom:14px}
 .field>span.lb{display:block;font-weight:600;margin-bottom:5px;font-size:.95rem}
 .help{display:block;color:var(--ink-3);font-size:.85rem;margin-top:4px;line-height:1.5}
-input[type=text],input[type=url],input[type=email],input[type=number],input[type=password],input[type=search],select,textarea{width:100%;min-height:46px;padding:9px 14px;border:1px solid var(--line-2);border-radius:11px;background:#fff;font-size:1rem;line-height:1.5;transition:border-color .15s,box-shadow .15s}
+input[type=text],input[type=url],input[type=email],input[type=tel],input[type=number],input[type=password],input[type=search],select,textarea{width:100%;min-height:46px;padding:9px 14px;border:1px solid var(--line-2);border-radius:11px;background:#fff;font-size:1rem;line-height:1.5;transition:border-color .15s,box-shadow .15s}
 textarea{resize:vertical;min-height:90px}
 input:focus,select:focus,textarea:focus{outline:0;border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-100)}
 input[type=color]{width:56px;height:46px;padding:3px;border:1px solid var(--line-2);border-radius:11px;background:#fff;cursor:pointer}
@@ -433,6 +433,130 @@ pre.code{background:#0f1830;color:#dbe3ff;padding:14px 16px;border-radius:12px;o
 @media (max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}.toolbar select{flex:1 1 140px}}
 
 @media (max-width:900px){.user-chip span.n{display:none}.user-chip{padding:4px}}
+
+/* ---------- analytics / charts ---------- */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;min-width:0}
+.kpi .kl{color:var(--ink-2);font-size:.88rem;line-height:1.35}
+.kpi b{font-family:var(--head);font-size:1.9rem;line-height:1.25;font-weight:600;margin-top:2px}
+.kpi small{color:var(--ink-3);font-size:.8rem;line-height:1.35}
+.grid-ch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px;align-items:start}
+.grid-ch .panel,.grid-ch .panel+.panel{margin-top:0}
+.panel.chart{margin-top:0}
+.panel.chart+.panel{margin-top:16px}
+.grid-ch .panel.chart+.panel.chart{margin-top:0}
+.callout.mt-s{margin-top:14px}
+@media (max-width:640px){.callout{flex-wrap:wrap}.callout .grow{flex:1 1 calc(100% - 40px);min-width:0}.callout>.btn{margin-left:30px}}
+.chart-h{display:flex;justify-content:space-between;gap:10px;margin-bottom:14px}
+.filters{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.filters label{display:flex;flex-direction:column;gap:3px;font-size:.85rem;color:var(--ink-2);font-weight:600}
+.filters select,.filters input{min-width:170px}
+.filters.tight{align-items:center}
+.filters.tight select{min-width:140px;width:auto;flex:0 0 auto}
+.filters.tight .srch{flex:1 1 240px;max-width:420px}.filters.tight .srch input{width:100%}
+.filters .srch{position:relative;flex-direction:row;align-items:center}
+.filters .srch .ic{position:absolute;left:12px;color:var(--ink-3)}
+.filters .srch input{padding-left:38px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.88rem;color:var(--ink-2);margin:0 0 10px}
+.legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.legend .sw.ln{width:16px;height:3px;border-radius:2px;vertical-align:3px}
+.vbars{display:grid;gap:12px}
+.vb{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr) 3.4em;gap:12px;align-items:center;border-radius:8px;outline-offset:3px}
+.vb-l{min-width:0;font-size:.94rem;line-height:1.35;overflow-wrap:anywhere}
+.vb-l a{color:var(--ink);text-decoration:none;font-weight:600}
+.vb-l a:hover{color:var(--primary);text-decoration:underline}
+.vb-l small{display:block;color:var(--ink-3);font-size:.8rem}
+.vb-t{height:14px;background:#eef1f8;border-radius:0 4px 4px 0;position:relative}
+.vb-t i{position:absolute;left:0;top:0;bottom:0;min-width:2px;background:#2a78d6;border-radius:0 4px 4px 0;transition:width .35s}
+.vb-v{font-family:var(--head);font-weight:600;font-size:.95rem;text-align:right}
+.vb:hover .vb-t i,.vb:focus-visible .vb-t i,.fn:hover .vb-t i,.fn:focus-visible .vb-t i{filter:brightness(1.12)}
+.dbs{position:relative;display:grid;gap:12px}
+.db-axis{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr) 3.4em;gap:12px;font-size:.76rem;color:var(--ink-3)}
+.db-axis .ticks{display:flex;justify-content:space-between}
+.db{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr) 3.4em;gap:12px;align-items:center;border-radius:8px;outline-offset:3px}
+.db-t{position:relative;height:22px;background:linear-gradient(to right,var(--line) 1px,transparent 1px) 0 0/25% 100%;border-right:1px solid var(--line)}
+.db-t::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
+.db-t u{position:absolute;top:50%;height:3px;margin-top:-1.5px;background:#9ec5f4;text-decoration:none;border-radius:2px}
+.db-t i{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;box-shadow:0 0 0 2px #fff}
+.db-t i.a{background:#86b6ef}.db-t i.b{background:#1c5cab}
+.hist{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;height:190px;align-items:end;border-bottom:1px solid var(--line);padding-top:4px}
+.hc{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;outline-offset:2px;border-radius:6px}
+.hc i{display:block;width:min(24px,100%);background:#1c5cab;border-radius:4px 4px 0 0;transition:height .35s}
+.hc .hn{font-size:.76rem;color:var(--ink-2);line-height:1.5;min-height:1.5em}
+.hc .hx{position:absolute;bottom:-1.7em;font-size:.76rem;color:var(--ink-3)}
+.hist{margin-bottom:2em}
+.hc:hover i,.hc:focus-visible i{filter:brightness(1.15)}
+.viz-line{width:100%;min-height:232px}
+.viz-line svg{display:block;max-width:100%;height:auto;font-family:var(--body)}
+.viz-line .gl{stroke:var(--line);stroke-width:1}
+.viz-line .xh{stroke:var(--line-2);stroke-width:1}
+.viz-line .ax{fill:var(--ink-3);font-size:11px}
+.viz-line .lbl{fill:var(--ink-2);font-size:12px;font-weight:600}
+.mix{display:flex;gap:2px;height:10px;margin:2px 0 12px}
+.mix i{display:block;border-radius:5px;min-width:6px;outline-offset:2px}
+.funnel{display:grid;gap:12px}
+.fn{display:grid;grid-template-columns:minmax(0,40%) minmax(0,1fr) 2.6em 3.2em;gap:12px;align-items:center;border-radius:8px;outline-offset:3px}
+.fn .vb-t{height:20px}
+.fn .fd{font-size:.8rem;color:var(--ink-3);text-align:right}
+.meter{height:8px;background:#eef1f8;border-radius:99px;overflow:hidden;min-width:70px;flex:1}
+.meter i{display:block;height:100%;background:#2a78d6;border-radius:99px}
+.cellbar{display:flex;align-items:center;gap:10px;min-width:150px}
+.cellbar span{font-size:.88rem;white-space:nowrap;color:var(--ink-2)}
+details.tv{margin-top:12px}
+details.tv summary{cursor:pointer;font-size:.88rem;color:var(--primary);font-weight:600}
+details.tv .tbl-wrap{margin-top:8px;max-height:260px;overflow:auto}
+.viz-tip{position:fixed;z-index:400;pointer-events:none;background:var(--deep);color:#fff;border-radius:10px;padding:8px 12px;font-size:.88rem;line-height:1.5;max-width:300px;white-space:pre-line;box-shadow:0 10px 30px rgba(15,26,69,.3)}
+.viz-tip::first-line{font-weight:700;font-size:1rem}
+.mb-s{margin-bottom:6px}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-ch{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi b{font-size:1.6rem}
+  .vb,.db{grid-template-columns:minmax(0,1fr) 3.2em;row-gap:5px}.vb .vb-l,.db .vb-l{grid-column:1/-1}
+  .db-axis{grid-template-columns:minmax(0,1fr) 3.2em}.db-axis span:first-child{display:none}
+  .fn{grid-template-columns:minmax(0,1fr) 2.4em 2.8em;row-gap:4px}.fn .vb-l{grid-column:1/-1}
+  .filters select,.filters input,.filters.tight select{min-width:0;width:100%;flex:1 1 140px}.filters label{flex:1 1 140px}.filters.tight .srch{flex:1 1 100%;max-width:none}
+}
+
+.tbl th{white-space:nowrap}
+
+/* ---------- course registration wizard ---------- */
+.stepper{list-style:none;display:flex;gap:0;padding:0;margin:0 0 18px;counter-reset:s}
+.stepper li{flex:1 1 0;min-width:0;position:relative}
+.stepper li+li::before{content:"";position:absolute;left:-50%;right:50%;top:18px;height:2px;background:var(--line-2);z-index:0}
+.stepper li.done+li::before,.stepper li.cur::before{background:var(--primary)}
+.stepper button{all:unset;box-sizing:border-box;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;cursor:pointer;text-align:center;padding:2px 4px;border-radius:10px}
+.stepper button[disabled]{cursor:default;opacity:.55}
+.stepper button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.stepper .nd{position:static;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#fff;border:2px solid var(--line-2);color:var(--ink-2);font-family:var(--head);font-weight:600;font-size:.95rem}
+.stepper .done .nd{background:var(--primary);border-color:var(--primary);color:#fff}
+.stepper .cur .nd{border-color:var(--primary);color:var(--primary);box-shadow:0 0 0 4px var(--primary-100)}
+.stepper .tx{font-size:.84rem;line-height:1.3;color:var(--ink-2)}
+.stepper .cur .tx{color:var(--ink);font-weight:600}
+.wz{padding:28px}
+.wz h2{margin-bottom:.2em}
+.req{color:var(--bad)}
+.linkbtn{all:unset;color:var(--primary);cursor:pointer;text-decoration:underline;font-weight:600}
+.linkbtn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.lpv{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.lpv li{display:flex;gap:12px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.lpv li.ok .ic{color:var(--ok);flex:none}
+.lpv li.bad{background:var(--bad-bg);border-color:#efc3c3;color:var(--bad)}
+.lpv li.bad .ic{flex:none}
+.lpv img{width:80px;height:45px;object-fit:cover;border-radius:6px;background:var(--primary-100);flex:none}
+.lpv li>div{min-width:0;flex:1}
+.fmt{margin:12px 0 16px;background:var(--primary-50);border:1px solid var(--primary-100);border-radius:12px;padding:10px 16px}
+.fmt summary{cursor:pointer;font-weight:600;color:var(--primary)}
+.fmt .code{margin:10px 0}
+.qgroup{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:14px;background:#fff}
+.qgroup .check{margin-bottom:10px}
+.qbox textarea{margin-top:8px;font-family:ui-monospace,Menlo,'Sarabun',monospace;font-size:.92rem}
+details.lq{border-top:1px solid var(--line);padding:10px 0 4px;margin-top:10px}
+details.lq summary{cursor:pointer;font-weight:600;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.review-card{display:flex;gap:16px;align-items:center;margin:8px 0 18px}
+.cover-mini{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--deep-2));display:grid;place-items:center;font-size:2rem;flex:none}
+.kpis.rv{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:640px){.wz{padding:20px 16px}.stepper .tx{display:none}.stepper li.cur .tx{display:block;position:absolute;top:44px;left:0;right:0;font-size:.8rem}.stepper{margin-bottom:54px}.kpis.rv{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.h-sm{font-size:1.1rem;margin:20px 0 10px}
 
 </style>
 <style id="theme-vars"></style>
@@ -1778,9 +1902,16 @@ const HASH = {};   // course id → fingerprint at last save (so we can stamp up
 const courseHash = c => fnv(JSON.stringify(Object.assign({}, c, { updatedAt: 0, sentRev: 0 })));
 const rebaseHashes = () => { DATA.courses.forEach(c => { HASH[c.id] = courseHash(c); }); };
 function loadData() {
-  const local = store.get(LS.data, null);
-  if (local && local.data && (local.data.updatedAt || 0) > (EMBEDDED.updatedAt || 0)) DATA = normData(local.data);
-  else { DATA = deep(EMBEDDED); if (local) store.del(LS.data); }
+  const local = store.get(LS.data, null), ld = local && local.data;
+  if (ld && (ld.updatedAt || 0) > (EMBEDDED.updatedAt || 0)) DATA = normData(ld);
+  else {
+    DATA = deep(EMBEDDED);
+    // the published file has caught up with this browser's edits: keep the administrator-only data (roster, fingerprints, inbox) — it never travels in index.html
+    const adminData = !!(ld && ld.auth && ld.auth.salt && ld.auth.salt === DATA.auth.salt && (ld.users || ld.inbox));
+    if (adminData) { if (typeof SESS !== 'undefined' && SESS && SESS.role === 'admin') { ['users', 'fp', 'inbox'].forEach(k => { if (ld[k] !== undefined) DATA[k] = deep(ld[k]); }); store.set(LS.data, { data: DATA }); } }
+    else if (local) store.del(LS.data);
+  }
+  if (typeof resolveOwners === 'function') resolveOwners(DATA);
   rebaseHashes();
 }
 const isDirty = () => (DATA.updatedAt || 0) > (EMBEDDED.updatedAt || 0);
@@ -1814,7 +1945,7 @@ function addProfile(d) {
   const p = { id: uid('u-'), name: d.name.trim(), email: (d.email || '').trim(), extra: (d.extra || '').trim(), certName: '', createdAt: Date.now() };
   PROFILES.push(p); CUR = p.id; saveProfiles(); return p;
 }
-const newCP = () => ({ startedAt: Date.now(), pre: null, lessons: {}, post: { attempts: [], best: 0, passed: false }, completedAt: null, certId: null });
+const newCP = () => ({ startedAt: Date.now(), pre: null, lessons: {}, post: { attempts: [], best: 0, passed: false }, qs: {}, completedAt: null, certId: null });
 function cp(courseId, create) {
   const p = profile(); if (!p) return null;
   let all = PROG[p.id]; if (!all) { if (!create) return null; all = PROG[p.id] = {}; }
@@ -1940,7 +2071,14 @@ function isAdmin() { return !!SESS && SESS.role === 'admin'; }
 function isTeacher() { return !!SESS && SESS.role === 'teacher'; }
 function isStaff() { return isAdmin() || isTeacher(); }
 const splitList = s => String(s || '').split(/[,;\n、]+/).map(x => x.trim().toLowerCase()).filter(Boolean);
-function ownsCourse(c) { return !!SESS && !!c.owner && normEmail(c.owner) === normEmail(SESS.email); }
+// published files carry a course owner as 'h:<account id>' (a hash), never as an e-mail address
+function ownsCourse(c) { return !!SESS && !!c.owner && (normEmail(c.owner) === normEmail(SESS.email) || c.owner === 'h:' + SESS.id); }
+const ownerIs = (c, email) => !!c.owner && !!email && (normEmail(c.owner) === normEmail(email) || (!!DATA.auth.salt && c.owner === 'h:' + acctIdOf(normEmail(email), DATA.auth.salt)));
+function resolveOwners(D) {
+  if (!Array.isArray(D.users) || !D.auth.salt) return;
+  const m = {}; D.users.forEach(u => { m['h:' + acctIdOf(u.email, D.auth.salt)] = u.email; });
+  D.courses.forEach(c => { if (c.owner && m[c.owner]) c.owner = m[c.owner]; });
+}
 function canEditCourse(c) { return isAdmin() || (isTeacher() && ownsCourse(c)); }
 function canViewCourse(c) { return !!c.published || canEditCourse(c); }
 
@@ -2077,6 +2215,7 @@ function buildPackage(courses) {
 function exportData() {
   const d = Object.assign({}, DATA); delete d.users; delete d.fp; delete d.inbox;
   const x = deep(d); x.settings.adminPinHash = '';
+  x.courses.forEach(c => { if (c.owner && !/^h:/.test(c.owner)) c.owner = x.auth.salt ? 'h:' + acctIdOf(normEmail(c.owner), x.auth.salt) : ''; });   // no teacher e-mail in the public file
   return x;
 }
 
@@ -2437,6 +2576,7 @@ function loginView() {
           <span class="help">ลืมรหัสผ่าน? แจ้งผู้ดูแลระบบเพื่อขอรหัสใหม่</span></label>
         <button class="btn primary lg" data-action="do-login" style="width:100%">เข้าสู่ระบบ</button>
         ${S.allowGuests ? `<div class="auth-or"><span>หรือ</span></div><button class="btn" style="width:100%" data-action="guest-start">เรียนแบบผู้สนใจทั่วไป (ไม่ต้องมีบัญชี)</button><p class="help center mt-s">ใช้ได้เฉพาะคอร์สที่เปิดให้ทุกคน</p>` : ''}
+        <p class="help center mt">เป็นครูและยังไม่มีบัญชี? <a href="#/teacher-signup">ขอสมัครเป็นครูผู้สอน</a></p>
       </div></div>`,
     mount() { const e = $('#li-email'); if (e) e.focus(); }
   };
@@ -2695,6 +2835,8 @@ actions['quiz-submit'] = async () => {
   const answers = readAnswers(QZ.items), un = answers.filter(a => !a.length).length;
   if (un && !(await confirmDlg(`ยังไม่ได้ตอบ ${un} ข้อ ต้องการส่งคำตอบเลยหรือไม่?`, { ok: 'ส่งคำตอบ' }))) return;
   const res = grade(QZ.items, answers), { cfg, c, lesson } = QZ, cpv = cp(c.id, true);
+  if (!cpv.qs) cpv.qs = {};   // per-question tally [tries, correct] → item analysis in the administrator's dashboard
+  res.details.forEach(d => { const e = cpv.qs[d.it.q.id] || (cpv.qs[d.it.q.id] = [0, 0]); e[0]++; if (d.ok) e[1]++; });
   let pass = null;
   const base = { course: cinfo(c), score: res.earned, total: res.total, percent: res.percent };
   if (cfg.kind === 'pre') { cpv.pre = { percent: res.percent, score: res.earned, total: res.total, at: Date.now() }; emit('pretest', base); }
@@ -3104,7 +3246,7 @@ const hooks = {};
 function adminBarHtml(path) {
   const a = (h, t, on, badge) => `<a href="${h}" class="${on ? 'on' : ''}">${t}${badge ? `<span class="count">${badge}</span>` : ''}</a>`;
   const links = isAdmin()
-    ? a('#/admin', 'ภาพรวม / คอร์ส', path === '/admin' || path.startsWith('/admin/course')) + a('#/admin/users', 'ผู้ใช้งาน', path === '/admin/users') + a('#/admin/inbox', 'คอร์สจากครู', path === '/admin/inbox', (DATA.inbox || []).length) + a('#/admin/results', 'ผลการเรียน', path === '/admin/results') + a('#/admin/settings', 'ตั้งค่าเว็บไซต์', path === '/admin/settings')
+    ? a('#/admin', 'ภาพรวม / คอร์ส', path === '/admin' || path.startsWith('/admin/course') || path === '/admin/new') + a('#/admin/analytics', 'วิเคราะห์ข้อมูล', path.startsWith('/admin/analytics')) + a('#/admin/users', 'ผู้ใช้งาน', path === '/admin/users') + a('#/admin/inbox', 'กล่องรับเรื่อง', path === '/admin/inbox', (DATA.inbox || []).length) + a('#/admin/results', 'ผลการเรียน', path === '/admin/results') + a('#/admin/settings', 'ตั้งค่าเว็บไซต์', path === '/admin/settings')
     : a('#/admin', 'คอร์สของฉัน', path === '/admin' || path.startsWith('/admin/course')) + a('#/admin/results', 'ผลการเรียนในคอร์สของฉัน', path === '/admin/results');
   return `<div class="admin-bar"><div class="wrap"><b>${isAdmin() ? 'ผู้ดูแลระบบ' : 'ครูผู้สอน'}</b>${links}<span class="grow"></span>${a('#/', 'ดูหน้าผู้เรียน')}</div></div>`;
 }
@@ -3157,7 +3299,7 @@ function ownerField(c) {
   const teachers = (DATA.users || []).filter(u => u.role === 'teacher');
   if (!hasRoster() && !teachers.length) return fld.text('อีเมลของครูเจ้าของคอร์ส', 'c.owner', c.owner, { type: 'email', help: 'เว้นว่าง = คอร์สส่วนกลาง (ไม่มีครูเจ้าของ) ครูเจ้าของคอร์สแก้ไขคอร์สนี้ได้เมื่อเข้าสู่ระบบด้วยอีเมลนี้' });
   const opts = [['', 'ไม่มีเจ้าของ (คอร์สส่วนกลาง)']].concat(teachers.map(u => [u.email, `${u.name} (${u.email})`]));
-  if (c.owner && !teachers.some(u => u.email === normEmail(c.owner))) opts.push([c.owner, c.ownerName ? `${c.ownerName} (${c.owner})` : c.owner]);
+  if (c.owner && !teachers.some(u => u.email === normEmail(c.owner))) opts.push([c.owner, /^h:/.test(c.owner) ? `${c.ownerName || 'ครูเจ้าของ'} (ไม่พบในรายชื่อของเครื่องนี้)` : c.ownerName ? `${c.ownerName} (${c.owner})` : c.owner]);
   return fld.select('ครูเจ้าของคอร์ส', 'c.owner', c.owner, opts, 'ครูเจ้าของคอร์สแก้ไขคอร์สนี้ได้เมื่อเข้าสู่ระบบ — ผู้ดูแลระบบแก้ไขได้ทุกคอร์ส', { hook: 'owner' });
 }
 hooks.qtype = (el, root, path, v) => {
@@ -3183,7 +3325,7 @@ const move = (arr, i, d) => { const j = i + d; if (j < 0 || j >= arr.length) ret
 
 /* ---------- dashboard ---------- */
 route(/^\/admin$/, () => staffGuard(() => ({ title: isAdmin() ? 'ผู้ดูแลระบบ' : 'คอร์สของฉัน', admin: true, html: dashboardHtml() })));
-const ownerTag = c => (c.owner ? `<span class="tag gray">${icon('user', 13)} ${esc(c.ownerName || c.owner)}</span>` : '');
+const ownerTag = c => (c.owner ? `<span class="tag gray">${icon('user', 13)} ${esc(c.ownerName || (/^h:/.test(c.owner) ? 'ครูผู้สอน' : c.owner))}</span>` : '');
 const lockTag = c => (accessLabel(c) ? `<span class="tag gold">${icon('lock', 13)} ${esc(accessLabel(c))}</span>` : '');
 function courseRow(c, i) {
   const admin = isAdmin(), st = admin ? null : courseState(c);
@@ -3208,7 +3350,7 @@ function dashboardHtml() {
   const stat = (n, t, href) => `<a class="stat" href="${href}"><b>${n}</b><span>${t}</span></a>`;
   return `<div class="wrap mt">
     ${isDirty() ? `<div class="banner">${icon('alert')}<div class="grow"><b>มีการแก้ไขที่ยังไม่ได้เผยแพร่</b><div class="small">การแก้ไขอยู่ในเบราว์เซอร์เครื่องนี้เท่านั้น ผู้เรียนยังไม่เห็น — ดาวน์โหลด index.html แล้วอัปโหลดทับไฟล์เดิมบน GitHub</div></div><button class="btn primary" data-action="pub-html">${icon('download', 18)} ดาวน์โหลด index.html</button></div>` : ''}
-    <div class="stats">${stat(DATA.courses.length, 'คอร์สทั้งหมด', '#/admin')}${stat(hasRoster() ? rc.student : '–', 'นักเรียน', '#/admin/users')}${stat(hasRoster() ? rc.teacher : '–', 'ครูผู้สอน', '#/admin/users')}${stat(inbox, 'คอร์สจากครูรอตรวจ', '#/admin/inbox')}</div>
+    <div class="stats">${stat(DATA.courses.length, 'คอร์สทั้งหมด', '#/admin')}${stat(hasRoster() ? rc.student : '–', 'นักเรียน', '#/admin/users')}${stat(hasRoster() ? rc.teacher : '–', 'ครูผู้สอน', '#/admin/users')}${stat(inbox, 'เรื่องจากครูรอตรวจ', '#/admin/inbox')}</div>
     <div class="row between mb"><h1 class="mb-0">คอร์สทั้งหมด</h1><button class="btn primary" data-action="course-new">${icon('plus', 18)} สร้างคอร์สใหม่</button></div>
     ${DATA.courses.map(courseRow).join('') || '<div class="empty"><div class="big">🌱</div><p>ยังไม่มีคอร์ส กดปุ่ม "สร้างคอร์สใหม่" เพื่อเริ่มต้น</p></div>'}
     <section class="panel mt"><h2>เผยแพร่และสำรองข้อมูล</h2>
@@ -3216,7 +3358,8 @@ function dashboardHtml() {
       <div class="row"><button class="btn primary" data-action="pub-html">${icon('download', 18)} ดาวน์โหลด index.html</button><button class="btn" data-action="data-export">${icon('download', 18)} ส่งออกข้อมูลคอร์ส/ตั้งค่า (JSON)</button><button class="btn" data-action="data-import">${icon('upload', 18)} นำเข้าข้อมูล (JSON)</button>${isDirty() ? `<button class="btn danger-o" data-action="data-discard">${icon('refresh', 18)} ยกเลิกการแก้ไขที่ยังไม่เผยแพร่</button>` : ''}</div>
       <p class="small muted mt-s">ไฟล์ JSON ไม่รวมรายชื่อผู้ใช้และรหัสผ่าน — สำรองรายชื่อผ่านหน้า "ผู้ใช้งาน" → ส่งออกรายชื่อ (Excel)${hasRoster() ? '' : ` · บัญชีในไฟล์นี้ ${nAcc} บัญชี (รายชื่อที่แก้ไขได้อยู่ในเครื่องผู้ดูแลที่นำเข้าไว้)`}</p></section></div>`;
 }
-actions['course-new'] = () => {
+actions['course-new'] = () => { location.hash = '#/admin/new'; };   // guided registration wizard (65_wizard.js)
+actions['course-blank'] = () => {
   const c = newCourse();
   if (isTeacher()) { c.owner = SESS.email; c.ownerName = SESS.name; c.instructor = SESS.name; }
   DATA.courses.push(c); saveData(); location.hash = '#/admin/course/' + c.id;
@@ -3323,10 +3466,10 @@ const APPS_SCRIPT = `function doPost(e) {
   var d = JSON.parse(e.postData.contents);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName('results') || ss.insertSheet('results');
-  if (sh.getLastRow() === 0) sh.appendRow(['เวลา','เหตุการณ์','ชื่อ','อีเมล','หน่วยงาน','คอร์ส','บทเรียน','คะแนน %','ผ่าน','รหัสเกียรติบัตร']);
+  if (sh.getLastRow() === 0) sh.appendRow(['เวลา','เหตุการณ์','ชื่อ','อีเมล','หน่วยงาน','คอร์ส','บทเรียน','คะแนน %','ผ่าน','รหัสเกียรติบัตร','กลุ่ม','รหัสประจำตัว','รหัสคอร์ส','รหัสบทเรียน','ครั้งที่']);
   var L = d.learner || {}, C = d.course || {}, Ls = d.lesson || {};
   sh.appendRow([d.at, d.event, L.name, L.email, L.extra, C.title, Ls.title,
-    d.percent != null ? d.percent : (d.post != null ? d.post : ''), d.passed == null ? '' : d.passed, d.certId || '']);
+    d.percent != null ? d.percent : (d.post != null ? d.post : ''), d.passed == null ? '' : d.passed, d.certId || '', L.group || '', L.sid || '', C.id || '', Ls.id || '', d.attempt || '']);
   return ContentService.createTextOutput('ok');
 }`;
 actions['copy-script'] = async () => toast((await copyText(APPS_SCRIPT)) ? 'คัดลอกโค้ดแล้ว' : 'คัดลอกไม่สำเร็จ', 'ok');
@@ -3743,9 +3886,10 @@ actions['u-import'] = async () => {
 };
 
 /* ---------- courses sent by teachers ---------- */
-route(/^\/admin\/inbox$/, () => staffGuard(() => ({ title: 'คอร์สจากครู', admin: true, html: inboxHtml() }), { admin: true }));
+route(/^\/admin\/inbox$/, () => staffGuard(() => ({ title: 'กล่องรับเรื่อง', admin: true, html: inboxHtml() }), { admin: true }));
 function inboxRow(it) {
-  const c = it.course, ex = DATA.courses.find(x => x.id === c.id), sameOwner = ex && ex.owner && normEmail(ex.owner) === normEmail(c.owner);
+  if (!it.course) return requestRow(it);
+  const c = it.course, ex = DATA.courses.find(x => x.id === c.id), sameOwner = !!ex && !!ex.owner && ownerIs(ex, c.owner);
   const kind = !ex ? ['ใหม่', 'ok'] : sameOwner ? ['อัปเดตคอร์สเดิม', ''] : ['รหัสคอร์สซ้ำกับคอร์สอื่น — จะรับเป็นคอร์สใหม่', 'warn'];
   const older = sameOwner && (c.updatedAt || 0) < (ex.updatedAt || 0);
   const known = hasRoster() ? findUser(it.from.email) : null;
@@ -3755,20 +3899,59 @@ function inboxRow(it) {
     <div class="small muted mt-s">จาก ${esc(it.from.name || '–')} (${esc(it.from.email || '–')}) · รับเมื่อ ${fmtDT(it.at)} · ${c.lessons.length} บทเรียน · ข้อสอบรวม ${qn} ข้อ${c.updatedAt ? ' · แก้ไขล่าสุด ' + fmtDT(c.updatedAt) : ''}</div></div>
     <div class="row" style="gap:6px"><button class="btn sm" data-action="inbox-accept" data-id="${it.id}">รับเข้า (ฉบับร่าง)</button><button class="btn primary sm" data-action="inbox-publish" data-id="${it.id}">รับเข้าและเผยแพร่</button><button class="icon-btn" title="ลบออกจากกล่อง" aria-label="ลบออกจากกล่อง" data-action="inbox-del" data-id="${it.id}" style="color:var(--bad)">${icon('trash', 18)}</button></div></div>`;
 }
+function requestRow(it) {
+  const r = it.req || {}, ex = findUser(r.email);
+  return `<div class="panel row between" style="gap:14px"><div style="min-width:0;flex:1 1 300px"><div class="row" style="gap:8px"><h3 class="mb-0">${esc(r.name)}</h3><span class="tag gold">${icon('edit', 13)} ขอสมัครเป็นครู</span>${ex ? `<span class="tag warn">มีบัญชีอยู่แล้ว (${esc(ROLE_TH[ex.role] || ex.role)})</span>` : ''}</div>
+    <div class="small muted mt-s">${esc(r.email)}${r.org ? ' · ' + esc(r.org) : ''}${r.phone ? ' · โทร ' + esc(r.phone) : ''} · รับเมื่อ ${fmtDT(it.at)}</div>
+    ${r.subject ? `<div class="small mt-s"><b>จะสอน:</b> ${esc(r.subject)}</div>` : ''}${r.note ? `<div class="small muted">${esc(r.note)}</div>` : ''}</div>
+    <div class="row" style="gap:6px"><button class="btn primary sm" data-action="req-approve" data-id="${it.id}">${icon('check', 16)} อนุมัติเป็นครู</button><button class="icon-btn" title="ปฏิเสธ/ลบ" aria-label="ปฏิเสธคำขอ" data-action="inbox-del" data-id="${it.id}" style="color:var(--bad)">${icon('trash', 18)}</button></div></div>`;
+}
 function inboxHtml() {
-  const list = DATA.inbox || [];
-  return `<div class="wrap mt"><div class="row between mb"><div><h1 class="mb-0">คอร์สจากครู</h1><div class="muted small">นำเข้าไฟล์ที่ครูส่งมา (.pmooc.json) เพื่อตรวจสอบและเผยแพร่</div></div><button class="btn primary" data-action="inbox-import">${icon('upload', 18)} นำเข้าไฟล์จากครู</button></div>
-    ${list.map(inboxRow).join('') || `<div class="empty"><div class="big">📥</div><p>ยังไม่มีคอร์สที่รอตรวจ — ครูกด "ส่งให้ผู้ดูแล" แล้วส่งไฟล์มาให้ จากนั้นกด "นำเข้าไฟล์จากครู"</p></div>`}
+  const list = DATA.inbox || [], reqs = list.filter(x => !x.course), pk = list.filter(x => x.course);
+  return `<div class="wrap mt"><div class="row between mb"><div><h1 class="mb-0">กล่องรับเรื่อง</h1><div class="muted small">คำขอสมัครครู และคอร์สที่ครูส่งมาให้ตรวจ</div></div><div class="row"><button class="btn" data-action="inbox-paste">${icon('copy', 18)} วางรหัสคำขอ</button><button class="btn primary" data-action="inbox-import">${icon('upload', 18)} นำเข้าไฟล์ (คอร์ส / คำขอ)</button></div></div>
+    ${reqs.length ? `<h2 class="h-sm">คำขอสมัครเป็นครู <span class="tag">${reqs.length}</span></h2><div class="callout">${icon('info')}<div class="small">ใครก็ส่งคำขอได้ — ตรวจสอบตัวตนก่อนอนุมัติ (เช่น เทียบอีเมลโรงเรียนหรือโทรยืนยัน) เมื่ออนุมัติ ระบบจะสร้างบัญชีครูและสุ่มรหัสผ่านให้ แล้วคุณส่งรหัสให้ครูเอง</div></div>${reqs.map(requestRow).join('')}` : ''}
+    <h2 class="h-sm mt">คอร์สจากครู ${pk.length ? `<span class="tag">${pk.length}</span>` : ''}</h2>
+    ${pk.map(inboxRow).join('') || `<div class="empty"><div class="big">📥</div><p>ยังไม่มีคอร์สที่รอตรวจ — ครูกด "ส่งให้ผู้ดูแล" แล้วส่งไฟล์มาให้ จากนั้นกด "นำเข้าไฟล์"</p></div>`}
     <p class="small muted mt">"รับเข้า (ฉบับร่าง)" = นำคอร์สเข้าระบบแต่ยังไม่เปิดให้ผู้เรียนเห็น (กดดูตัวอย่างและแก้ไขได้ก่อน) · เมื่อเรียบร้อยให้กด "ดาวน์โหลด index.html" เพื่อเผยแพร่</p></div>`;
 }
+function addRequest(x) {
+  if (!Array.isArray(DATA.inbox)) DATA.inbox = [];
+  DATA.inbox = DATA.inbox.filter(i => !(i.req && i.req.email === x.person.email));
+  DATA.inbox.push({ id: uid('rq-'), at: Date.now(), kind: 'teacher', req: x.person });
+}
+actions['inbox-paste'] = async () => {
+  const t = await openModal({ title: 'วางรหัสคำขอสมัครครู', body: `<p class="muted small">วางข้อความที่ครูส่งมา (ขึ้นต้นด้วย <span class="kbd">${REQ_PREFIX}</span>)</p><textarea id="req-code" rows="5" placeholder="${REQ_PREFIX}…"></textarea>`, actions: [{ label: 'ยกเลิก', value: null, cls: 'ghost' }, { label: 'เพิ่มคำขอ', cls: 'primary', collect: m => $('#req-code', m).value }] });
+  if (!t) return;
+  try { const x = reqFromText(t); addRequest(x); saveData(); toast('รับคำขอของ ' + x.person.name + ' แล้ว', 'ok'); rerender(); } catch (e) { toast('อ่านรหัสไม่ได้: ' + e.message, 'bad', 6000); }
+};
+actions['req-approve'] = async el => {
+  const it = (DATA.inbox || []).find(x => x.id === el.dataset.id); if (!it || !it.req) return;
+  const r = it.req, ex = findUser(r.email);
+  if (ex && ex.role === 'admin') return toast('อีเมลนี้เป็นผู้ดูแลระบบอยู่แล้ว', 'bad');
+  if (!(await confirmDlg(ex ? `อีเมล ${r.email} มีบัญชีอยู่แล้ว (${ROLE_TH[ex.role]}) — เปลี่ยนเป็นครูผู้สอน? (รหัสผ่านเดิมไม่เปลี่ยน)` : `สร้างบัญชีครูผู้สอนให้ ${r.name} (${r.email})?`, { ok: 'อนุมัติ' }))) return;
+  const pw = ex ? ex.password : genPassword();
+  upsertUser({ email: r.email, name: ex ? ex.name : r.name, role: 'teacher', password: pw, org: ex ? ex.org || r.org : r.org, sid: ex ? ex.sid : '', group: ex ? ex.group : '' });
+  DATA.inbox = DATA.inbox.filter(x => x.id !== it.id);
+  await withProgress('กำลังเข้ารหัสบัญชี…', upd => syncAccounts(upd)); saveData();
+  const url = location.href.split('#')[0].replace(/^file:.*/, '(ที่อยู่เว็บของคุณ)'), msg = `เรียน ${r.name}
+บัญชีครูผู้สอนของคุณพร้อมแล้ว
+เข้าสู่ระบบที่: ${url}#/login
+อีเมล: ${r.email}
+รหัสผ่าน: ${pw}
+(ใช้ได้หลังผู้ดูแลเผยแพร่เว็บฉบับใหม่ขึ้นแล้ว)`;
+  const v = await openModal({ title: 'อนุมัติแล้ว — ส่งรหัสผ่านให้ครู', body: `<div class="callout ok">${icon('checkc')}<div class="small">สร้างบัญชีครู <b>${esc(r.name)}</b> แล้ว</div></div><pre class="code" id="req-msg" style="white-space:pre-wrap">${esc(msg)}</pre><div class="callout warn">${icon('info')}<div class="small"><b>อย่าลืม:</b> กด "ดาวน์โหลด index.html" ที่หน้าภาพรวมแล้วอัปโหลดขึ้น GitHub ครูจึงจะเข้าสู่ระบบได้</div></div>`, actions: [{ label: 'คัดลอกข้อความ', value: 'copy', cls: '' }, { label: 'เสร็จสิ้น', value: null, cls: 'primary' }] });
+  if (v === 'copy') { await copyText(msg); toast('คัดลอกข้อความแล้ว', 'ok'); }
+  rerender();
+};
 actions['inbox-import'] = async () => {
   const files = await pickFiles('.json,application/json'); if (!files.length) return;
   if (!Array.isArray(DATA.inbox)) DATA.inbox = [];
   let n = 0, bad = 0;
   for (const f of files) {
     try {
-      const d = JSON.parse(await readText(f));
-      if (!d || d.app !== 'prommamooc' || d.kind !== 'course-package' || !Array.isArray(d.courses)) throw new Error('ไม่ใช่ไฟล์คอร์สจากครู');
+      const raw = await readText(f), d = JSON.parse(raw);
+      if (d && d.kind === 'teacher-request') { addRequest(reqFromText(raw)); n++; continue; }
+      if (!d || d.app !== 'prommamooc' || d.kind !== 'course-package' || !Array.isArray(d.courses)) throw new Error('ไม่ใช่ไฟล์คอร์สหรือคำขอสมัครครูของ PrommaMooc');
       d.courses.forEach(raw => {
         const c = normCourse(raw), from = d.from && typeof d.from === 'object' ? { email: String(d.from.email || ''), name: String(d.from.name || '') } : {};
         DATA.inbox = DATA.inbox.filter(x => !(x.course.id === c.id && normEmail(x.from.email) === normEmail(from.email)));
@@ -3776,12 +3959,12 @@ actions['inbox-import'] = async () => {
       });
     } catch (e) { bad++; toast(`${f.name}: ${e.message}`, 'bad', 5000); }
   }
-  saveData(); if (n) toast(`รับไฟล์แล้ว ${n} คอร์ส${bad ? ` · ผิดพลาด ${bad} ไฟล์` : ''}`, 'ok'); rerender();
+  saveData(); if (n) toast(`รับไฟล์แล้ว ${n} รายการ${bad ? ` · ผิดพลาด ${bad} ไฟล์` : ''}`, 'ok'); rerender();
 };
 async function acceptInbox(id, publish) {
   const i = (DATA.inbox || []).findIndex(x => x.id === id); if (i < 0) return;
   const it = DATA.inbox[i], c = normCourse(deep(it.course)), idx = DATA.courses.findIndex(x => x.id === c.id), ex = idx >= 0 ? DATA.courses[idx] : null;
-  const sameOwner = !!ex && !!ex.owner && normEmail(ex.owner) === normEmail(c.owner);
+  const sameOwner = !!ex && !!ex.owner && ownerIs(ex, c.owner);
   if (sameOwner && (c.updatedAt || 0) < (ex.updatedAt || 0) && !(await confirmDlg('ไฟล์นี้เก่ากว่าเวอร์ชันของคอร์สที่มีอยู่ในระบบ ต้องการแทนที่ด้วยไฟล์นี้หรือไม่?', { ok: 'แทนที่', danger: true }))) return;
   if (ex && !sameOwner) c.id = uid('c-');
   c.published = publish ? true : (sameOwner ? ex.published : false);
@@ -3793,6 +3976,660 @@ async function acceptInbox(id, publish) {
 actions['inbox-accept'] = el => acceptInbox(el.dataset.id, false);
 actions['inbox-publish'] = el => acceptInbox(el.dataset.id, true);
 actions['inbox-del'] = async el => { if (await confirmDlg('ลบรายการนี้ออกจากกล่องคอร์สจากครู?', { danger: true, ok: 'ลบ' })) { DATA.inbox = (DATA.inbox || []).filter(x => x.id !== el.dataset.id); saveData(); rerender(); } };
+
+/* =====================================================================
+   Administrator: learner analytics — overview, course detail, learner detail, imports, export
+   Data sources: (1) learners on this device  (2) progress files sent by learners  (3) Google Sheets CSV from the webhook
+   ===================================================================== */
+const LKEY = 'pmooc.learners.v1';
+let IMPORTED = store.get(LKEY, null);
+if (!IMPORTED || !Array.isArray(IMPORTED.learners)) IMPORTED = { learners: [], sources: [] };
+const saveImported = () => { if (!store.set(LKEY, IMPORTED)) toast('พื้นที่จัดเก็บของเบราว์เซอร์เต็ม — ข้อมูลที่นำเข้าจะอยู่ถึงเมื่อปิดหน้านี้เท่านั้น', 'bad', 6000); };
+
+const AN = { course: 'all', group: 'all', range: 'all' };
+const CD = { q: '', status: 'all', sort: 'last', limit: 50 };
+const BLUE = { 250: '#86b6ef', 300: '#6da7ec', 350: '#5598e7', 450: '#2a78d6', 500: '#256abf', 550: '#1c5cab' };
+const C_ENROLL = '#2a78d6', C_DONE = '#eb6834';
+const TH_M = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const shortDate = t => { const d = new Date(t); return d.getDate() + ' ' + TH_M[d.getMonth()]; };
+const avg = a => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : null);
+const fPct = v => (v == null ? '–' : Math.round(v) + '%');
+const fGain = g => (g == null ? '–' : (g > 0 ? '+' : '') + Math.round(g));
+const lkey = p => (p.email ? 'e:' + normEmail(p.email) : 'i:' + (p.id || p.name));
+const groupFirst = g => String(g || '').split(/[,;、]+/)[0].trim() || 'ไม่ระบุกลุ่ม';
+
+/* ---------- normalising / ranking one learner×course progress record ---------- */
+function fixCP(v) {
+  v = v && typeof v === 'object' ? v : {};
+  if (!v.lessons || typeof v.lessons !== 'object') v.lessons = {};
+  if (!v.post || typeof v.post !== 'object') v.post = {};
+  if (!Array.isArray(v.post.attempts)) v.post.attempts = [];
+  v.post.best = num(v.post.best, 0); v.post.passed = !!v.post.passed;
+  if (!v.qs || typeof v.qs !== 'object') v.qs = {};
+  return v;
+}
+const lastAt = v => Math.max(v.startedAt || 0, v.pre ? v.pre.at || 0 : 0, v.completedAt || 0, ...v.post.attempts.map(a => a.at || 0));
+function cpUnits(v) { let n = (v.pre ? 1 : 0) + v.post.attempts.length; Object.keys(v.lessons).forEach(k => { const l = v.lessons[k] || {}; n += (l.videoDone ? 1 : 0) + (l.quiz ? l.quiz.attempts || 0 : 0); }); return n; }
+const cpRank = v => (v.completedAt ? 1e9 : 0) + cpUnits(v) * 1e3 + Math.min(999, lastAt(v) / 2e9);
+
+/* ---------- pooling learners from every source ---------- */
+function collectLearners() {
+  const map = new Map();
+  const put = (p, prog, src) => {
+    if (p.role === 'admin' || p.role === 'teacher') return;
+    const key = lkey(p);
+    let L = map.get(key);
+    if (!L) { L = { key, name: '', email: normEmail(p.email || ''), group: '', sid: '', org: '', courses: {}, src: {}, demo: !!p.demo }; map.set(key, L); }
+    L.name = L.name || p.name || ''; L.group = L.group || p.group || ''; L.sid = L.sid || p.sid || ''; L.org = L.org || p.extra || p.org || '';
+    L.src[src] = true; if (!p.demo) L.demo = false;
+    Object.keys(prog || {}).forEach(cid => { if (!prog[cid]) return; const n = fixCP(deep(prog[cid])), o = L.courses[cid]; if (!o || cpRank(n) >= cpRank(o)) L.courses[cid] = n; });
+  };
+  IMPORTED.learners.forEach(x => put(x, x.progress, x.demo ? 'demo' : x.src || 'file'));
+  PROFILES.forEach(p => put(p, PROG[p.id], 'local'));
+  map.forEach((L, k) => {
+    const u = L.email && findUser(L.email);
+    if (u) { if (u.role !== 'student') { map.delete(k); return; } L.name = u.name; L.group = u.group || L.group; L.sid = u.sid || L.sid; L.org = u.org || L.org; }
+    if (!L.name) L.name = L.email || 'ไม่ทราบชื่อ';
+  });
+  return map;
+}
+function analyticsRows(f, pool) {
+  pool = pool || collectLearners();
+  const since = !f.range || f.range === 'all' ? 0 : Date.now() - num(f.range) * 864e5;
+  const courses = f.course === 'all' ? DATA.courses : DATA.courses.filter(c => c.id === f.course), out = [];
+  pool.forEach(L => {
+    if (f.group && f.group !== 'all' && !splitList(L.group).includes(f.group.toLowerCase())) return;
+    courses.forEach(c => {
+      const v = L.courses[c.id]; if (!v) return;
+      if (since && (v.startedAt || 0) < since) return;
+      const st = status(c, v);
+      out.push({ L, c, v, st, pre: v.pre ? v.pre.percent : null, post: v.post.attempts.length ? v.post.best : null, tries: v.post.attempts.length, state: st.complete ? 'done' : st.done > 0 ? 'active' : 'idle', start: v.startedAt || 0, last: lastAt(v) });
+    });
+  });
+  return out;
+}
+function summarize(rows) {
+  const s = { n: rows.length, done: 0, active: 0, idle: 0, learners: new Set(), certs: 0, pre: [], post: [], gain: [], postPass: 0, prog: [] };
+  rows.forEach(r => {
+    s[r.state]++; s.learners.add(r.L.key); if (r.v.certId && r.v.completedAt) s.certs++;
+    if (r.pre != null) s.pre.push(r.pre);
+    if (r.post != null) { s.post.push(r.post); if (r.v.post.passed) s.postPass++; }
+    if (r.pre != null && r.post != null) s.gain.push(r.post - r.pre);
+    s.prog.push(r.st.percent);
+  });
+  s.learnerN = s.learners.size; s.rate = pct(s.done, s.n); s.avgPre = avg(s.pre); s.avgPost = avg(s.post); s.avgGain = avg(s.gain); s.passRate = pct(s.postPass, s.post.length); s.avgProg = avg(s.prog);
+  return s;
+}
+function weeklySeries(rows) {
+  const W = 7 * 864e5, now = Date.now(); let min = now; rows.forEach(r => { if (r.start && r.start < min) min = r.start; });
+  const n = clamp(Math.ceil((now - min) / W), 2, 26), enr = new Array(n).fill(0), fin = new Array(n).fill(0);
+  const idx = t => n - 1 - Math.floor((now - t) / W);
+  rows.forEach(r => { if (r.start) { const i = idx(r.start); if (i >= 0 && i < n) enr[i]++; } if (r.state === 'done' && r.v.completedAt) { const i = idx(r.v.completedAt); if (i >= 0 && i < n) fin[i]++; } });
+  return { labels: enr.map((_, i) => shortDate(now - (n - i) * W)), series: [{ name: 'ลงทะเบียนเรียน', color: C_ENROLL, vals: enr }, { name: 'เรียนจบ', color: C_DONE, vals: fin }] };
+}
+
+/* ---------- tooltips (one shared element; values are set with textContent) ---------- */
+let TIPEL = null;
+function tipEl() { if (!TIPEL) { TIPEL = document.createElement('div'); TIPEL.className = 'viz-tip'; TIPEL.setAttribute('role', 'tooltip'); TIPEL.hidden = true; document.body.appendChild(TIPEL); } return TIPEL; }
+function showTip(text, x, y) {
+  const t = tipEl(); t.textContent = text; t.hidden = false;
+  const w = t.offsetWidth, h = t.offsetHeight; let l = x + 14, tp = y - h - 12;
+  if (l + w > window.innerWidth - 8) l = x - w - 14; if (l < 8) l = 8; if (tp < 8) tp = y + 18;
+  t.style.left = l + 'px'; t.style.top = tp + 'px';
+}
+const hideTip = () => { if (TIPEL) TIPEL.hidden = true; };
+document.addEventListener('pointermove', e => { const el = e.target.closest ? e.target.closest('[data-tip]') : null; if (el) showTip(el.dataset.tip, e.clientX, e.clientY); else hideTip(); });
+document.addEventListener('focusin', e => { const el = e.target.closest ? e.target.closest('[data-tip]') : null; if (el) { const r = el.getBoundingClientRect(); showTip(el.dataset.tip, r.left + r.width / 2, r.top); } });
+document.addEventListener('focusout', hideTip); window.addEventListener('hashchange', hideTip); window.addEventListener('scroll', hideTip, { passive: true });
+
+/* ---------- chart pieces (plain HTML/SVG, no libraries) ---------- */
+const tipAttr = t => `data-tip="${esc(t)}" tabindex="0"`;
+function rankBars(items, o = {}) {   // [{label, sub, v, tip, href}] v = 0..100
+  return `<div class="vbars" role="list">${items.map(i => `<div class="vb" role="listitem" ${tipAttr(i.tip)}><div class="vb-l">${i.href ? `<a href="${i.href}">${esc(i.label)}</a>` : esc(i.label)}${i.sub ? `<small>${esc(i.sub)}</small>` : ''}</div><div class="vb-t"><i style="width:${clamp(i.v, 0, 100)}%;${o.color ? `background:${o.color}` : ''}"></i></div><b class="vb-v">${esc(i.val != null ? i.val : fPct(i.v))}</b></div>`).join('')}</div>`;
+}
+function dumbbells(items) {   // [{label, a, b, tip}]
+  return `<div class="dbs"><div class="db-axis"><span></span><div class="ticks"><span>0</span><span>50</span><span>100%</span></div><span></span></div>${items.map(i => {
+    const lo = Math.min(i.a, i.b), hi = Math.max(i.a, i.b), d = Math.round(i.b - i.a);
+    return `<div class="db" ${tipAttr(i.tip)}><div class="vb-l">${esc(i.label)}</div><div class="db-t"><u style="left:${lo}%;width:${hi - lo}%"></u><i class="a" style="left:${i.a}%"></i><i class="b" style="left:${i.b}%"></i></div><b class="vb-v">${d > 0 ? '+' : ''}${d}</b></div>`;
+  }).join('')}</div>`;
+}
+function histogram(vals, pass) {
+  const bins = new Array(10).fill(0); vals.forEach(v => { bins[Math.min(9, Math.floor(clamp(v, 0, 100) / 10))]++; });
+  const mx = Math.max(1, ...bins);
+  return `<div class="hist" role="img" aria-label="การกระจายของคะแนนหลังเรียนสูงสุด จำนวน ${vals.length} คน">${bins.map((n, i) => {
+    const lo = i * 10, hi = i === 9 ? 100 : lo + 9, ok = pass != null && lo >= pass;
+    return `<div class="hc" ${tipAttr(`${n} คน\nคะแนน ${lo}–${hi}%`)}><span class="hn">${n || ''}</span><i style="height:${n ? Math.max(3, n / mx * 100) : 0}%;${ok ? '' : `background:${BLUE[300]}`}"></i><span class="hx">${lo}</span></div>`;
+  }).join('')}</div>`;
+}
+const niceMax = v => { if (v <= 4) return 4; const raw = v / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p, s = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; return s * 4; };
+const CHARTS = {};
+function lineSvg(d, W) {
+  const H = 232, m = { l: 34, r: 16, t: 14, b: 30 }, iw = W - m.l - m.r, ih = H - m.t - m.b, n = d.labels.length;
+  const ymax = niceMax(Math.max(1, ...d.series.map(s => Math.max(...s.vals)))), X = i => m.l + (n === 1 ? iw / 2 : i * iw / (n - 1)), Y = v => m.t + ih - v / ymax * ih;
+  const grid = [0, 1, 2, 3, 4].map(k => { const v = ymax / 4 * k, y = Y(v); return `<line x1="${m.l}" x2="${W - m.r}" y1="${y}" y2="${y}" class="gl"/><text x="${m.l - 8}" y="${y + 4}" text-anchor="end" class="ax">${v}</text>`; }).join('');
+  const step = Math.ceil(n / Math.max(2, Math.floor(iw / 62))), xl = d.labels.map((t, i) => (i % step === (n - 1) % step ? `<text x="${X(i)}" y="${H - 8}" text-anchor="middle" class="ax">${esc(t)}</text>` : '')).join('');
+  const lines = d.series.map((s, k) => {
+    const path = s.vals.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1)).join(' '), lx = X(n - 1), ly = Y(s.vals[n - 1]);
+    return `<path d="${path}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${lx}" cy="${ly}" r="4" fill="${s.color}" stroke="#fff" stroke-width="2"/><text x="${lx - 9}" y="${ly + (k ? 18 : -10)}" text-anchor="end" class="lbl">${esc(s.name)} ${s.vals[n - 1]}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(d.series.map(s => s.name).join(' และ '))} รายสัปดาห์">${grid}${xl}${lines}<line class="xh" x1="0" x2="0" y1="${m.t}" y2="${m.t + ih}" visibility="hidden"/><g class="xd"></g><rect class="hit" x="${m.l}" y="${m.t}" width="${iw}" height="${ih}" fill="transparent"/></svg>`;
+}
+function drawLine(host) {
+  const d = CHARTS[host.dataset.chart]; if (!d) return; const W = Math.max(260, Math.floor(host.clientWidth)); host.innerHTML = lineSvg(d, W);
+  const svg = host.firstElementChild, hit = $('.hit', svg), xh = $('.xh', svg), xd = $('.xd', svg), n = d.labels.length, m = { l: 34, r: 16, t: 14 }, iw = W - m.l - m.r, ih = 232 - 14 - 30;
+  const ymax = niceMax(Math.max(1, ...d.series.map(s => Math.max(...s.vals)))), X = i => m.l + (n === 1 ? iw / 2 : i * iw / (n - 1)), Y = v => m.t + ih - v / ymax * ih;
+  const move = e => {
+    const r = svg.getBoundingClientRect(), x = (e.clientX - r.left) * (W / r.width), i = clamp(Math.round((x - m.l) / iw * (n - 1)), 0, n - 1);
+    xh.setAttribute('x1', X(i)); xh.setAttribute('x2', X(i)); xh.setAttribute('visibility', 'visible');
+    xd.innerHTML = d.series.map(s => `<circle cx="${X(i)}" cy="${Y(s.vals[i])}" r="4" fill="${s.color}" stroke="#fff" stroke-width="2"/>`).join('');
+    showTip(`สัปดาห์ที่เริ่ม ${d.labels[i]}\n` + d.series.map(s => `${s.name}: ${s.vals[i]}`).join('\n'), e.clientX, e.clientY);
+  };
+  hit.addEventListener('pointermove', move); hit.addEventListener('pointerleave', () => { xh.setAttribute('visibility', 'hidden'); xd.innerHTML = ''; hideTip(); });
+}
+function drawCharts() { $$('.viz-line[data-chart]').forEach(drawLine); }
+let rsz = 0; window.addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(drawCharts, 150); });
+const legend = items => `<div class="legend">${items.map(i => `<span><i class="sw ${i.line ? 'ln' : ''}" style="background:${i.color}"></i>${esc(i.name)}</span>`).join('')}</div>`;
+const kpi = (label, value, sub) => `<div class="kpi"><span class="kl">${esc(label)}</span><b>${esc(String(value))}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>`;
+const card = (title, sub, body, extra) => `<section class="panel chart"><div class="chart-h"><div><h3 class="mb-0">${esc(title)}</h3>${sub ? `<div class="small muted">${esc(sub)}</div>` : ''}</div>${extra || ''}</div>${body}</section>`;
+const tableView = (head, rows) => `<details class="tv"><summary>ดูเป็นตาราง</summary><div class="tbl-wrap"><table class="tbl"><thead><tr>${head.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${esc(String(c))}</td>`).join('')}</tr>`).join('')}</tbody></table></div></details>`;
+const thinMix = (parts) => { const tot = parts.reduce((s, p) => s + p.n, 0) || 1; return `<div class="mix" role="img" aria-label="${esc(parts.map(p => p.name + ' ' + p.n).join(' · '))}">${parts.filter(p => p.n).map(p => `<i style="flex:${p.n};background:${p.color}" ${tipAttr(`${p.n} (${Math.round(p.n / tot * 100)}%)\n${p.name}`)}></i>`).join('')}</div>${legend(parts.map(p => ({ name: `${p.name} ${p.n}`, color: p.color })))}`; };
+const STATE_PARTS = s => [{ name: 'เรียนจบ', n: s.done, color: BLUE[550] }, { name: 'กำลังเรียน', n: s.active, color: BLUE[300] }, { name: 'ลงทะเบียนแล้วยังไม่เริ่ม', n: s.idle, color: '#cfd3dc' }];
+const STATE_TAG = { done: '<span class="tag ok">เรียนจบ</span>', active: '<span class="tag">กำลังเรียน</span>', idle: '<span class="tag gray">ยังไม่เริ่ม</span>' };
+const meter = (p, tip) => `<div class="meter" ${tip ? tipAttr(tip) : ''}><i style="width:${clamp(p, 0, 100)}%"></i></div>`;
+
+/* ---------- overview page ---------- */
+route(/^\/admin\/analytics$/, () => staffGuard(() => ({ title: 'วิเคราะห์ข้อมูล', admin: true, html: overviewHtml(), mount: drawCharts }), { admin: true }));
+function groupOptionsAn(pool) {
+  const gs = new Set(); pool.forEach(L => splitList(L.group).forEach(g => gs.add(g)));
+  const orig = {}; pool.forEach(L => String(L.group || '').split(/[,;、]+/).forEach(x => { x = x.trim(); if (x) orig[x.toLowerCase()] = x; }));
+  return [...gs].sort((a, b) => a.localeCompare(b, 'th')).map(g => `<option value="${esc(g)}" ${AN.group === g ? 'selected' : ''}>${esc(orig[g] || g)}</option>`).join('');
+}
+function sourcePanel(pool) {
+  const loc = [...pool.values()].filter(L => L.src.local).length, imp = IMPORTED.learners.filter(x => !x.demo).length, demo = IMPORTED.learners.filter(x => x.demo).length;
+  const last = IMPORTED.sources.filter(s => s.kind !== 'demo').slice(-1)[0];
+  return `<section class="panel"><div class="row between" style="gap:12px"><div><h3 class="mb-0">แหล่งข้อมูลผลการเรียน</h3><div class="small muted">ในเครื่องนี้ ${loc} คน · นำเข้า ${imp} คน${last ? ' · นำเข้าล่าสุด ' + fmtDT(last.at) : ''}${demo ? ` · <b>ข้อมูลตัวอย่าง ${demo} คน</b>` : ''}</div></div>
+    <div class="row"><button class="btn" data-action="an-import-files">${icon('upload', 18)} นำเข้าไฟล์ความคืบหน้า (.json)</button><button class="btn" data-action="an-import-sheet">${icon('upload', 18)} นำเข้า CSV จาก Google Sheets</button></div></div>
+    ${demo ? `<div class="callout warn mt-s">${icon('info')}<div class="small grow"><b>กำลังแสดงข้อมูลตัวอย่างปนอยู่</b> — ใช้ดูหน้าตาแดชบอร์ดเท่านั้น ไม่ใช่ผู้เรียนจริง</div><button class="btn sm" data-action="an-clear-demo">ล้างข้อมูลตัวอย่าง</button></div>` : ''}
+    <details class="tv mt-s"><summary>ข้อมูลมาจากไหน? ทำอย่างไรให้ครบทุกคน</summary><div class="small muted" style="line-height:1.7;padding-top:8px">เว็บบน GitHub ไม่มีเซิร์ฟเวอร์กลาง ความคืบหน้าของผู้เรียนจึงอยู่ในเครื่องของแต่ละคน หน้านี้รวมข้อมูลจาก 3 ทาง:<br>
+      <b>1) เครื่องนี้</b> — ผู้เรียนที่ใช้เบราว์เซอร์เครื่องนี้ (เหมาะกับห้องเรียนที่ใช้เครื่องร่วมกัน)<br>
+      <b>2) ไฟล์ความคืบหน้า</b> — ผู้เรียนกด "สำรองความคืบหน้า" ที่หน้า <i>การเรียนของฉัน</i> แล้วส่งไฟล์ .json ให้ผู้ดูแล (เลือกหลายไฟล์พร้อมกันได้ นำเข้าซ้ำได้ ไม่ซ้อนกัน)<br>
+      <b>3) Google Sheets</b> — ตั้ง Webhook ที่หน้า <i>ตั้งค่าเว็บไซต์</i> ผลของทุกเครื่องจะไหลเข้าชีตอัตโนมัติ แล้วดาวน์โหลดชีตเป็น .csv มานำเข้าที่นี่ (ต้องวางโค้ด Apps Script เวอร์ชันล่าสุดจากหน้าตั้งค่าเพื่อให้ได้คอลัมน์ครบ)<br>
+      ข้อมูลที่นำเข้าเก็บในเบราว์เซอร์ของผู้ดูแลเท่านั้น ไม่ถูกฝังในไฟล์ index.html ที่เผยแพร่</div></details></section>`;
+}
+function overviewHtml() {
+  if (!DATA.courses.length) return `<div class="wrap mt"><div class="empty"><div class="big">📊</div><p>ยังไม่มีคอร์สในระบบ — สร้างคอร์สก่อนจึงจะมีข้อมูลวิเคราะห์</p></div></div>`;
+  const pool = collectLearners();
+  return `<div class="wrap mt"><div class="row between mb"><div><h1 class="mb-0">วิเคราะห์ข้อมูล</h1><div class="muted small">ภาพรวมการเรียน ผลสอบ และอัตราการเรียนจบ ของผู้เรียนทั้งระบบ</div></div><button class="btn" data-action="an-export">${icon('download', 18)} ส่งออก Excel (ตามตัวกรอง)</button></div>
+    ${sourcePanel(pool)}
+    <div class="filters mt"><label>คอร์ส<select data-on="an-filter" data-f="course"><option value="all">ทุกคอร์ส</option>${DATA.courses.map(c => `<option value="${esc(c.id)}" ${AN.course === c.id ? 'selected' : ''}>${esc(c.title)}</option>`).join('')}</select></label>
+      <label>กลุ่ม/ห้อง<select data-on="an-filter" data-f="group"><option value="all">ทุกกลุ่ม</option>${groupOptionsAn(pool)}</select></label>
+      <label>เริ่มเรียนภายใน<select data-on="an-filter" data-f="range">${[['all', 'ทั้งหมด'], ['7', '7 วันที่ผ่านมา'], ['30', '30 วันที่ผ่านมา'], ['90', '90 วันที่ผ่านมา']].map(([v, t]) => `<option value="${v}" ${AN.range === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label></div>
+    <div id="an-body" class="mt">${overviewBody(pool)}</div></div>`;
+}
+handlers['an-filter'] = el => { AN[el.dataset.f] = el.value; const b = $('#an-body'); if (b) { b.innerHTML = overviewBody(); drawCharts(); } };
+function overviewBody(pool) {
+  pool = pool || collectLearners();
+  const rows = analyticsRows(AN, pool), s = summarize(rows);
+  if (!rows.length) return `<div class="empty"><div class="big">📊</div><p>ยังไม่มีข้อมูลผู้เรียนตามตัวกรองนี้${IMPORTED.learners.length || pool.size ? '' : '<br>นำเข้าไฟล์ความคืบหน้าหรือ CSV ด้านบน หรือกดปุ่มด้านล่างเพื่อดูแดชบอร์ดด้วยข้อมูลตัวอย่าง'}</p>${IMPORTED.learners.length || pool.size ? '' : `<button class="btn primary" data-action="an-demo">${icon('plus', 18)} สร้างข้อมูลตัวอย่าง</button>`}</div>`;
+  const byCourse = DATA.courses.map(c => ({ c, r: rows.filter(x => x.c.id === c.id) })).filter(x => x.r.length).map(x => Object.assign(x, { s: summarize(x.r) }));
+  const comp = byCourse.slice().sort((a, b) => b.s.rate - a.s.rate).map(x => ({ label: x.c.title, sub: `ลงทะเบียน ${x.s.n} · เรียนจบ ${x.s.done}`, v: x.s.rate, tip: `${x.s.rate}% เรียนจบ\n${x.c.title}\nลงทะเบียน ${x.s.n} คน · เรียนจบ ${x.s.done} คน`, href: '#/admin/analytics/course/' + x.c.id }));
+  const both = byCourse.filter(x => x.s.gain.length).map(x => ({ label: x.c.title, a: x.s.avgPre, b: avg(rows.filter(r => r.c.id === x.c.id && r.pre != null && r.post != null).map(r => r.post)), tip: `${x.c.title}\nก่อนเรียน ${fPct(x.s.avgPre)} → หลังเรียน ${fPct(avg(rows.filter(r => r.c.id === x.c.id && r.pre != null && r.post != null).map(r => r.post)))}\nจาก ${x.s.gain.length} คนที่ทำครบทั้งสองแบบทดสอบ` }));
+  const wk = weeklySeries(rows); CHARTS.week = wk;
+  const post = rows.filter(r => r.post != null).map(r => r.post);
+  const pass = AN.course !== 'all' ? (getCourse(AN.course) || {}).postTest : null;
+  const groups = {}; rows.forEach(r => { (groups[groupFirst(r.L.group)] = groups[groupFirst(r.L.group)] || []).push(r); });
+  const gRows = Object.keys(groups).sort((a, b) => a.localeCompare(b, 'th')).map(g => ({ g, s: summarize(groups[g]) }));
+  const owners = {}; byCourse.forEach(x => { const k = x.c.owner || ''; (owners[k] = owners[k] || []).push(x); });
+  const oRows = Object.keys(owners).map(k => { const rs = [].concat(...owners[k].map(x => x.r)), u = k ? (findUser(k) || {}) : {}; return { name: k ? (owners[k][0].c.ownerName || u.name || k) : 'คอร์สส่วนกลาง', n: owners[k].length, s: summarize(rs) }; }).sort((a, b) => b.s.n - a.s.n);
+  return `<div class="kpis">${kpi('ผู้เรียน', s.learnerN, 'คน')}${kpi('ลงทะเบียนเรียน', s.n, 'รายการ (คน × คอร์ส)')}${kpi('เรียนจบ', s.rate + '%', `${s.done} จาก ${s.n}`)}${kpi('คะแนนหลังเรียนเฉลี่ย', fPct(s.avgPost), s.post.length ? `ผ่าน ${s.passRate}% ของผู้สอบ` : 'ยังไม่มีผู้สอน')}${kpi('พัฒนาการ ก่อน→หลัง', fGain(s.avgGain), s.gain.length ? `คะแนนเฉลี่ย จาก ${s.gain.length} คน` : 'ยังไม่มีข้อมูลครบคู่')}${kpi('เกียรติบัตรที่ออก', s.certs, 'ใบ')}</div>
+    <div class="grid-ch">
+      ${card('อัตราการเรียนจบแต่ละคอร์ส', 'เรียงจากสูงไปต่ำ · คลิกชื่อเพื่อดูรายละเอียด', rankBars(comp))}
+      ${card('คะแนนเฉลี่ย ก่อนเรียน → หลังเรียน', 'เฉพาะผู้ที่ทำครบทั้งสองแบบทดสอบ', both.length ? legend([{ name: 'ก่อนเรียน', color: BLUE[250] }, { name: 'หลังเรียน', color: BLUE[550] }]) + dumbbells(both) : '<p class="muted small">ยังไม่มีผู้เรียนที่ทำทั้งแบบทดสอบก่อนและหลังเรียน</p>')}
+      ${card('ความเคลื่อนไหวรายสัปดาห์', 'จำนวนคนที่ลงทะเบียนและเรียนจบในแต่ละสัปดาห์', legend([{ name: 'ลงทะเบียนเรียน', color: C_ENROLL, line: 1 }, { name: 'เรียนจบ', color: C_DONE, line: 1 }]) + `<div class="viz-line" data-chart="week"></div>` + tableView(['สัปดาห์ที่เริ่ม', 'ลงทะเบียนเรียน', 'เรียนจบ'], wk.labels.map((l, i) => [l, wk.series[0].vals[i], wk.series[1].vals[i]])))}
+      ${card('การกระจายคะแนนหลังเรียน', post.length ? `คะแนนสูงสุดของแต่ละคน · ${post.length} คน${pass ? ` · แท่งเข้มคือถึงเกณฑ์ผ่าน (${pass.passPercent}%)` : ''}` : 'ยังไม่มีผู้สอนหลังเรียน', post.length ? histogram(post, pass ? pass.passPercent : null) + tableView(['ช่วงคะแนน', 'จำนวนคน'], Array.from({ length: 10 }, (_, i) => [`${i * 10}–${i === 9 ? 100 : i * 10 + 9}`, post.filter(v => Math.min(9, Math.floor(v / 10)) === i).length])) : '')}
+    </div>
+    ${card('สถานะการเรียนทั้งหมด', `${s.n} รายการ`, thinMix(STATE_PARTS(s)))}
+    <section class="panel mt"><h3>รายคอร์ส</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>คอร์ส</th><th>ครูเจ้าของ</th><th>ลงทะเบียน</th><th>เรียนจบ</th><th>ก่อนเรียน</th><th>หลังเรียน</th><th>ผ่านหลังเรียน</th><th></th></tr></thead><tbody>
+      ${byCourse.map(x => `<tr><td><b>${esc(x.c.title)}</b></td><td>${esc(x.c.ownerName || x.c.owner || '–')}</td><td>${x.s.n}</td><td>${x.s.done} <span class="muted small">(${x.s.rate}%)</span></td><td>${fPct(x.s.avgPre)}</td><td>${fPct(x.s.avgPost)}</td><td>${x.s.post.length ? x.s.passRate + '%' : '–'}</td><td class="nowrap"><a class="btn sm" href="#/admin/analytics/course/${esc(x.c.id)}">${icon('eye', 16)} รายละเอียด</a></td></tr>`).join('')}</tbody></table></div></section>
+    <div class="grid-ch mt">
+      <section class="panel"><h3>ตามกลุ่ม / ห้อง</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>กลุ่ม</th><th>ผู้เรียน</th><th>เรียนจบ</th><th>หลังเรียนเฉลี่ย</th></tr></thead><tbody>${gRows.map(x => `<tr><td>${esc(x.g)}</td><td>${x.s.learnerN}</td><td><div class="cellbar">${meter(x.s.rate, `${x.s.rate}% เรียนจบ`)}<span>${x.s.rate}%</span></div></td><td>${fPct(x.s.avgPost)}</td></tr>`).join('')}</tbody></table></div><p class="small muted mb-0 mt-s">จัดตามกลุ่มแรกของผู้เรียน (ข้อมูลกลุ่มมาจากทะเบียนผู้ใช้เมื่อมี)</p></section>
+      <section class="panel"><h3>ตามครูผู้สอน</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>ครู</th><th>คอร์ส</th><th>ผู้เรียน</th><th>เรียนจบ</th></tr></thead><tbody>${oRows.map(x => `<tr><td>${esc(x.name)}</td><td>${x.n}</td><td>${x.s.learnerN}</td><td><div class="cellbar">${meter(x.s.rate, `${x.s.rate}% เรียนจบ`)}<span>${x.s.rate}%</span></div></td></tr>`).join('')}</tbody></table></div></section>
+    </div>`;
+}
+
+/* ---------- course detail ---------- */
+route(/^\/admin\/analytics\/course\/([^/]+)$/, id => staffGuard(() => {
+  const c = getCourse(id); if (!c) return { admin: true, html: notFound('ไม่พบคอร์ส').html };
+  return { title: 'วิเคราะห์ — ' + c.title, admin: true, html: courseDetailHtml(c), mount: drawCharts };
+}, { admin: true }));
+const lessonLabel = (c, i) => `บทที่ ${i + 1} ${c.lessons[i].title}`;
+function courseFunnel(c, rows) {
+  const st = [{ name: 'ลงทะเบียนเรียน', n: rows.length }];
+  if (preOn(c)) st.push({ name: 'ทำแบบทดสอบก่อนเรียน', n: rows.filter(r => r.v.pre).length });
+  if (c.lessons.length) st.push({ name: 'เรียนจบอย่างน้อย 1 บท', n: rows.filter(r => r.st.doneLessons >= 1).length }, { name: `เรียนครบทุกบท (${c.lessons.length} บท)`, n: rows.filter(r => r.st.allLessons).length });
+  if (postOn(c)) st.push({ name: 'ผ่านแบบทดสอบหลังเรียน', n: rows.filter(r => r.v.post.passed).length });
+  st.push({ name: 'เรียนจบหลักสูตร', n: rows.filter(r => r.state === 'done').length });
+  const tot = rows.length || 1, ramp = [BLUE[250], BLUE[300], BLUE[350], BLUE[450], BLUE[500], BLUE[550]];
+  return `<div class="funnel">${st.map((x, i) => { const p = Math.round(x.n / tot * 100), prev = i ? st[i - 1].n : null, drop = prev != null && prev > x.n ? prev - x.n : 0;
+    return `<div class="fn" ${tipAttr(`${x.n} คน (${p}% ของผู้ลงทะเบียน)\n${x.name}${drop ? `\nลดลงจากขั้นก่อนหน้า ${drop} คน` : ''}`)}><div class="vb-l">${esc(x.name)}</div><div class="vb-t"><i style="width:${p}%;background:${ramp[Math.min(ramp.length - 1, Math.round(i * (ramp.length - 1) / Math.max(1, st.length - 1)))]}"></i></div><b class="vb-v">${x.n}</b><span class="fd">${drop ? '−' + drop : ''}</span></div>`; }).join('')}</div>`;
+}
+function lessonStats(c, rows) {
+  if (!c.lessons.length) return '';
+  return `<section class="panel mt"><h3>รายบทเรียน</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>บทเรียน</th><th>ดูวิดีโอจบ</th><th>ผ่านข้อสอบท้ายบท</th><th>คะแนนท้ายบทเฉลี่ย</th><th>ทำซ้ำเฉลี่ย</th></tr></thead><tbody>${c.lessons.map((l, i) => {
+    const ps = rows.map(r => r.v.lessons[l.id]).filter(Boolean), vd = ps.filter(p => p.videoDone).length, q = hasQuiz(l), tried = ps.filter(p => p.quiz && p.quiz.attempts > 0), qp = tried.filter(p => p.quiz.passed).length;
+    const vp = pct(vd, rows.length), qpct = pct(qp, rows.length);
+    return `<tr><td><b>${esc(lessonLabel(c, i))}</b></td><td><div class="cellbar">${meter(vp, `${vd} จาก ${rows.length} คน`)}<span>${vd} (${vp}%)</span></div></td><td>${q ? `<div class="cellbar">${meter(qpct, `${qp} จาก ${rows.length} คน`)}<span>${qp} (${qpct}%)</span></div>` : '<span class="muted small">ไม่มีข้อสอบ</span>'}</td><td>${q && tried.length ? fPct(avg(tried.map(p => p.quiz.best))) : '–'}</td><td>${q && tried.length ? avg(tried.map(p => p.quiz.attempts)).toFixed(1) + ' ครั้ง' : '–'}</td></tr>`; }).join('')}</tbody></table></div></section>`;
+}
+function itemStats(c, rows) {
+  const src = [{ tag: 'ก่อนเรียน', qs: c.preTest.questions }].concat(c.lessons.map((l, i) => ({ tag: `บทที่ ${i + 1}`, qs: l.quiz.questions })), [{ tag: 'หลังเรียน', qs: c.postTest.questions }]);
+  const items = [];
+  src.forEach(g => g.qs.forEach(q => { let t = 0, k = 0, who = 0; rows.forEach(r => { const e = r.v.qs[q.id]; if (e) { t += e[0]; k += e[1]; who++; } }); if (t) items.push({ q, tag: g.tag, t, k, who, p: Math.round(k / t * 100) }); }));
+  if (!items.length) return `<section class="panel mt"><h3>ข้อสอบที่ผู้เรียนตอบผิดมากที่สุด</h3><p class="muted small mb-0">ยังไม่มีข้อมูลรายข้อ — ระบบเริ่มเก็บสถิติรายข้อตั้งแต่เวอร์ชันนี้ ผู้เรียนที่ทำข้อสอบหลังจากนี้จะแสดงที่นี่ (ข้อมูลจาก Google Sheets ไม่มีรายละเอียดรายข้อ)</p></section>`;
+  const worst = items.sort((a, b) => a.p - b.p || b.t - a.t).slice(0, 8);
+  return `<section class="panel mt"><h3>ข้อสอบที่ผู้เรียนตอบผิดมากที่สุด</h3><p class="small muted">เรียงจากตอบถูกน้อยไปมาก — ข้อที่ถูกน้อยมากอาจยากเกินไป หรือคำถาม/เฉลยไม่ชัดเจน ควรตรวจสอบ</p>
+    ${rankBars(worst.map(i => ({ label: trunc(i.q.text, 70), sub: `${i.tag} · ตอบ ${i.t} ครั้ง`, v: i.p, val: i.p + '%', tip: `ตอบถูก ${i.p}% (${i.k} จาก ${i.t} ครั้ง)\n${i.tag}\n${trunc(i.q.text, 140)}` })), { color: BLUE[500] })}</section>`;
+}
+function courseDetailHtml(c) {
+  const pool = collectLearners(), rows = analyticsRows({ course: c.id, group: 'all', range: 'all' }, pool), s = summarize(rows);
+  const head = `<div class="row between mb"><div><a class="small" href="#/admin/analytics">← วิเคราะห์ข้อมูลทั้งหมด</a><h1 class="mb-0 mt-s">${esc(c.title)}</h1><div class="muted small">${c.published ? 'เผยแพร่แล้ว' : 'ฉบับร่าง'} · ครู: ${esc(c.ownerName || c.owner || 'ส่วนกลาง')} · ${c.lessons.length} บทเรียน</div></div><div class="row"><a class="btn" href="#/admin/course/${esc(c.id)}">${icon('edit', 18)} แก้ไขคอร์ส</a><button class="btn" data-action="an-export" data-course="${esc(c.id)}">${icon('download', 18)} ส่งออก Excel</button></div></div>`;
+  if (!rows.length) return `<div class="wrap mt">${head}<div class="empty"><div class="big">📊</div><p>ยังไม่มีข้อมูลผู้เรียนในคอร์สนี้ — นำเข้าไฟล์ความคืบหน้าหรือ CSV ที่หน้าวิเคราะห์ข้อมูล</p><a class="btn primary" href="#/admin/analytics">ไปหน้านำเข้าข้อมูล</a></div></div>`;
+  return `<div class="wrap mt">${head}
+    <div class="kpis">${kpi('ลงทะเบียน', s.n, 'คน')}${kpi('เรียนจบ', s.rate + '%', `${s.done} คน`)}${kpi('ความคืบหน้าเฉลี่ย', fPct(s.avgProg))}${kpi('ก่อนเรียนเฉลี่ย', fPct(s.avgPre), s.pre.length + ' คน')}${kpi('หลังเรียนเฉลี่ย', fPct(s.avgPost), s.post.length ? `ผ่าน ${s.passRate}%` : '')}${kpi('พัฒนาการ', fGain(s.avgGain), s.gain.length ? s.gain.length + ' คน' : '')}</div>
+    <div class="grid-ch">${card('เส้นทางของผู้เรียน', 'จำนวนคนในแต่ละขั้น เทียบกับผู้ลงทะเบียนทั้งหมด', courseFunnel(c, rows))}${card('สถานะผู้เรียน', `${s.n} คน`, thinMix(STATE_PARTS(s)) + (s.post.length ? `<div class="mt"><div class="small muted mb-s">การกระจายคะแนนหลังเรียน</div>${histogram(s.post, postOn(c) ? c.postTest.passPercent : null)}</div>` : ''))}</div>
+    ${lessonStats(c, rows)}${itemStats(c, rows)}
+    <section class="panel mt"><h3>รายชื่อผู้เรียน</h3><div class="filters tight"><label class="srch">${icon('search', 16)}<input type="search" placeholder="ค้นหาชื่อ อีเมล กลุ่ม" value="${esc(CD.q)}" data-on="cd-filter" data-f="q" aria-label="ค้นหาผู้เรียน"></label>
+      <select data-on="cd-filter" data-f="status" aria-label="กรองตามสถานะ">${[['all', 'ทุกสถานะ'], ['done', 'เรียนจบ'], ['active', 'กำลังเรียน'], ['idle', 'ยังไม่เริ่ม']].map(([v, t]) => `<option value="${v}" ${CD.status === v ? 'selected' : ''}>${t}</option>`).join('')}</select>
+      <select data-on="cd-filter" data-f="sort" aria-label="เรียงตาม">${[['last', 'ล่าสุดก่อน'], ['name', 'ชื่อ ก–ฮ'], ['prog', 'ความคืบหน้ามากสุด'], ['post', 'คะแนนหลังเรียนสูงสุด']].map(([v, t]) => `<option value="${v}" ${CD.sort === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+      <div id="cd-list" class="mt-s">${learnerTable(c, rows)}</div></section></div>`;
+}
+let CD_ROWS = null, CD_COURSE = null;
+function learnerTable(c, rows) {
+  CD_ROWS = rows; CD_COURSE = c;
+  const q = CD.q.trim().toLowerCase(); let list = rows.filter(r => (CD.status === 'all' || r.state === CD.status) && (!q || [r.L.name, r.L.email, r.L.group, r.L.sid].join(' ').toLowerCase().includes(q)));
+  const by = { last: (a, b) => b.last - a.last, name: (a, b) => a.L.name.localeCompare(b.L.name, 'th'), prog: (a, b) => b.st.percent - a.st.percent, post: (a, b) => (b.post == null ? -1 : b.post) - (a.post == null ? -1 : a.post) };
+  list = list.sort(by[CD.sort] || by.last);
+  if (!list.length) return '<p class="muted small mb-0">ไม่พบผู้เรียนที่ตรงกับตัวกรอง</p>';
+  const shown = list.slice(0, CD.limit);
+  return `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>ผู้เรียน</th><th>ความคืบหน้า</th><th>ก่อนเรียน</th><th>บทที่จบ</th><th>หลังเรียน</th><th>สถานะ</th><th>ล่าสุด</th></tr></thead><tbody>${shown.map(r => `<tr><td><a href="#/admin/analytics/learner/${encodeURIComponent(r.L.key)}"><b>${esc(r.L.name)}</b></a><div class="small muted">${esc([r.L.group, r.L.email].filter(Boolean).join(' · '))}</div></td><td><div class="cellbar">${meter(r.st.percent, r.st.percent + '%')}<span>${r.st.percent}%</span></div></td><td>${fPct(r.pre)}</td><td>${r.st.doneLessons}/${c.lessons.length}</td><td>${r.post == null ? '–' : `${r.post}%${r.v.post.passed ? '' : ' <span class="muted small">(ไม่ผ่าน)</span>'}`}${r.tries > 1 ? `<div class="small muted">สอบ ${r.tries} ครั้ง</div>` : ''}</td><td>${STATE_TAG[r.state]}</td><td class="small muted nowrap">${r.last ? fmtDate(r.last) : '–'}</td></tr>`).join('')}</tbody></table></div>
+    <div class="row between mt-s"><span class="small muted">แสดง ${shown.length} จาก ${list.length} คน</span>${list.length > shown.length ? `<button class="btn sm" data-action="cd-more">แสดงเพิ่ม</button>` : ''}</div>`;
+}
+handlers['cd-filter'] = el => { CD[el.dataset.f] = el.value; CD.limit = 50; const b = $('#cd-list'); if (b && CD_COURSE) b.innerHTML = learnerTable(CD_COURSE, CD_ROWS); };
+actions['cd-more'] = () => { CD.limit += 100; const b = $('#cd-list'); if (b && CD_COURSE) b.innerHTML = learnerTable(CD_COURSE, CD_ROWS); };
+
+/* ---------- learner detail ---------- */
+route(/^\/admin\/analytics\/learner\/([^/]+)$/, k => staffGuard(() => {
+  let key = k; try { key = decodeURIComponent(k); } catch (e) { /* keep raw */ }
+  const L = collectLearners().get(key); if (!L) return { admin: true, html: notFound('ไม่พบผู้เรียน').html };
+  return { title: 'ผู้เรียน — ' + L.name, admin: true, html: learnerHtml(L) };
+}, { admin: true }));
+function learnerHtml(L) {
+  const cs = DATA.courses.filter(c => L.courses[c.id]), rows = cs.map(c => ({ c, v: L.courses[c.id], st: status(c, L.courses[c.id]) })), imported = IMPORTED.learners.some(x => lkey(x) === L.key);
+  const srcTxt = Object.keys(L.src).map(x => ({ local: 'เครื่องนี้', file: 'ไฟล์ความคืบหน้า', sheet: 'Google Sheets', demo: 'ข้อมูลตัวอย่าง' }[x] || x)).join(' + ');
+  return `<div class="wrap mt"><a class="small" href="#/admin/analytics">← วิเคราะห์ข้อมูลทั้งหมด</a>
+    <div class="row between mb mt-s"><div><h1 class="mb-0">${esc(L.name)}</h1><div class="muted small">${esc([L.email, L.group, L.sid ? 'รหัส ' + L.sid : '', L.org].filter(Boolean).join(' · '))}</div><div class="small muted">แหล่งข้อมูล: ${esc(srcTxt)}${findUser(L.email) ? ' · อยู่ในทะเบียนผู้ใช้' : ''}</div></div>${imported ? `<button class="btn danger-o" data-action="an-del-learner" data-key="${esc(L.key)}">${icon('trash', 18)} ลบข้อมูลที่นำเข้าของคนนี้</button>` : ''}</div>
+    ${rows.map(({ c, v, st }) => `<section class="panel mt"><div class="row between" style="gap:10px"><h3 class="mb-0"><a href="#/admin/analytics/course/${esc(c.id)}">${esc(c.title)}</a></h3>${st.complete ? '<span class="tag ok">เรียนจบ</span>' : st.done ? '<span class="tag">กำลังเรียน</span>' : '<span class="tag gray">ยังไม่เริ่ม</span>'}</div>
+      <div class="cellbar mt-s">${meter(st.percent, st.percent + '%')}<span>${st.percent}% (${st.done}/${st.total} ขั้น)</span></div>
+      <div class="tbl-wrap mt-s"><table class="tbl"><thead><tr><th>ขั้นตอน</th><th>ผล</th></tr></thead><tbody>
+        ${preOn(c) ? `<tr><td>แบบทดสอบก่อนเรียน</td><td>${v.pre ? `${v.pre.percent}%${v.pre.at ? ` <span class="muted small">· ${fmtDT(v.pre.at)}</span>` : ''}` : '<span class="muted">ยังไม่ทำ</span>'}</td></tr>` : ''}
+        ${c.lessons.map((l, i) => { const p = v.lessons[l.id]; return `<tr><td>${esc(lessonLabel(c, i))}</td><td>${p && p.videoDone ? icon('check', 16) + ' ดูจบ' : '<span class="muted">ยังไม่จบ</span>'}${hasQuiz(l) ? ` · ข้อสอบท้ายบท ${p && p.quiz && p.quiz.attempts ? `${p.quiz.best}% (${p.quiz.attempts} ครั้ง${p.quiz.passed ? ' ผ่าน' : ' ยังไม่ผ่าน'})` : '<span class="muted">ยังไม่ทำ</span>'}` : ''}</td></tr>`; }).join('')}
+        ${postOn(c) ? `<tr><td>แบบทดสอบหลังเรียน</td><td>${v.post.attempts.length ? v.post.attempts.map((a, i) => `ครั้งที่ ${i + 1}: ${a.percent}%${a.passed ? ' ผ่าน' : ''}${a.at ? ` <span class="muted small">(${fmtDate(a.at)})</span>` : ''}`).join('<br>') : '<span class="muted">ยังไม่ทำ</span>'}</td></tr>` : ''}
+        ${v.completedAt ? `<tr><td>เรียนจบ</td><td>${fmtDT(v.completedAt)}${v.certId ? ` · เกียรติบัตร <span class="kbd">${esc(v.certId)}</span>` : ''}</td></tr>` : ''}</tbody></table></div></section>`).join('') || '<div class="empty"><p>ไม่มีข้อมูลการเรียน</p></div>'}</div>`;
+}
+actions['an-del-learner'] = async el => {
+  if (!(await confirmDlg('ลบข้อมูลที่นำเข้าของผู้เรียนคนนี้? (ไม่กระทบข้อมูลในเครื่องของผู้เรียนเอง)', { danger: true, ok: 'ลบ' }))) return;
+  IMPORTED.learners = IMPORTED.learners.filter(x => lkey(x) !== el.dataset.key); saveImported(); location.hash = '#/admin/analytics';
+};
+
+/* ---------- importing: progress files, Google Sheets CSV, demo ---------- */
+function mergeImported(list, src) {
+  let n = 0;
+  list.forEach(inc => {
+    const key = lkey(inc), cur = IMPORTED.learners.find(x => lkey(x) === key);
+    if (!cur) { IMPORTED.learners.push(inc); n++; return; }
+    ['name', 'group', 'sid', 'extra'].forEach(f => { if (inc[f]) cur[f] = inc[f]; });
+    Object.keys(inc.progress).forEach(cid => { const o = cur.progress[cid]; if (!o || cpRank(fixCP(inc.progress[cid])) >= cpRank(fixCP(o))) cur.progress[cid] = inc.progress[cid]; });
+  });
+  IMPORTED.sources.push(Object.assign({ at: Date.now(), learners: list.length }, src)); IMPORTED.sources = IMPORTED.sources.slice(-30); saveImported(); return n;
+}
+actions['an-import-files'] = async () => {
+  const files = await pickFiles('.json,application/json'); if (!files.length) return;
+  const list = []; let bad = 0;
+  for (const f of files) {
+    try {
+      const d = JSON.parse(await readText(f));
+      if (!d || d.app !== 'prommamooc' || d.kind !== 'progress' || !d.profile || typeof d.progress !== 'object') throw new Error('ไม่ใช่ไฟล์ความคืบหน้าของ PrommaMooc');
+      const p = d.profile; list.push({ id: p.id || '', name: String(p.name || ''), email: String(p.email || ''), group: String(p.group || ''), sid: String(p.sid || ''), extra: String(p.extra || ''), role: p.role || '', src: 'file', progress: d.progress });
+    } catch (e) { bad++; toast(`${f.name}: ${e.message}`, 'bad', 5000); }
+  }
+  if (!list.length) return;
+  const nNew = mergeImported(list, { kind: 'file', name: files.length === 1 ? files[0].name : files.length + ' ไฟล์' });
+  toast(`นำเข้า ${list.length} คนแล้ว (ใหม่ ${nNew} · อัปเดต ${list.length - nNew})${bad ? ` · ผิดพลาด ${bad} ไฟล์` : ''}`, 'ok', 5000); rerender();
+};
+const SHEET_HDR = { at: ['เวลา', 'time', 'at'], event: ['เหตุการณ์', 'event'], name: ['ชื่อ', 'name'], email: ['อีเมล', 'email'], org: ['หน่วยงาน'], course: ['คอร์ส', 'course'], lesson: ['บทเรียน', 'lesson'], percent: ['คะแนน', 'percent'], passed: ['ผ่าน', 'passed'], cert: ['รหัสเกียรติบัตร', 'cert'], group: ['กลุ่ม'], sid: ['รหัสประจำตัว'], cid: ['รหัสคอร์ส'], lid: ['รหัสบทเรียน'], attempt: ['ครั้งที่'] };
+function parseSheetRows(rows) {
+  if (rows.length < 2) return { learners: [], used: 0, skipped: 0, missing: ['ข้อมูล'] };
+  const hdr = rows[0].map(h => String(h || '').trim().toLowerCase().replace(/[\s%]/g, '')), col = {};
+  Object.keys(SHEET_HDR).forEach(k => { col[k] = hdr.findIndex(h => SHEET_HDR[k].some(a => h === a.replace(/[\s%]/g, ''))); });
+  const need = ['event', 'course'].filter(k => col[k] < 0); if (need.length || (col.email < 0 && col.name < 0)) return { learners: [], used: 0, skipped: 0, missing: need.concat(col.email < 0 && col.name < 0 ? ['อีเมล/ชื่อ'] : []) };
+  const get = (r, k) => (col[k] >= 0 ? String(r[col[k]] == null ? '' : r[col[k]]).trim() : '');
+  const byCourseId = {}, byTitle = {}; DATA.courses.forEach(c => { byCourseId[c.id] = c; byTitle[c.title.trim()] = c; });
+  const map = new Map(); let used = 0, skipped = 0;
+  rows.slice(1).forEach(r => {
+    const ev = get(r, 'event'), c = byCourseId[get(r, 'cid')] || byTitle[get(r, 'course')];
+    if (!ev || ev === 'test' || ev === 'certificate_download' || !c) { skipped++; return; }
+    const email = get(r, 'email'), name = get(r, 'name'); if (!email && !name) { skipped++; return; }
+    const key = lkey({ email, id: name, name });
+    let L = map.get(key); if (!L) { L = { id: '', name, email, group: get(r, 'group'), sid: get(r, 'sid'), extra: get(r, 'org'), role: '', src: 'sheet', progress: {} }; map.set(key, L); }
+    L.name = L.name || name; L.group = L.group || get(r, 'group'); L.sid = L.sid || get(r, 'sid');
+    const t = Date.parse(get(r, 'at')) || Date.now(), pc = Math.round(num(get(r, 'percent'), 0)), ok = /^(true|จริง|1|ผ่าน)$/i.test(get(r, 'passed'));
+    const v = L.progress[c.id] || (L.progress[c.id] = fixCP({ startedAt: t }));
+    v.startedAt = Math.min(v.startedAt || t, t);
+    const les = c.lessons.find(l => l.id === get(r, 'lid')) || c.lessons.find(l => l.title.trim() === get(r, 'lesson'));
+    if (ev === 'enroll') { /* startedAt already set */ }
+    else if (ev === 'pretest') v.pre = { percent: pc, score: 0, total: 0, at: t };
+    else if (ev === 'posttest') { v.post.attempts.push({ percent: pc, at: t, passed: ok }); v.post.best = Math.max(v.post.best, pc); if (ok) v.post.passed = true; }
+    else if (ev === 'lesson_done' && les) { const p = v.lessons[les.id] || (v.lessons[les.id] = { watched: 0, duration: 0, pos: 0, videoDone: true, quiz: { attempts: 0, best: 0, passed: false } }); p.videoDone = true; }
+    else if (ev === 'lesson_quiz' && les) { const p = v.lessons[les.id] || (v.lessons[les.id] = { watched: 0, duration: 0, pos: 0, videoDone: true, quiz: { attempts: 0, best: 0, passed: false } }); p.videoDone = true; p.quiz.attempts = Math.max(p.quiz.attempts + 1, num(get(r, 'attempt'), 0)); p.quiz.best = Math.max(p.quiz.best, pc); if (ok) p.quiz.passed = true; }
+    else if (ev === 'complete') { v.completedAt = t; v.certId = get(r, 'cert') || v.certId || null; }
+    else { skipped++; return; }
+    used++;
+  });
+  return { learners: [...map.values()], used, skipped, missing: [] };
+}
+actions['an-import-sheet'] = async () => {
+  const f = await pickFile('.csv,text/csv,.xlsx'); if (!f) return;
+  let rows; try { rows = /\.xlsx$/i.test(f.name) ? xlsxRead(await readBuf(f)).rows : parseCSV(await readText(f)); } catch (e) { return toast('อ่านไฟล์ไม่ได้: ' + e.message, 'bad', 6000); }
+  const r = parseSheetRows(rows);
+  if (r.missing.length) return toast(`ไฟล์นี้ไม่ใช่ผลจาก Webhook ของ PrommaMooc (ไม่พบคอลัมน์ ${r.missing.join(', ')}) — ต้องมีหัวคอลัมน์ "เหตุการณ์", "คอร์ส", "อีเมล"`, 'bad', 8000);
+  if (!r.learners.length) return toast(`ไม่พบเหตุการณ์ที่ตรงกับคอร์สในระบบ (ข้าม ${r.skipped} แถว) — ชื่อคอร์สในชีตต้องตรงกับชื่อคอร์สปัจจุบัน`, 'bad', 8000);
+  const nNew = mergeImported(r.learners, { kind: 'sheet', name: f.name });
+  toast(`นำเข้าจากชีต ${r.learners.length} คน (ใหม่ ${nNew}) จาก ${r.used} เหตุการณ์${r.skipped ? ` · ข้าม ${r.skipped} แถว` : ''}`, 'ok', 6000); rerender();
+};
+function makeDemo(seed) {
+  let s = seed || 42; const rnd = () => { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; };
+  const groups = ['ม.1/1', 'ม.1/2', 'ม.2/1', 'ม.2/2'], th = ['สมชาย', 'สมหญิง', 'วิชัย', 'มณี', 'ประเสริฐ', 'นภา', 'กิตติ', 'อรทัย', 'ธนา', 'ปวีณา', 'ชาติชาย', 'รัตนา'], sn = ['ใจดี', 'รักเรียน', 'มั่นคง', 'สุขใจ', 'พรหมมา', 'ทองดี', 'แก้วใส', 'บุญมี'];
+  const courses = DATA.courses.filter(c => c.lessons.length), now = Date.now(), out = [];
+  for (let i = 0; i < 48; i++) {
+    const g = groups[i % groups.length], ab = 0.4 + rnd() * 0.5, name = th[i % th.length] + ' ' + sn[(i * 3 + 1) % sn.length], progress = {};
+    courses.forEach(c => {
+      if (rnd() > 0.78) return;
+      const v = fixCP({ startedAt: now - Math.floor(rnd() * 70 + 1) * 864e5 + Math.floor(rnd() * 5e7) }); let t = v.startedAt, alive = true;
+      const tally = (qs) => qs.forEach((q, k) => { const e = v.qs[q.id] || (v.qs[q.id] = [0, 0]); e[0]++; if (rnd() < clamp(ab - k * 0.045 + 0.12, 0.12, 0.97)) e[1]++; });
+      if (preOn(c) && rnd() < 0.9) { v.pre = { percent: clamp(Math.round(ab * 62 + (rnd() - 0.5) * 30), 0, 100), score: 0, total: 0, at: t }; tally(c.preTest.questions); }
+      for (const l of c.lessons) {
+        if (!alive) break; if (rnd() < 0.1) { alive = false; break; }
+        const p = lp(v, l); p.videoDone = true; t += Math.floor(rnd() * 2e6 + 3e5);
+        if (hasQuiz(l)) { const tries = rnd() < 0.7 ? 1 : 2; for (let k = 0; k < tries; k++) { p.quiz.attempts++; const pc = clamp(Math.round(ab * 100 + (rnd() - 0.5) * 36 + k * 8), 0, 100); p.quiz.best = Math.max(p.quiz.best, pc); tally(l.quiz.questions); if (pc >= l.quiz.passPercent) { p.quiz.passed = true; break; } } if (!p.quiz.passed) alive = false; }
+      }
+      if (alive && postOn(c)) { for (let k = 0; k < 3; k++) { const pc = clamp(Math.round(ab * 84 + 12 + (rnd() - 0.5) * 24 + k * 6), 0, 100), ps = pc >= c.postTest.passPercent; t += 864e5 * 0.3; v.post.attempts.push({ percent: pc, at: Math.min(t, now), passed: ps }); v.post.best = Math.max(v.post.best, pc); tally(c.postTest.questions); if (ps) { v.post.passed = true; break; } } }
+      if (status(c, v).complete) { v.completedAt = Math.min(t + 6e5, now); v.certId = `${c.certificate.idPrefix || 'PM'}-DEMO-${String(i).padStart(3, '0')}`; }
+      progress[c.id] = v;
+    });
+    if (Object.keys(progress).length) out.push({ id: 'demo-' + i, name, email: `demo${String(i + 1).padStart(2, '0')}@example.invalid`, group: g, sid: String(11000 + i), extra: 'ข้อมูลตัวอย่าง', role: 'student', src: 'file', demo: true, progress });
+  }
+  return out;
+}
+actions['an-demo'] = () => { const d = makeDemo(42); mergeImported(d, { kind: 'demo', name: 'ข้อมูลตัวอย่าง' }); toast(`สร้างข้อมูลตัวอย่าง ${d.length} คนแล้ว`, 'ok'); rerender(); };
+actions['an-clear-demo'] = () => { IMPORTED.learners = IMPORTED.learners.filter(x => !x.demo); IMPORTED.sources = IMPORTED.sources.filter(s => s.kind !== 'demo'); saveImported(); toast('ล้างข้อมูลตัวอย่างแล้ว'); rerender(); };
+
+/* ---------- export ---------- */
+actions['an-export'] = el => {
+  const f = Object.assign({}, AN); if (el.dataset.course) f.course = el.dataset.course;
+  const pool = collectLearners(), rows = analyticsRows(f, pool); if (!rows.length) return toast('ไม่มีข้อมูลให้ส่งออก', 'bad');
+  const yn = b => (b ? 'ใช่' : 'ไม่'), dt = t => (t ? new Date(t).toISOString().slice(0, 16).replace('T', ' ') : '');
+  const head = ['ชื่อ-นามสกุล', 'อีเมล', 'กลุ่ม/ห้อง', 'รหัสประจำตัว', 'โรงเรียน/หน่วยงาน', 'คอร์ส', 'สถานะ', 'ความคืบหน้า %', 'ก่อนเรียน %', 'บทเรียนที่จบ', 'จำนวนบท', 'หลังเรียนสูงสุด %', 'จำนวนครั้งที่สอบหลังเรียน', 'ผ่านหลังเรียน', 'เริ่มเรียน', 'เรียนจบเมื่อ', 'รหัสเกียรติบัตร'];
+  const sTxt = { done: 'เรียนจบ', active: 'กำลังเรียน', idle: 'ยังไม่เริ่ม' };
+  const data = rows.map(r => [r.L.name, r.L.email, r.L.group, r.L.sid, r.L.org, r.c.title, sTxt[r.state], r.st.percent, r.pre == null ? '' : r.pre, r.st.doneLessons, r.c.lessons.length, r.post == null ? '' : r.post, r.tries, postOn(r.c) ? yn(r.v.post.passed) : '', dt(r.start), dt(r.v.completedAt), r.v.certId || '']);
+  const cs = DATA.courses.map(c => ({ c, s: summarize(rows.filter(r => r.c.id === c.id)) })).filter(x => x.s.n);
+  const sum = [['คอร์ส', 'ลงทะเบียน', 'เรียนจบ', 'อัตราเรียนจบ %', 'ก่อนเรียนเฉลี่ย %', 'หลังเรียนเฉลี่ย %', 'ผ่านหลังเรียน %', 'เกียรติบัตร']].concat(cs.map(x => [x.c.title, x.s.n, x.s.done, x.s.rate, x.s.avgPre == null ? '' : Math.round(x.s.avgPre), x.s.avgPost == null ? '' : Math.round(x.s.avgPost), x.s.post.length ? x.s.passRate : '', x.s.certs]));
+  downloadBlob('prommamooc-analytics-' + new Date().toISOString().slice(0, 10) + '.xlsx', new Blob([xlsxBuild([{ name: 'ผลการเรียน', header: true, rows: [head].concat(data), widths: [24, 28, 12, 14, 20, 30, 12, 12, 12, 12, 10, 14, 14, 12, 17, 17, 20] }, { name: 'สรุปรายคอร์ส', header: true, rows: sum, widths: [34, 12, 12, 14, 16, 16, 16, 12] }])], { type: XLSX_MIME }));
+  toast(`ส่งออก ${rows.length} รายการแล้ว`, 'ok');
+};
+
+/* =====================================================================
+   Course registration wizard (teachers & administrators):
+   details → video links → tests → completion conditions → review & create
+   ===================================================================== */
+const WZ_STEPS = ['ข้อมูลคอร์ส', 'ลิงก์วิดีโอ', 'ข้อสอบ', 'เงื่อนไขจบหลักสูตร', 'ตรวจและสร้าง'];
+let WZ = null;
+const newWZ = () => ({
+  step: 0, max: 0,
+  c: { title: '', subtitle: '', description: '', category: '', level: '', duration: '', emoji: '📚', cover: '', instructor: SESS ? SESS.name : '', owner: '' },
+  lessonsText: '', pre: false, preText: '', post: true, postText: '', lq: {},
+  cond: { sequential: true, completion: 'watch', watchPercent: 85, preRequired: false, lessonPass: 60, postPass: 60, maxAttempts: 0, cert: true, certTitle: 'เกียรติบัตร' }
+});
+const WZ_EXAMPLE = `1. ข้อใดคือเมืองหลวงของประเทศไทย
+- เชียงใหม่
++ กรุงเทพมหานคร
+- ภูเก็ต
+? กรุงเทพมหานครเป็นเมืองหลวงและศูนย์กลางการปกครอง
+
+2. เลือกได้หลายข้อ: ข้อใดเป็นผลไม้
++ มะม่วง
+- แครอท
++ ส้ม`;
+const WZ_LESSON_EXAMPLE = `บทที่ 1 ทำความรู้จัก | https://www.youtube.com/watch?v=M7lc1UVf-VE
+บทที่ 2 เริ่มต้นใช้งาน | https://youtu.be/jNQXAC9IVRw`;
+
+function parseLessonLines(text) {
+  const out = [];
+  String(text || '').split('\n').forEach((raw, i) => {
+    const line = raw.trim(); if (!line) return;
+    const parts = line.includes('|') ? line.split('|').map(s => s.trim()) : ['', line], url = parts[parts.length - 1], id = ytId(url);
+    out.push({ line: i + 1, title: parts.length > 1 && parts[0] ? parts[0] : '', url, id, ok: !!id });
+  });
+  let n = 0; out.forEach(x => { if (x.ok) { n++; if (!x.title) x.title = 'บทที่ ' + n; } });
+  return out;
+}
+const wzLessons = () => parseLessonLines(WZ.lessonsText).filter(x => x.ok);
+const wzQ = text => parseBulk(String(text || ''));
+const wzCounts = () => {
+  const L = wzLessons(), pre = WZ.pre ? wzQ(WZ.preText).out.length : 0, post = WZ.post ? wzQ(WZ.postText).out.length : 0;
+  const lq = L.map((_, i) => wzQ(WZ.lq[i]).out.length), lqN = lq.filter(n => n > 0).length;
+  return { L, pre, post, lq, lqN, lqTotal: lq.reduce((s, n) => s + n, 0) };
+};
+
+route(/^\/admin\/new$/, () => staffGuard(() => { if (!WZ) WZ = newWZ(); return { title: 'ลงทะเบียนรายวิชา', admin: true, html: wizardHtml() }; }));
+const wzField = (label, f, val, o = {}) => {
+  const a = `data-on="wz-in" data-f="${f}" ${o.num ? 'data-t="num"' : ''}`;
+  const tag = o.area ? `<textarea ${a} rows="${o.rows || 3}" placeholder="${esc(o.ph || '')}">${esc(val)}</textarea>` : `<input type="${o.type || 'text'}" ${a} value="${esc(val)}" placeholder="${esc(o.ph || '')}" ${o.min != null ? `min="${o.min}"` : ''} ${o.max != null ? `max="${o.max}"` : ''}>`;
+  return `<label class="field"><span class="lb">${label}</span>${tag}${o.help ? `<span class="help">${o.help}</span>` : ''}</label>`;
+};
+const wzCheck = (label, f, val, help, rf) => `<label class="check"><input type="checkbox" data-on="wz-in" data-f="${f}" ${rf ? 'data-rf="1"' : ''} ${val ? 'checked' : ''}><span><b>${label}</b>${help ? `<span class="help">${help}</span>` : ''}</span></label>`;
+
+function wizardHtml() {
+  const stepper = `<ol class="stepper" aria-label="ขั้นตอนการลงทะเบียนรายวิชา">${WZ_STEPS.map((t, i) => `<li class="${i === WZ.step ? 'cur' : i < WZ.step ? 'done' : ''}"><button type="button" ${i <= WZ.max ? `data-action="wz-go" data-i="${i}"` : 'disabled'} ${i === WZ.step ? 'aria-current="step"' : ''}><span class="nd">${i < WZ.step ? icon('check', 16) : i + 1}</span><span class="tx">${t}</span></button></li>`).join('')}</ol>`;
+  const last = WZ.step === WZ_STEPS.length - 1;
+  return `<div class="wrap mt" style="max-width:920px"><div class="row between mb"><div><h1 class="mb-0">ลงทะเบียนรายวิชาใหม่</h1><div class="muted small">กรอกทีละขั้น — ทุกอย่างแก้ไขต่อได้ภายหลังในหน้าแก้ไขคอร์ส</div></div><div class="row"><button class="btn sm" data-action="wz-reset">เริ่มใหม่</button><button class="btn sm" data-action="wz-skip">ข้ามไปหน้าแก้ไขเต็ม</button></div></div>
+    ${stepper}<div class="panel wz" id="wz-body">${[wzStep1, wzStep2, wzStep3, wzStep4, wzStep5][WZ.step]()}</div>
+    <div class="row between mt"><button class="btn" data-action="wz-prev" ${WZ.step === 0 ? 'disabled' : ''}>${icon('left', 18)} ย้อนกลับ</button>
+      ${last ? '' : `<button class="btn primary" data-action="wz-next">ถัดไป: ${WZ_STEPS[WZ.step + 1]} ${icon('right', 18)}</button>`}</div></div>`;
+}
+function wzStep1() {
+  const c = WZ.c, teachers = isAdmin() ? (DATA.users || []).filter(u => u.role === 'teacher') : [];
+  return `<h2>1. ข้อมูลคอร์ส</h2><p class="muted">ข้อมูลที่ผู้เรียนจะเห็นในหน้ารวมคอร์ส</p>
+    ${wzField('ชื่อคอร์ส <span class="req">*</span>', 'c.title', c.title, { ph: 'เช่น การใช้อินเทอร์เน็ตอย่างปลอดภัย' })}
+    ${wzField('คำโปรยสั้น ๆ', 'c.subtitle', c.subtitle, { ph: 'ประโยคเดียวที่บอกว่าคอร์สนี้ได้อะไร' })}
+    ${wzField('รายละเอียดคอร์ส', 'c.description', c.description, { area: true, rows: 4, help: 'ใส่เป้าหมายการเรียนรู้ หรือเนื้อหาที่จะได้เรียน — เว้นบรรทัดเพื่อขึ้นย่อหน้าใหม่' })}
+    <div class="grid3">${wzField('หมวดหมู่', 'c.category', c.category, { ph: 'เช่น ไอที, ภาษา' })}
+      <label class="field"><span class="lb">ระดับ</span><select data-on="wz-in" data-f="c.level">${[['', 'ไม่ระบุ'], ['เริ่มต้น', 'เริ่มต้น'], ['ปานกลาง', 'ปานกลาง'], ['ขั้นสูง', 'ขั้นสูง']].map(([v, t]) => `<option value="${v}" ${c.level === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+      ${wzField('ระยะเวลาโดยประมาณ', 'c.duration', c.duration, { ph: 'เช่น 2 ชั่วโมง' })}</div>
+    <div class="grid2">${wzField('ชื่อผู้สอน', 'c.instructor', c.instructor)}${wzField('ไอคอนบนปก (อีโมจิ)', 'c.emoji', c.emoji, { help: 'ใช้เมื่อไม่มีรูปปก — ถ้าไม่ใส่รูป ระบบใช้ภาพจากวิดีโอแรกให้อัตโนมัติ' })}</div>
+    ${teachers.length ? `<label class="field"><span class="lb">ครูเจ้าของคอร์ส</span><select data-on="wz-in" data-f="c.owner"><option value="">ไม่มีเจ้าของ (คอร์สส่วนกลาง)</option>${teachers.map(u => `<option value="${esc(u.email)}" ${c.owner === u.email ? 'selected' : ''}>${esc(u.name)} (${esc(u.email)})</option>`).join('')}</select></label>` : ''}`;
+}
+function lessonPreview() {
+  const items = parseLessonLines(WZ.lessonsText); if (!items.length) return '<p class="muted small mb-0">ยังไม่มีบทเรียน — วางลิงก์ด้านบนได้เลย</p>';
+  const okN = items.filter(x => x.ok).length;
+  return `<div class="small mb-s"><b>${okN}</b> บทเรียนที่ใช้ได้${items.length - okN ? ` · <span style="color:var(--bad)">${items.length - okN} บรรทัดอ่านลิงก์ไม่ได้ (จะไม่ถูกเพิ่ม)</span>` : ''}</div>
+    <ol class="lpv">${items.map(x => x.ok ? `<li class="ok"><img src="${esc(ytThumb(x.id))}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><div><b>${esc(x.title)}</b><div class="small muted">youtube.com/watch?v=${esc(x.id)}</div></div>${icon('checkc', 20)}</li>` : `<li class="bad"><div class="grow"><b>บรรทัดที่ ${x.line}: ลิงก์ไม่ถูกต้อง</b><div class="small">${esc(trunc(x.url, 70))}</div></div>${icon('alert', 20)}</li>`).join('')}</ol>`;
+}
+function wzStep2() {
+  return `<h2>2. ลิงก์วิดีโอบทเรียน</h2><p class="muted">วางลิงก์ YouTube <b>บรรทัดละ 1 บทเรียน</b> เรียงตามลำดับที่ผู้เรียนจะเรียน — ใส่ชื่อบทนำหน้าได้ด้วยเครื่องหมาย <span class="kbd">|</span> (ถ้าไม่ใส่ ระบบตั้งชื่อ "บทที่ 1, 2, …" ให้)</p>
+    <label class="field"><span class="lb">ลิงก์วิดีโอ</span><textarea data-on="wz-in" data-f="lessonsText" rows="8" placeholder="บทที่ 1 ทำความรู้จัก | https://www.youtube.com/watch?v=xxxxxxxxxxx&#10;บทที่ 2 เริ่มต้นใช้งาน | https://youtu.be/yyyyyyyyyyy">${esc(WZ.lessonsText)}</textarea><span class="help">ใช้ได้ทั้งลิงก์ youtube.com/watch, youtu.be และ youtube.com/embed — วิดีโอต้องไม่ปิดการฝังโดยเจ้าของ ·
+      <button type="button" class="linkbtn" data-action="wz-example" data-f="lessonsText" data-k="lesson">เติมตัวอย่าง</button></span></label>
+    <div id="wz-lessons">${lessonPreview()}</div>`;
+}
+function qBox(f, text, title, extra) {
+  const r = wzQ(text);
+  return `<div class="qbox" data-qbox><div class="row between"><b>${title}</b><span class="qcnt small">${qCnt(r)}</span></div>${extra || ''}
+    <textarea data-on="wz-in" data-f="${f}" rows="7" placeholder="วางข้อสอบที่นี่ (ดูรูปแบบด้านล่าง)">${esc(text)}</textarea><div class="help"><button type="button" class="linkbtn" data-action="wz-example" data-f="${f}">เติมตัวอย่าง</button></div></div>`;
+}
+const qCnt = r => (r.out.length || r.bad ? `<span class="tag ${r.out.length ? 'ok' : 'gray'}">พบ ${r.out.length} ข้อ</span>${r.bad ? ` <span class="tag warn">อ่านไม่ได้ ${r.bad} ข้อ</span>` : ''}` : '<span class="tag gray">ยังไม่มีข้อสอบ</span>');
+function wzStep3() {
+  const L = wzLessons();
+  return `<h2>3. ข้อสอบ</h2><p class="muted">วางข้อสอบจาก Word / Google Docs ได้เลย (ไม่ต้องมีครบทุกช่วง — ช่วงไหนไม่ต้องการให้ปิดไว้ หรือเว้นว่าง)</p>
+    <details class="fmt"><summary>รูปแบบการวางข้อสอบ</summary><pre class="code">${esc(WZ_EXAMPLE)}</pre><p class="small muted mb-0">เว้น 1 บรรทัดระหว่างข้อ · ขึ้นต้นตัวเลือกที่<b>ถูก</b>ด้วย <span class="kbd">+</span> และตัวเลือกที่ผิดด้วย <span class="kbd">-</span> · <span class="kbd">?</span> = คำอธิบายเฉลย (ไม่บังคับ) · มี <span class="kbd">+</span> หลายตัวเลือก = ข้อเลือกได้หลายคำตอบ · ตัวเลือกเป็น "จริง" กับ "เท็จ" = ข้อจริง/เท็จ</p></details>
+    <div class="qgroup">${wzCheck('แบบทดสอบก่อนเรียน', 'pre', WZ.pre, 'วัดความรู้เดิมไว้เทียบพัฒนาการกับหลังเรียน (ทำได้ครั้งเดียว)', true)}${WZ.pre ? qBox('preText', WZ.preText, 'ข้อสอบก่อนเรียน') : ''}</div>
+    <div class="qgroup"><b>แบบทดสอบท้ายบท</b> <span class="muted small">— ไม่บังคับ ใส่เฉพาะบทที่ต้องการ</span>
+      ${L.length ? L.map((l, i) => `<details class="lq" ${WZ.lq[i] ? 'open' : ''}><summary>${esc(l.title)} <span class="qcnt">${qCnt(wzQ(WZ.lq[i]))}</span></summary>${qBox('lq.' + i, WZ.lq[i] || '', 'ข้อสอบท้าย ' + esc(l.title))}</details>`).join('') : '<p class="muted small mb-0">ยังไม่มีบทเรียน — กลับไปขั้นที่ 2 เพื่อเพิ่มลิงก์ก่อน</p>'}</div>
+    <div class="qgroup">${wzCheck('แบบทดสอบหลังเรียน', 'post', WZ.post, 'ใช้ตัดสินการผ่านหลักสูตร — แนะนำให้เปิดไว้', true)}${WZ.post ? qBox('postText', WZ.postText, 'ข้อสอบหลังเรียน') : ''}</div>`;
+}
+function condLines() {
+  const k = wzCounts(), c = WZ.cond, L = k.L.length, out = [];
+  if (c.preRequired && WZ.pre && k.pre) out.push('ทำแบบทดสอบก่อนเรียนให้เสร็จ (ไม่มีเกณฑ์ผ่าน/ตก)');
+  if (L) out.push(c.completion === 'watch' ? `ดูวิดีโอให้จบครบทั้ง ${L} บท (ดูอย่างน้อย ${c.watchPercent}% ของความยาว)` : `กดยืนยัน "ฉันดูจบแล้ว" ครบทั้ง ${L} บท`);
+  if (k.lqN) out.push(`ผ่านแบบทดสอบท้ายบทไม่ต่ำกว่า ${c.lessonPass}% (${k.lqN} บทที่มีข้อสอบ)`);
+  if (WZ.post && k.post) out.push(`ผ่านแบบทดสอบหลังเรียนไม่ต่ำกว่า ${c.postPass}%${c.maxAttempts ? ` (สอบได้ไม่เกิน ${c.maxAttempts} ครั้ง)` : ' (สอบซ้ำได้ไม่จำกัดครั้ง)'}`);
+  return out;
+}
+function condSummaryHtml() {
+  const l = condLines(), c = WZ.cond;
+  return `<div class="callout">${icon('checkc')}<div><b>ผู้เรียนจะเรียนจบหลักสูตรเมื่อ</b>${l.length ? `<ol class="mb-0 mt-s">${l.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : '<div class="small">ยังไม่มีเงื่อนไข (ยังไม่มีบทเรียนหรือข้อสอบ)</div>'}
+    <div class="small mt-s">${c.cert ? `จากนั้นได้รับ <b>${esc(c.certTitle || 'เกียรติบัตร')}</b> ดาวน์โหลดเป็น PNG/PDF ได้ทันที` : 'ไม่ออกเกียรติบัตร'}${c.sequential ? ' · เรียนตามลำดับบท' : ' · เรียนข้ามบทได้'}</div></div></div>`;
+}
+function wzStep4() {
+  const k = wzCounts(), c = WZ.cond;
+  return `<h2>4. เงื่อนไขจบหลักสูตร</h2><p class="muted">กำหนดว่าผู้เรียนต้องทำอะไรบ้างจึงจะได้รับเกียรติบัตร — ปรับให้เหมาะกับคอร์สของคุณ</p>
+    <div class="grid2"><div>${wzCheck('เรียนตามลำดับบท', 'cond.sequential', c.sequential, 'บทถัดไปปลดล็อกเมื่อบทก่อนหน้าเสร็จ')}</div>
+      <label class="field"><span class="lb">วิธีนับว่าดูวิดีโอจบ</span><select data-on="wz-in" data-f="cond.completion" data-rf="1"><option value="watch" ${c.completion === 'watch' ? 'selected' : ''}>ระบบตรวจจากเวลาที่ดูจริง</option><option value="manual" ${c.completion === 'manual' ? 'selected' : ''}>ผู้เรียนกดปุ่ม "ฉันดูจบแล้ว"</option></select></label></div>
+    <div class="grid3">${c.completion === 'watch' ? wzField('ต้องดูอย่างน้อย (%)', 'cond.watchPercent', c.watchPercent, { type: 'number', num: true, min: 10, max: 98, help: 'ของความยาววิดีโอแต่ละบท' }) : ''}
+      ${k.lqN ? wzField('เกณฑ์ผ่านข้อสอบท้ายบท (%)', 'cond.lessonPass', c.lessonPass, { type: 'number', num: true, min: 1, max: 100 }) : ''}
+      ${WZ.post && k.post ? wzField('เกณฑ์ผ่านหลังเรียน (%)', 'cond.postPass', c.postPass, { type: 'number', num: true, min: 1, max: 100 }) : ''}
+      ${WZ.post && k.post ? wzField('สอบหลังเรียนได้สูงสุด (ครั้ง)', 'cond.maxAttempts', c.maxAttempts, { type: 'number', num: true, min: 0, max: 20, help: '0 = ไม่จำกัด' }) : ''}</div>
+    ${WZ.pre && k.pre ? wzCheck('บังคับทำแบบทดสอบก่อนเรียนก่อนเริ่มบทแรก', 'cond.preRequired', c.preRequired, 'ถ้าไม่บังคับ ผู้เรียนข้ามไปเรียนได้เลย') : ''}
+    ${wzCheck('ออกเกียรติบัตรเมื่อเรียนจบ', 'cond.cert', c.cert, 'ปรับแบบ สี และลายเซ็นได้ภายหลังที่แท็บ "เกียรติบัตร" ของคอร์ส', true)}
+    ${c.cert ? wzField('หัวข้อเกียรติบัตร', 'cond.certTitle', c.certTitle) : ''}
+    <div id="wz-sum" class="mt">${condSummaryHtml()}</div>`;
+}
+function wzWarnings() {
+  const k = wzCounts(), w = [], bad = parseLessonLines(WZ.lessonsText).filter(x => !x.ok).length;
+  if (!WZ.c.title.trim()) w.push('ยังไม่ได้ตั้งชื่อคอร์ส');
+  if (!k.L.length) w.push('ยังไม่มีบทเรียน');
+  if (bad) w.push(`มี ${bad} บรรทัดลิงก์ที่อ่านไม่ได้ จะไม่ถูกเพิ่ม`);
+  if (WZ.post && !k.post) w.push('เปิดแบบทดสอบหลังเรียนไว้แต่ยังไม่มีข้อสอบ — จะไม่ถูกนับเป็นเงื่อนไขจบ (เพิ่มข้อสอบทีหลังได้)');
+  if (WZ.pre && !k.pre) w.push('เปิดแบบทดสอบก่อนเรียนไว้แต่ยังไม่มีข้อสอบ');
+  [[WZ.preText, WZ.pre, 'ก่อนเรียน'], [WZ.postText, WZ.post, 'หลังเรียน']].forEach(([t, on, n]) => { if (on) { const r = wzQ(t); if (r.bad) w.push(`ข้อสอบ${n}: มี ${r.bad} ข้อที่อ่านไม่ได้ (ต้องมีตัวเลือกอย่างน้อย 2 ข้อและมี + หนึ่งข้อ)`); } });
+  k.L.forEach((l, i) => { const r = wzQ(WZ.lq[i]); if (r.bad) w.push(`ข้อสอบท้าย "${l.title}": มี ${r.bad} ข้อที่อ่านไม่ได้`); });
+  return w;
+}
+function wzStep5() {
+  const k = wzCounts(), c = WZ.c, w = wzWarnings(), teacher = isTeacher(), errors = !c.title.trim() || !k.L.length;
+  return `<h2>5. ตรวจสอบและสร้างคอร์ส</h2>
+    <div class="review-card"><div class="cover-mini">${esc(c.emoji || '📚')}</div><div><h3 class="mb-0">${esc(c.title || '(ยังไม่มีชื่อ)')}</h3><div class="muted small">${esc([c.category, c.level, c.duration, c.instructor && 'ผู้สอน ' + c.instructor].filter(Boolean).join(' · '))}</div></div></div>
+    <div class="kpis rv"><div class="kpi"><span class="kl">บทเรียน</span><b>${k.L.length}</b></div><div class="kpi"><span class="kl">ข้อสอบก่อนเรียน</span><b>${WZ.pre ? k.pre : '–'}</b><small>ข้อ</small></div><div class="kpi"><span class="kl">ข้อสอบท้ายบท</span><b>${k.lqTotal}</b><small>${k.lqN} บท</small></div><div class="kpi"><span class="kl">ข้อสอบหลังเรียน</span><b>${WZ.post ? k.post : '–'}</b><small>ข้อ</small></div></div>
+    ${condSummaryHtml()}
+    ${w.length ? `<div class="callout warn">${icon('alert')}<div><b>ควรตรวจสอบ</b><ul class="mb-0 mt-s">${w.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div></div>` : `<div class="callout ok">${icon('checkc')}<div>ข้อมูลครบถ้วน พร้อมสร้างคอร์ส</div></div>`}
+    <p class="small muted">คอร์สที่สร้างจะเป็น<b>ฉบับร่าง</b> ${teacher ? 'ยังไม่แสดงต่อผู้เรียน — กด "ส่งให้ผู้ดูแล" เมื่อพร้อม ผู้ดูแลจะตรวจและเผยแพร่' : 'เปิดเผยแพร่ได้ที่แท็บ "ทั่วไป" ของคอร์ส'}</p>
+    <div class="row"><button class="btn primary lg" data-action="wz-create" ${errors ? 'disabled' : ''}>${icon('plus', 20)} สร้างคอร์ส (ฉบับร่าง)</button>${teacher ? `<button class="btn lg" data-action="wz-create" data-send="1" ${errors ? 'disabled' : ''}>${icon('upload', 20)} สร้างและส่งให้ผู้ดูแล</button>` : ''}</div>`;
+}
+
+function wzRender(keepScroll) { const y = window.scrollY; rerender(); if (keepScroll) window.scrollTo(0, y); }
+function wzLive(el) {
+  if (WZ.step === 1) { const b = $('#wz-lessons'); if (b) b.innerHTML = lessonPreview(); }
+  else if (WZ.step === 2) { const box = el.closest('[data-qbox]'); if (box) $('.qcnt', box).innerHTML = qCnt(wzQ(getPath(WZ, el.dataset.f))); const sm = el.closest('details.lq'); if (sm) $('summary .qcnt', sm).innerHTML = qCnt(wzQ(getPath(WZ, el.dataset.f))); }
+  else if (WZ.step === 3) { const b = $('#wz-sum'); if (b) b.innerHTML = condSummaryHtml(); }
+}
+handlers['wz-in'] = el => {
+  if (!WZ) return; const f = el.dataset.f;
+  const v = el.type === 'checkbox' ? el.checked : el.dataset.t === 'num' ? (el.value === '' ? '' : Number(el.value)) : el.value;
+  setPath(WZ, f, v);
+  if (el.dataset.rf) { wzRender(true); return; }
+  wzLive(el);
+};
+actions['wz-example'] = el => {
+  const f = el.dataset.f, cur = getPath(WZ, f); if (cur && cur.trim()) return toast('ช่องนี้มีข้อมูลอยู่แล้ว — ลบข้อความก่อนจึงจะเติมตัวอย่างได้', 'bad');
+  setPath(WZ, f, el.dataset.k === 'lesson' ? WZ_LESSON_EXAMPLE : WZ_EXAMPLE);
+  const ta = $(`textarea[data-f="${f}"]`); if (ta) { ta.value = getPath(WZ, f); wzLive(ta); }
+};
+function wzValidate(step) {
+  if (step === 0 && WZ.c.title.trim().length < 2) { toast('กรุณาตั้งชื่อคอร์ส', 'bad'); const i = $('input[data-f="c.title"]'); if (i) i.focus(); return false; }
+  if (step === 1 && !wzLessons().length) { toast('วางลิงก์วิดีโอ YouTube อย่างน้อย 1 บทเรียนก่อน', 'bad'); const i = $('textarea[data-f="lessonsText"]'); if (i) i.focus(); return false; }
+  return true;
+}
+function wzGo(i) { WZ.step = clamp(i, 0, WZ_STEPS.length - 1); WZ.max = Math.max(WZ.max, WZ.step); wzRender(); window.scrollTo(0, 0); }
+actions['wz-next'] = () => { if (wzValidate(WZ.step)) wzGo(WZ.step + 1); };
+actions['wz-prev'] = () => wzGo(WZ.step - 1);
+actions['wz-go'] = el => { const i = +el.dataset.i; if (i > WZ.step) { for (let s = WZ.step; s < i; s++) if (!wzValidate(s)) return; } wzGo(i); };
+actions['wz-reset'] = async () => { if (await confirmDlg('ล้างข้อมูลที่กรอกไว้ทั้งหมดและเริ่มใหม่?', { danger: true, ok: 'เริ่มใหม่' })) { WZ = newWZ(); rerender(); } };
+actions['wz-skip'] = () => { WZ = null; actions['course-blank'](); };
+function wzBuild() {
+  const k = wzCounts(), W = WZ.c, cd = WZ.cond, c = newCourse();
+  ['title', 'subtitle', 'description', 'category', 'level', 'duration', 'emoji', 'cover', 'instructor'].forEach(f => { c[f] = String(W[f] || '').trim(); });
+  c.emoji = c.emoji || '📚';
+  if (isTeacher()) { c.owner = SESS.email; c.ownerName = SESS.name; if (!c.instructor) c.instructor = SESS.name; }
+  else if (W.owner) { c.owner = W.owner; const u = findUser(W.owner); c.ownerName = u ? u.name : ''; if (!c.instructor && u) c.instructor = u.name; }
+  c.sequential = !!cd.sequential; c.completion = cd.completion === 'manual' ? 'manual' : 'watch'; c.watchPercent = clamp(num(cd.watchPercent, 85), 10, 98);
+  c.lessons = k.L.map((x, i) => { const l = newLesson(); l.title = x.title; l.youtube = ytWatch(x.id); const qs = wzQ(WZ.lq[i]).out; if (qs.length) { l.quiz.enabled = true; l.quiz.passPercent = clamp(num(cd.lessonPass, 60), 1, 100); l.quiz.questions = qs; } return l; });
+  const pre = WZ.pre ? wzQ(WZ.preText).out : []; c.preTest.enabled = !!WZ.pre; c.preTest.required = !!(WZ.pre && cd.preRequired && pre.length); c.preTest.questions = pre;
+  const post = WZ.post ? wzQ(WZ.postText).out : []; c.postTest.enabled = !!WZ.post; c.postTest.passPercent = clamp(num(cd.postPass, 60), 1, 100); c.postTest.maxAttempts = Math.max(0, Math.floor(num(cd.maxAttempts, 0))); c.postTest.questions = post;
+  c.certificate.enabled = !!cd.cert; if (cd.certTitle && cd.certTitle.trim()) c.certificate.title = cd.certTitle.trim();
+  return c;
+}
+actions['wz-create'] = async el => {
+  if (!WZ || !wzValidate(0) || !wzValidate(1)) return;
+  const c = wzBuild(); DATA.courses.push(c); saveData(); WZ = null;
+  if (el.dataset.send) { await sendPackage([c]); location.hash = '#/admin'; return; }
+  toast('สร้างคอร์สแล้ว (ฉบับร่าง) — ปรับรายละเอียดเพิ่มเติมได้ที่นี่', 'ok', 5000); location.hash = '#/admin/course/' + c.id;
+};
+
+/* =====================================================================
+   Teacher sign-up request (public form) → file / code for the administrator → approved in the inbox (55_users.js)
+   A static site cannot create accounts by itself, so the request travels to the administrator, who approves it
+   and sends the new teacher an e-mail + password.
+   ===================================================================== */
+const REQ_PREFIX = 'PMREQ1:';
+const cleanReq = p => { p = p && typeof p === 'object' ? p : {}; const s = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n); return { name: s(p.name, 120), email: normEmail(s(p.email, 160)), org: s(p.org, 160), phone: s(p.phone, 40), subject: s(p.subject, 200), note: String(p.note == null ? '' : p.note).trim().slice(0, 600) }; };
+const reqToText = r => REQ_PREFIX + toB64(utf8(JSON.stringify({ app: 'prommamooc', kind: 'teacher-request', v: 1, at: new Date().toISOString(), person: r })));
+function reqFromText(t) {
+  t = String(t || '').trim(); let d;
+  if (t.startsWith(REQ_PREFIX)) d = JSON.parse(fromUtf8(fromB64(t.slice(REQ_PREFIX.length).replace(/\s+/g, ''))));
+  else d = JSON.parse(t);
+  if (!d || d.app !== 'prommamooc' || d.kind !== 'teacher-request' || !d.person) throw new Error('ไม่ใช่คำขอสมัครครูของ PrommaMooc');
+  const p = cleanReq(d.person); if (!EMAIL_RE.test(p.email) || p.name.length < 2) throw new Error('คำขอไม่ครบถ้วน (ต้องมีชื่อและอีเมล)');
+  return { person: p, at: Date.parse(d.at) || Date.now() };
+}
+let TS_DONE = null;
+route(/^\/teacher-signup$/, () => {
+  const S = DATA.settings;
+  if (TS_DONE) return {
+    title: 'ส่งคำขอสมัครครู', html: `<div class="wrap" style="max-width:640px"><div class="panel mt"><div class="center"><div class="big" style="font-size:2.4rem">✅</div><h2>สร้างคำขอเรียบร้อยแล้ว</h2></div>
+      <div class="callout warn">${icon('alert')}<div class="small"><b>ยังไม่ได้ส่งถึงผู้ดูแลระบบ</b> — เว็บนี้ไม่มีเซิร์ฟเวอร์รับข้อมูล กรุณาส่งไฟล์หรือรหัสด้านล่างให้ผู้ดูแล (LINE / อีเมล / ฝากไว้ที่ห้องธุรการ) ผู้ดูแลจะตรวจสอบแล้วส่งรหัสผ่านเข้าสู่ระบบกลับให้คุณ</div></div>
+      <div class="row"><button class="btn primary" data-action="ts-download">${icon('download', 18)} ดาวน์โหลดไฟล์คำขอ</button><button class="btn" data-action="ts-copy">${icon('copy', 18)} คัดลอกรหัสคำขอ</button></div>
+      <p class="small muted mt">รหัสคำขอคือข้อความยาว ๆ ขึ้นต้นด้วย <span class="kbd">${REQ_PREFIX}</span> วางในแชตส่งให้ผู้ดูแลได้เลย (ไม่มีรหัสผ่านอยู่ในนั้น)</p>
+      <div class="row between mt"><a class="btn ghost" href="#/login">ไปหน้าเข้าสู่ระบบ</a><button class="btn ghost" data-action="ts-again">กรอกคำขอใหม่</button></div></div></div>`
+  };
+  return {
+    title: 'ขอสมัครเป็นครูผู้สอน', html: `<div class="wrap" style="max-width:640px"><div class="panel mt"><h2>ขอสมัครเป็นครูผู้สอน</h2>
+      <p class="muted">กรอกข้อมูลเพื่อขอสิทธิ์สร้างคอร์สใน ${esc(S.orgName || S.siteName)} — ผู้ดูแลระบบจะตรวจสอบและสร้างบัญชีให้ คุณจะได้รับอีเมลและรหัสผ่านสำหรับเข้าสู่ระบบ</p>
+      <label class="field"><span class="lb">ชื่อ–นามสกุล <span class="req">*</span></span><input type="text" id="ts-name" autocomplete="name"></label>
+      <label class="field"><span class="lb">อีเมล <span class="req">*</span></span><input type="email" id="ts-email" autocomplete="email" autocapitalize="off" spellcheck="false" inputmode="email"><span class="help">ใช้เป็นชื่อผู้ใช้ตอนเข้าสู่ระบบ</span></label>
+      <div class="grid2"><label class="field"><span class="lb">โรงเรียน / หน่วยงาน</span><input type="text" id="ts-org" value="${esc(S.orgName || '')}"></label><label class="field"><span class="lb">เบอร์โทรติดต่อ</span><input type="tel" id="ts-phone" autocomplete="tel" inputmode="tel"></label></div>
+      <label class="field"><span class="lb">วิชา / หัวข้อที่จะสอน</span><input type="text" id="ts-subject" placeholder="เช่น คณิตศาสตร์ ม.ต้น"></label>
+      <label class="field"><span class="lb">หมายเหตุถึงผู้ดูแล</span><textarea id="ts-note" rows="3"></textarea></label>
+      <button class="btn primary lg" data-action="ts-make" style="width:100%">สร้างคำขอสมัคร</button>
+      <p class="help center mt-s">ข้อมูลนี้ไม่ถูกส่งออกจากเครื่องคุณ จนกว่าคุณจะส่งไฟล์ให้ผู้ดูแลเอง</p></div></div>`,
+    mount() { const e = $('#ts-name'); if (e) e.focus(); }
+  };
+});
+actions['ts-make'] = () => {
+  const r = cleanReq({ name: $('#ts-name').value, email: $('#ts-email').value, org: $('#ts-org').value, phone: $('#ts-phone').value, subject: $('#ts-subject').value, note: $('#ts-note').value });
+  if (r.name.length < 2) return toast('กรุณากรอกชื่อ–นามสกุล', 'bad');
+  if (!EMAIL_RE.test(r.email)) return toast('รูปแบบอีเมลไม่ถูกต้อง', 'bad');
+  TS_DONE = r; rerender(); window.scrollTo(0, 0);
+};
+actions['ts-download'] = () => { if (!TS_DONE) return; downloadText('teacher-request-' + TS_DONE.email.replace(/[^a-z0-9]+/g, '_') + '.pmooc.json', JSON.stringify({ app: 'prommamooc', kind: 'teacher-request', v: 1, at: new Date().toISOString(), person: TS_DONE }), 'application/json'); toast('ดาวน์โหลดไฟล์คำขอแล้ว — ส่งให้ผู้ดูแลระบบ', 'ok', 5000); };
+actions['ts-copy'] = async () => { if (!TS_DONE) return; toast((await copyText(reqToText(TS_DONE))) ? 'คัดลอกรหัสคำขอแล้ว — วางส่งให้ผู้ดูแลได้เลย' : 'คัดลอกไม่สำเร็จ ใช้ปุ่มดาวน์โหลดไฟล์แทน', 'ok', 5000); };
+actions['ts-again'] = () => { TS_DONE = null; rerender(); };
 
 
 /* =====================================================================
