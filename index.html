@@ -308,7 +308,7 @@ input[type=color]{width:56px;height:46px;padding:3px;border:1px solid var(--line
 /* ---------- admin ---------- */
 .admin-bar{background:var(--deep-2);color:#fff}
 .admin-bar .wrap{display:flex;gap:14px;align-items:center;min-height:50px;flex-wrap:wrap}
-.admin-bar a{color:#dbe3ff;text-decoration:none;padding:6px 12px;border-radius:999px;font-size:.95rem}
+.admin-bar a{color:#dbe3ff;text-decoration:none;padding:6px 10px;border-radius:999px;font-size:.95rem}
 .admin-bar a:hover,.admin-bar a.on{background:rgba(255,255,255,.15);color:#fff}
 .admin-bar b{font-family:var(--head);font-weight:600;color:var(--accent)}
 .banner{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:14px 18px;border-radius:14px;background:var(--warn-bg);border:1px solid #f2d9a0;margin-bottom:18px}
@@ -338,8 +338,7 @@ details.item>summary:hover{background:#fafbfe}
 .tbl th,.tbl td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
 .tbl th{font-family:var(--head);font-weight:600;color:var(--ink-2);font-size:.88rem;background:#fafbfe}
 .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:#fff}
-.img-pick{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.img-pick img{max-height:64px;max-width:160px;border-radius:9px;border:1px solid var(--line);background:repeating-conic-gradient(#f0f2f7 0 25%,#fff 0 50%) 0 0/14px 14px}
+
 pre.code{background:#0f1830;color:#dbe3ff;padding:14px 16px;border-radius:12px;overflow:auto;font-size:.82rem;line-height:1.5;white-space:pre}
 .kbd{font-family:ui-monospace,Menlo,monospace;background:#eef1f8;padding:1px 7px;border-radius:6px;font-size:.88em}
 
@@ -562,6 +561,82 @@ details.lq summary{cursor:pointer;font-weight:600;display:flex;justify-content:s
 .hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
 .dbp{margin-bottom:16px}
 .dbp .check{align-items:flex-start}
+
+/* ---------- pictures: field, gallery, zoom ---------- */
+.img-pick{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:10px;border:1.5px dashed var(--line-2);border-radius:14px;background:#fbfcff;transition:border-color .15s,background .15s}
+.img-pick.drag{border-color:var(--primary);background:var(--primary-50)}
+.imgprev{flex:none;width:132px;height:74px;border-radius:10px;overflow:hidden;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-3);background:repeating-conic-gradient(#f0f2f7 0 25%,#fff 0 50%) 0 0/14px 14px}
+.imgprev.empty{background:#f3f5fa}
+.imgprev img{width:100%;height:100%;object-fit:contain;display:block}
+.img-ctl{display:flex;flex-direction:column;min-width:0;flex:1 1 220px}
+img.broken{visibility:hidden}
+.item .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.gal-ed{display:grid;gap:10px;align-items:stretch;padding:12px}
+.gal-i{display:flex;gap:12px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.gal-c{flex:1;min-width:0;display:grid;gap:6px}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:16px}
+.gal.one{grid-template-columns:minmax(0,1fr)}
+.gal figure{margin:0}
+.gal-b{display:block;width:100%;padding:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#f3f5fa;cursor:zoom-in}
+.gal-b img{display:block;width:100%;height:auto;max-height:520px;object-fit:contain}
+.gal figcaption{font-size:.9rem;color:var(--ink-2);margin-top:6px}
+.zoom{display:grid;place-items:center;background:#0f1a45;border-radius:12px;overflow:hidden}
+.zoom img{display:block;max-width:100%;max-height:calc(100vh - 220px);object-fit:contain}
+.modal.wide .zoom{margin:0 -4px}
+.q img.qimg{max-width:100%}
+
+/* ---------- hero picture ---------- */
+.hero-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:.3;pointer-events:none}
+
+/* ---------- announcements ---------- */
+.ann-sec{margin:34px 0 8px}
+.ann-sec .sec-h{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ann-nav{display:flex;align-items:center;gap:6px}
+.ann-dots{display:flex;gap:6px}
+.ann-dots i{width:8px;height:8px;border-radius:50%;background:var(--line-2);transition:background .2s,width .2s}
+.ann-dots i.on{background:var(--primary);width:22px;border-radius:99px}
+.ann-track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-radius:var(--r)}
+.ann-track::-webkit-scrollbar{display:none}
+.ann{flex:0 0 100%;scroll-snap-align:start;display:grid;grid-template-columns:minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;border-left:6px solid var(--accent)}
+.ann.has-img{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);border-left-width:1px}
+.ann-img{display:grid;place-items:center;padding:0;border:0;background:var(--deep);min-height:220px;max-height:440px;cursor:zoom-in}
+.ann-img img{display:block;width:100%;height:100%;max-height:440px;object-fit:contain}
+.ann-b{padding:22px 26px;min-width:0;align-self:center}
+.ann-b h3{font-size:1.35rem;margin:6px 0 8px}
+.ann-t{color:var(--ink-2);overflow-wrap:anywhere}
+
+/* ---------- publish chip (administrator bar) ---------- */
+.admin-bar .ab-r{margin-left:auto;display:inline-flex;align-items:center;gap:2px;white-space:nowrap}
+.pubchip{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:6px 10px;font:inherit;font-size:.9rem;font-weight:600;text-decoration:none;white-space:nowrap}
+.admin-bar a.pubchip.off{background:rgba(255,255,255,.12);color:#dbe3ff;font-weight:500}
+.pubchip.dirty{background:var(--accent);color:#2b2000;cursor:pointer}
+.pubchip.dirty:hover{filter:brightness(1.06)}
+.pubchip.ok{color:#9be2c3;font-weight:500}
+.pubchip.busy{color:#fff;opacity:.85}
+@media (max-width:640px){.pubchip{font-size:.82rem;padding:5px 11px}}
+
+/* ---------- setup page ---------- */
+.step{margin-top:16px}
+.step-h{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.step-h .sn{width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-family:var(--head);font-weight:600;flex:none}
+.step-h .sn.ok{background:var(--ok)}
+.step.done{border-color:#bfe5d3}
+.step-b{margin-left:46px}
+ol.steps{padding-left:1.25em;margin:0 0 12px}
+ol.steps li{margin-bottom:6px}
+ul.health{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ul.health li{display:flex;gap:10px;align-items:flex-start;font-size:.95rem}
+.hs{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;margin-top:2px;color:#fff}
+.hs.ok{background:var(--ok)}.hs.warn{background:#d98a00}.hs.bad{background:var(--bad)}
+@media (max-width:640px){.step-b{margin-left:0}.ann.has-img{grid-template-columns:minmax(0,1fr)}.ann-b{padding:18px}.ann-img{min-height:160px}.imgprev{width:104px;height:60px}}
+
+/* ---------- getting-started card ---------- */
+.onb{margin-bottom:18px}
+ul.chk{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ul.chk li{display:flex;gap:10px;align-items:center}
+ul.chk .ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--line-2);display:grid;place-items:center;flex:none;color:#fff}
+ul.chk li.d .ck{background:var(--ok);border-color:var(--ok)}
+ul.chk li.d a{color:var(--ink-3);text-decoration:line-through}
 
 </style>
 <style id="theme-vars"></style>
@@ -1390,22 +1465,6 @@ function pickFile(accept) {
   });
 }
 const readText = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsText(f); });
-function readImageFile(file, maxSide = 600) {
-  return new Promise((res, rej) => {
-    const fr = new FileReader();
-    fr.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        const s = Math.min(1, maxSide / Math.max(img.width, img.height));
-        const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.width * s)); c.height = Math.max(1, Math.round(img.height * s));
-        const x = c.getContext('2d'); x.drawImage(img, 0, 0, c.width, c.height);
-        res(c.toDataURL(/png|gif|webp|svg/.test(file.type) ? 'image/png' : 'image/jpeg', 0.88));
-      };
-      img.onerror = () => rej(new Error('อ่านรูปไม่ได้')); img.src = fr.result;
-    };
-    fr.onerror = rej; fr.readAsDataURL(file);
-  });
-}
 async function copyText(t) {
   try { await navigator.clipboard.writeText(t); return true; } catch (e) {
     const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;left:-9999px'; document.body.appendChild(ta); ta.select();
@@ -1830,19 +1889,20 @@ function parseUserRows(rows) {
 /* =====================================================================
    Data model, persistence, progress
    ===================================================================== */
-const LS = { data: 'pmooc.data.v1', profiles: 'pmooc.profiles', cur: 'pmooc.current', prog: 'pmooc.progress', queue: 'pmooc.queue', sess: 'pmooc.session', tc: 'pmooc.tc.v1' };
+const LS = { data: 'pmooc.data.v1', profiles: 'pmooc.profiles', cur: 'pmooc.current', prog: 'pmooc.progress', queue: 'pmooc.queue', sess: 'pmooc.session', tc: 'pmooc.tc.v1', remote: 'pmooc.remote.v1', annseen: 'pmooc.annseen.v1' };
 
 const DEF_SETTINGS = {
   siteName: 'PrommaMooc',
   tagline: 'เรียนออนไลน์ตามลำดับ วัดผลทุกขั้นตอน และรับเกียรติบัตรเมื่อเรียนจบ',
   heroTitle: 'เรียนทีละบท วัดผลทุกขั้น จบแล้วรับเกียรติบัตร',
-  orgName: '', logo: '', logoText: '',
+  orgName: '', logo: '', logoText: '', heroImage: '',
   primary: '#26418f', accent: '#f2a900',
   footerText: '', profileExtraLabel: 'โรงเรียน / หน่วยงาน (ถ้ามี)',
-  showAdminLink: true, adminPinHash: '', webhookUrl: '', allowGuests: true
+  showAdminLink: true, adminPinHash: '', webhookUrl: '', allowGuests: true, dbPublish: false, imgDrive: true
 };
 const newQuiz = () => ({ enabled: false, passPercent: 60, shuffleQ: false, shuffleC: true, showFeedback: true, questions: [] });
-const newLesson = () => ({ id: uid('l-'), title: 'บทเรียนใหม่', youtube: '', description: '', resources: '', duration: '', quiz: newQuiz() });
+const newLesson = () => ({ id: uid('l-'), title: 'บทเรียนใหม่', youtube: '', description: '', images: [], resources: '', duration: '', quiz: newQuiz() });
+const newAnn = () => ({ id: uid('a-'), title: 'ประกาศใหม่', body: '', image: '', linkType: '', linkCourse: '', linkUrl: '', linkLabel: '', on: true, pinned: false, popup: false, from: '', to: '', createdAt: Date.now() });
 const newQuestion = (type = 'single') => ({ id: uid('q-'), type, text: '', image: '', choices: type === 'tf' ? ['จริง', 'เท็จ'] : ['', '', '', ''], answer: [0], explanation: '', points: 1 });
 const newCert = () => ({
   enabled: true, template: 'classic', primary: '#26418f', gold: '#b88a2e',
@@ -1880,7 +1940,11 @@ function normQuestion(q) {
 }
 function normCourse(c) {
   c = merge(newCourse(), c);
-  c.lessons = (c.lessons || []).map(l => { l = merge(newLesson(), l); l.quiz.questions = l.quiz.questions.map(normQuestion); return l; });
+  c.lessons = (c.lessons || []).map(l => {
+    l = merge(newLesson(), l); l.quiz.questions = l.quiz.questions.map(normQuestion);
+    l.images = (Array.isArray(l.images) ? l.images : []).map(g => ({ src: String((g && g.src) || ''), cap: String((g && g.cap) || '') })).filter(g => g.src);
+    return l;
+  });
   c.preTest.questions = c.preTest.questions.map(normQuestion);
   c.postTest.questions = c.postTest.questions.map(normQuestion);
   const s = c.certificate.signers || []; while (s.length < 2) s.push({ name: '', title: '', image: '' });
@@ -1892,6 +1956,7 @@ function normData(d) {
   d.schema = 1;
   d.settings = merge(DEF_SETTINGS, d.settings || {});
   d.courses = (d.courses || []).map(normCourse);
+  d.announcements = (Array.isArray(d.announcements) ? d.announcements : []).filter(a => a && typeof a === 'object').map(a => merge(newAnn(), a));
   d.updatedAt = d.updatedAt || 0;
   d.auth = merge({ setup: false, salt: '', accounts: [] }, d.auth || {});
   if (!Array.isArray(d.auth.accounts)) d.auth.accounts = [];
@@ -1902,6 +1967,14 @@ function normData(d) {
 
 /* ---------- load / save ---------- */
 let EMBEDDED = normData(JSON.parse($('#pmooc-data').textContent));
+/* a newer copy published through the database (see 59_site.js) is kept in this browser, so the page opens with it at once */
+const BAKED = { url: String(EMBEDDED.settings.webhookUrl || '').trim(), salt: EMBEDDED.auth.salt || '', at: EMBEDDED.updatedAt || 0, live: !!EMBEDDED.settings.dbPublish };   // what the HTML file itself carries
+const remoteCacheFits = r => !!(r && r.data && r.url === BAKED.url && (r.salt || '') === BAKED.salt && (r.data.updatedAt || 0) > BAKED.at);
+(function useCachedRemote() {
+  const r = store.get(LS.remote, null);
+  if (!r) return;
+  if (remoteCacheFits(r)) { try { EMBEDDED = normData(r.data); } catch (e) { store.del(LS.remote); } } else store.del(LS.remote);
+})();
 let DATA;
 const HASH = {};   // course id → fingerprint at last save (so we can stamp updatedAt only on courses that really changed)
 const courseHash = c => fnv(JSON.stringify(Object.assign({}, c, { updatedAt: 0, sentRev: 0 })));
@@ -1931,6 +2004,8 @@ function saveData() {
   if (typeof isTeacher === 'function' && isTeacher()) { persistTeacher(); return; }   // teachers keep only their own courses
   DATA.updatedAt = Date.now();
   if (!store.set(LS.data, { data: DATA })) toast('พื้นที่เก็บข้อมูลในเบราว์เซอร์เต็ม — กรุณาดาวน์โหลดไฟล์สำรองทันที', 'bad', 6000);
+  if (typeof pubChipUpdate === 'function') pubChipUpdate();
+  if (typeof sitePublishQueue === 'function') sitePublishQueue();
 }
 function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
 function flushSave() { if (saveTimer) saveData(); }
@@ -2161,13 +2236,17 @@ function upsertAccountProfile() {
   saveProfiles();
 }
 function reloadForSession() { loadData(); applyTeacherOverlay(); applyTheme(DATA.settings); if (typeof dbSyncRequests === 'function') setTimeout(() => dbSyncRequests({ silent: true, notify: true }), 900); }
-async function login(email, password) {
+async function login(email, password, retried) {
   email = normEmail(email); password = String(password || '').trim();
   if (!email || !password) return { ok: false, msg: 'กรุณากรอกอีเมลและรหัสผ่าน' };
   await sleep(30);
   const acc = DATA.auth.accounts.find(a => a.i === acctIdOf(email, DATA.auth.salt));
   const prof = acc ? openAccount(acc, password) : (pbkdf2(utf8(password), new Uint8Array(16), KDF_ITER), null);   // same cost whether or not the e-mail exists
-  if (!prof || normEmail(prof.e) !== email) { await sleep(500); return { ok: false, msg: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' }; }
+  if (!prof || normEmail(prof.e) !== email) {
+    // maybe the account was added after this page was last updated: fetch the newest published copy once, then try again
+    if (!retried && typeof siteFetch === 'function' && siteLive() && Date.now() - SITE.last > 15000 && (await siteFetch({ noRender: true })) === 'new') return login(email, password, true);
+    await sleep(500); return { ok: false, msg: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' };
+  }
   SESS = { id: acc.i, email: prof.e, name: prof.n, role: prof.r, group: prof.g || '', org: prof.o || '', sid: prof.s || '', at: Date.now() };
   store.set(LS.sess, SESS); upsertAccountProfile(); reloadForSession();
   return { ok: true, sess: SESS };
@@ -2240,6 +2319,7 @@ const currentPath = () => (location.hash.replace(/^#/, '') || '/');
 
 function render(keepScroll) {
   flushSave();
+  if (typeof siteApplyPending === 'function') siteApplyPending();   // a newer published copy that arrived while the page was busy
   const y = window.scrollY;
   teardown.forEach(f => { try { f(); } catch (e) { /* ignore */ } }); teardown = [];
   const path = currentPath();
@@ -2262,7 +2342,7 @@ function notFound(msg) {
 
 function shell(inner, o = {}) {
   const S = DATA.settings, p = profile(), path = currentPath();
-  const mark = S.logo ? `<img src="${esc(S.logo)}" alt="">` : esc((S.logoText || S.siteName || 'P').trim().slice(0, 2));
+  const mark = imgTag(S.logo, { w: 200, lazy: false }) || esc((S.logoText || S.siteName || 'P').trim().slice(0, 2));
   const nav = (href, label, on) => `<a href="${href}" class="${on ? 'on' : ''}">${label}</a>`;
   const chip = SESS
     ? `<button class="user-chip" data-action="account-menu" aria-label="บัญชีของฉัน"><span class="avatar">${esc(SESS.name.trim().slice(0, 1).toUpperCase())}</span><span class="n">${esc(SESS.name)}</span></button>`
@@ -2358,7 +2438,7 @@ function dotsHtml(c, cpv, st) {
 function coverHtml(c, extra) {
   const first = c.lessons.map(l => ytId(l.youtube)).find(Boolean);
   const img = c.cover || (first ? ytThumb(first) : '');
-  return `<div class="cover ${coverVariant(c)}"><span class="em" aria-hidden="true">${esc(c.emoji || '📚')}</span>${img ? `<img src="${esc(img)}" alt="" loading="lazy" onerror="this.remove()">` : ''}${extra || ''}</div>`;
+  return `<div class="cover ${coverVariant(c)}"><span class="em" aria-hidden="true">${esc(c.emoji || '📚')}</span>${imgTag(img, { w: 900, rm: true })}${extra || ''}</div>`;
 }
 const visibleCourses = () => DATA.courses.filter(listedFor);
 function quizCount(c) { return c.lessons.reduce((n, l) => n + (hasQuiz(l) ? 1 : 0), 0); }
@@ -2407,14 +2487,15 @@ route(/^\/?$/, () => {
   ];
   return {
     title: '', html: `
-    <section class="hero"><div class="hero-art" aria-hidden="true">${HERO_ART}</div><div class="wrap hero-grid">
+    <section class="hero">${S.heroImage ? imgTag(S.heroImage, { w: 1800, cls: 'hero-img', rm: true, lazy: false }) : ''}<div class="hero-art" aria-hidden="true">${HERO_ART}</div><div class="wrap hero-grid">
       <div><h1 class="${R} r1">${esc(S.heroTitle || S.siteName)}</h1><p class="lead ${R} r2">${esc(S.tagline)}</p>
       <label class="search ${R} r2"><span class="sr">ค้นหาคอร์ส</span>${icon('search')}<input type="search" data-on="search" placeholder="ค้นหาคอร์ส ผู้สอน หรือหมวดหมู่" value="${esc(UI.search)}"></label>
       <div class="hero-stats ${R} r3"><span><b>${vis.length}</b>คอร์ส</span><span><b>${nl}</b>บทเรียน</span>${nc ? `<span><b>${nc}</b>คอร์สที่มีเกียรติบัตร</span>` : ''}</div></div>
       <aside class="how ${R} r3" aria-label="ขั้นตอนการเรียน"><h3>เส้นทางการเรียนในแต่ละคอร์ส</h3><ol class="path">
       ${how.map(h => `<li><span class="nd ${h[1]}">${icon(h[0], 18)}</span><div class="pi"><span class="t">${h[2]}</span><span class="s">${h[3]}</span></div></li>`).join('')}</ol></aside>
     </div></section>
-    <div class="wrap"><div class="sec-h"><h2>คอร์สทั้งหมด</h2><span class="muted small">${vis.length} คอร์ส</span></div><div id="cats">${catsHtml()}</div><div id="cards" class="${catsHtml() ? '' : 'mt'}">${cardsHtml()}</div></div>`
+    <div class="wrap">${annSectionHtml()}<div class="sec-h"><h2>คอร์สทั้งหมด</h2><span class="muted small">${vis.length} คอร์ส</span></div><div id="cats">${catsHtml()}</div><div id="cards" class="${catsHtml() ? '' : 'mt'}">${cardsHtml()}</div></div>`,
+    mount() { annMount(); annPopup(); }
   };
 });
 
@@ -2726,7 +2807,7 @@ function ringHtml(p) {
 function qHtml(it, n) {
   const q = it.q, multi = q.type === 'multi';
   return `<fieldset class="q" data-n="${n}"><legend><span class="qn">${n + 1}</span><span>${esc(q.text)}${multi ? '<span class="hint">เลือกได้มากกว่า 1 ข้อ</span>' : ''}</span></legend>
-    ${q.image ? `<img class="qimg" src="${esc(q.image)}" alt="">` : ''}
+    ${q.image ? imgTag(q.image, { w: 1200, cls: 'qimg' }) : ''}
     ${it.order.map((ci, pos) => `<label class="choice ${multi ? 'multi' : ''}"><input type="${multi ? 'checkbox' : 'radio'}" name="q${n}" value="${ci}"><span class="bx">${LET[pos] || pos + 1}</span><span class="tx">${esc(q.choices[ci])}</span></label>`).join('')}</fieldset>`;
 }
 const quizFormHtml = items => `<div id="quizform" class="quiz">${items.map(qHtml).join('')}
@@ -2755,7 +2836,7 @@ function reviewHtml(res) {
   return res.details.map((d, n) => {
     const q = d.it.q, multi = q.type === 'multi';
     return `<div class="q review ${d.ok ? 'ok' : 'no'}"><legend style="display:flex;gap:10px;font-weight:600;margin-bottom:12px"><span class="qn">${n + 1}</span><span>${esc(q.text)} ${d.ok ? '<span class="tag ok">ถูกต้อง</span>' : '<span class="tag warn">ยังไม่ถูกต้อง</span>'}</span></legend>
-      ${q.image ? `<img class="qimg" src="${esc(q.image)}" alt="">` : ''}
+      ${q.image ? imgTag(q.image, { w: 1200, cls: 'qimg' }) : ''}
       ${d.it.order.map((ci, pos) => {
         const right = q.answer.includes(ci), picked = d.sel.includes(ci);
         const cls = right ? 'is-correct' : picked ? 'is-wrong' : '';
@@ -3019,7 +3100,7 @@ route(/^\/learn\/([^/]+)\/lesson\/([^/]+)$/, (cid, lid) => learnRoute(cid, 'l:' 
       <h1>${idx + 1}. ${esc(lesson.title)}</h1>
       ${vid ? `<div class="player-wrap" id="pwrap"><div id="yt-target"></div></div>` : ''}
       <div class="watch" id="watch">${watchHtml()}</div>
-      ${lesson.description ? `<section class="panel"><h2>เนื้อหาบทเรียน</h2><div class="desc" style="color:var(--ink)">${rich(lesson.description)}</div></section>` : ''}
+      ${lesson.description || (lesson.images || []).length ? `<section class="panel"><h2>เนื้อหาบทเรียน</h2>${lesson.description ? `<div class="desc" style="color:var(--ink)">${rich(lesson.description)}</div>` : ''}${galleryHtml(lesson.images)}</section>` : ''}
       ${res ? `<section class="panel"><h3>เอกสารและลิงก์ประกอบ</h3><ul class="res">${res}</ul></section>` : ''}
       ${QZ ? `<section class="panel" id="quizsec"><h2>${esc(QZ.cfg.title)}</h2><div id="quizbox"></div></section>` : ''}
       <div class="lesson-nav" id="lnav">${lnavHtml()}</div>`),
@@ -3246,15 +3327,15 @@ actions['cert-print'] = async () => {
    Instructor mode — edit courses, lessons, tests, certificate, publish
    ===================================================================== */
 const ED = { course: null, tab: 'general' };
-const roots = { c: () => ED.course, s: () => DATA.settings };
+const roots = { c: () => ED.course, s: () => DATA.settings, d: () => DATA };
 const hooks = {};
 
 function adminBarHtml(path) {
   const a = (h, t, on, badge) => `<a href="${h}" class="${on ? 'on' : ''}">${t}${badge ? `<span class="count">${badge}</span>` : ''}</a>`;
   const links = isAdmin()
-    ? a('#/admin', 'ภาพรวม / คอร์ส', path === '/admin' || path.startsWith('/admin/course') || path === '/admin/new') + a('#/admin/analytics', 'วิเคราะห์ข้อมูล', path.startsWith('/admin/analytics')) + a('#/admin/users', 'ผู้ใช้งาน', path === '/admin/users') + a('#/admin/inbox', 'กล่องรับเรื่อง', path === '/admin/inbox', (DATA.inbox || []).length) + a('#/admin/results', 'ผลการเรียน', path === '/admin/results') + a('#/admin/settings', 'ตั้งค่าเว็บไซต์', path === '/admin/settings')
+    ? a('#/admin', 'ภาพรวม / คอร์ส', path === '/admin' || path.startsWith('/admin/course') || path === '/admin/new') + a('#/admin/announcements', 'ประกาศ', path === '/admin/announcements') + a('#/admin/analytics', 'วิเคราะห์ข้อมูล', path.startsWith('/admin/analytics')) + a('#/admin/users', 'ผู้ใช้งาน', path === '/admin/users') + a('#/admin/inbox', 'กล่องรับเรื่อง', path === '/admin/inbox', (DATA.inbox || []).length) + a('#/admin/results', 'ผลการเรียน', path === '/admin/results') + a('#/admin/settings', 'ตั้งค่าเว็บไซต์', path === '/admin/settings')
     : a('#/admin', 'คอร์สของฉัน', path === '/admin' || path.startsWith('/admin/course')) + a('#/admin/results', 'ผลการเรียนในคอร์สของฉัน', path === '/admin/results');
-  return `<div class="admin-bar"><div class="wrap"><b>${isAdmin() ? 'ผู้ดูแลระบบ' : 'ครูผู้สอน'}</b>${links}<span class="grow"></span>${a('#/', 'ดูหน้าผู้เรียน')}</div></div>`;
+  return `<div class="admin-bar"><div class="wrap"><b>${isAdmin() ? 'ผู้ดูแลระบบ' : 'ครูผู้สอน'}</b>${links}<span class="ab-r">${pubChipHtml()}${a('#/', 'ดูหน้าผู้เรียน')}</span></div></div>`;
 }
 function staffGuard(fn, o = {}) {   // o.admin: administrators only
   if (!DATA.auth.setup) return setupView();
@@ -3277,16 +3358,13 @@ const fld = {
   select(label, bind, val, opts, help, o = {}) {
     return `<label class="field"><span class="lb">${label}</span><select data-bind="${bind}" ${o.hook ? `data-hook="${o.hook}"` : ''} ${o.refresh ? 'data-refresh="1"' : ''}>${opts.map(([v, t]) => `<option value="${esc(v)}" ${v === val ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>${help ? `<span class="help">${help}</span>` : ''}</label>`;
   },
-  color(label, bind, val, hook) { return `<label class="field"><span class="lb">${label}</span><input type="color" data-bind="${bind}" ${hook ? `data-hook="${hook}"` : ''} value="${esc(val)}"></label>`; },
-  image(label, bind, val, max, help) {
-    return `<div class="field"><span class="lb">${label}</span><div class="img-pick">${val ? `<img src="${esc(val)}" alt="">` : ''}<button class="btn sm" data-action="img-pick" data-bind="${bind}" data-max="${max}">${icon('image', 16)} ${val ? 'เปลี่ยนรูป' : 'เลือกรูป'}</button>${val ? `<button class="btn sm ghost danger-o" data-action="img-clear" data-bind="${bind}">ลบรูป</button>` : ''}</div>${help ? `<span class="help">${help}</span>` : ''}</div>`;
-  }
+  color(label, bind, val, hook) { return `<label class="field"><span class="lb">${label}</span><input type="color" data-bind="${bind}" ${hook ? `data-hook="${hook}"` : ''} value="${esc(val)}"></label>`; }
 };
 function bindTarget(bind) { const [r, ...rest] = bind.split('.'); const root = roots[r] && roots[r](); return { root, path: rest.join('.') }; }
 let prevTimer = null;
 function onBind(e) {
   const el = e.target; if (!el || !el.dataset || !el.dataset.bind || !isStaff()) return;
-  if (/^s\./.test(el.dataset.bind) && !isAdmin()) return;
+  if (/^[sd]\./.test(el.dataset.bind) && !isAdmin()) return;
   if (/^c\./.test(el.dataset.bind) && !(ED.course && canEditCourse(ED.course))) return;
   const isChoice = el.type === 'checkbox' || el.tagName === 'SELECT' || el.type === 'color';
   if (e.type === 'input' && (el.type === 'checkbox' || el.tagName === 'SELECT')) return;
@@ -3313,12 +3391,6 @@ hooks.qtype = (el, root, path, v) => {
   if (v === 'tf') { q.choices = ['จริง', 'เท็จ']; q.answer = [q.answer[0] === 1 ? 1 : 0]; }
   else { while (q.choices.length < 2) q.choices.push(''); q.answer = v === 'single' ? [q.answer[0] || 0] : q.answer; }
 };
-actions['img-pick'] = async el => {
-  const f = await pickFile('image/*'); if (!f) return;
-  try { const url = await readImageFile(f, num(el.dataset.max, 600)); const { root, path } = bindTarget(el.dataset.bind); setPath(root, path, url); saveData(); refreshEditor(); }
-  catch (e) { toast('อ่านไฟล์รูปไม่ได้', 'bad'); }
-};
-actions['img-clear'] = el => { const { root, path } = bindTarget(el.dataset.bind); setPath(root, path, ''); saveData(); refreshEditor(); };
 
 const keepOpen = () => $$('details[data-key]').filter(d => d.open).forEach(d => UI.open.add(d.dataset.key));
 const openAttr = k => (UI.open.has(k) ? 'open' : '');
@@ -3355,11 +3427,12 @@ function dashboardHtml() {
   const rc = countByRole(), nAcc = DATA.auth.accounts.length, inbox = (DATA.inbox || []).length;
   const stat = (n, t, href) => `<a class="stat" href="${href}"><b>${n}</b><span>${t}</span></a>`;
   return `<div class="wrap mt">
-    ${isDirty() ? `<div class="banner">${icon('alert')}<div class="grow"><b>มีการแก้ไขที่ยังไม่ได้เผยแพร่</b><div class="small">การแก้ไขอยู่ในเบราว์เซอร์เครื่องนี้เท่านั้น ผู้เรียนยังไม่เห็น — ดาวน์โหลด index.html แล้วอัปโหลดทับไฟล์เดิมบน GitHub</div></div><button class="btn primary" data-action="pub-html">${icon('download', 18)} ดาวน์โหลด index.html</button></div>` : ''}
+    ${adminHelpHtml()}
     <div class="stats">${stat(DATA.courses.length, 'คอร์สทั้งหมด', '#/admin')}${stat(hasRoster() ? rc.student : '–', 'นักเรียน', '#/admin/users')}${stat(hasRoster() ? rc.teacher : '–', 'ครูผู้สอน', '#/admin/users')}${stat(inbox, 'เรื่องจากครูรอตรวจ', '#/admin/inbox')}</div>
     <div class="row between mb"><h1 class="mb-0">คอร์สทั้งหมด</h1><button class="btn primary" data-action="course-new">${icon('plus', 18)} สร้างคอร์สใหม่</button></div>
     ${DATA.courses.map(courseRow).join('') || '<div class="empty"><div class="big">🌱</div><p>ยังไม่มีคอร์ส กดปุ่ม "สร้างคอร์สใหม่" เพื่อเริ่มต้น</p></div>'}
-    <section class="panel mt"><h2>เผยแพร่และสำรองข้อมูล</h2>
+    ${pubPanelHtml()}
+    <section class="panel mt"><h2>เผยแพร่ด้วยไฟล์ index.html และสำรองข้อมูล</h2>
       <ol class="muted" style="padding-left:1.3em"><li>แก้ไขคอร์ส/ผู้ใช้ให้เรียบร้อย (บันทึกอัตโนมัติในเบราว์เซอร์นี้)</li><li>กด <b>ดาวน์โหลด index.html</b> — ได้ไฟล์เดียวที่ฝังคอร์สและบัญชีผู้ใช้ล่าสุดไว้แล้ว (บัญชีถูกเข้ารหัส ไม่เห็นชื่อ/อีเมลในไฟล์)</li><li>ไปที่ GitHub → repository ของคุณ → <b>Add file → Upload files</b> → เลือกไฟล์ที่ได้ (ชื่อเดิม ทับไฟล์เดิม) → <b>Commit changes</b></li><li>รอ 1–2 นาที ผู้เรียนจะเห็นคอร์สใหม่และบัญชีที่เพิ่ม</li></ol>
       <div class="row"><button class="btn primary" data-action="pub-html">${icon('download', 18)} ดาวน์โหลด index.html</button><button class="btn" data-action="data-export">${icon('download', 18)} ส่งออกข้อมูลคอร์ส/ตั้งค่า (JSON)</button><button class="btn" data-action="data-import">${icon('upload', 18)} นำเข้าข้อมูล (JSON)</button>${isDirty() ? `<button class="btn danger-o" data-action="data-discard">${icon('refresh', 18)} ยกเลิกการแก้ไขที่ยังไม่เผยแพร่</button>` : ''}</div>
       <p class="small muted mt-s">ไฟล์ JSON ไม่รวมรายชื่อผู้ใช้และรหัสผ่าน — สำรองรายชื่อผ่านหน้า "ผู้ใช้งาน" → ส่งออกรายชื่อ (Excel)${hasRoster() ? '' : ` · บัญชีในไฟล์นี้ ${nAcc} บัญชี (รายชื่อที่แก้ไขได้อยู่ในเครื่องผู้ดูแลที่นำเข้าไว้)`}</p></section></div>`;
@@ -3454,7 +3527,7 @@ route(/^\/admin\/settings$/, () => staffGuard(() => {
       ${fld.text('ข้อความท้ายเว็บ', 's.footerText', S.footerText, { ph: 'เว้นว่าง = ใช้คำอธิบายสั้นด้านบน' })}${fld.text('ป้ายช่องข้อมูลเพิ่มเติมของผู้เรียน', 's.profileExtraLabel', S.profileExtraLabel, { help: 'ใช้กับผู้เรียนแบบผู้สนใจทั่วไปที่ลงชื่อเอง เช่น "ชั้น / ห้อง", "สังกัด"' })}
       ${fld.check('แสดงลิงก์ "สำหรับผู้ดูแล / ครู" ท้ายเว็บ', 's.showAdminLink', S.showAdminLink, 'ปิดได้ แล้วเข้าหน้าจัดการโดยเติม #/admin ต่อท้ายที่อยู่เว็บ')}</section>
     <section class="panel"><h2>หน้าตา</h2><div class="grid3">${fld.color('สีหลัก', 's.primary', S.primary, 'theme')}${fld.color('สีเน้น', 's.accent', S.accent, 'theme')}${fld.text('ตัวอักษรในโลโก้', 's.logoText', S.logoText, { ph: 'เช่น P', help: 'ไม่เกิน 2 ตัวอักษร (ถ้าไม่ใส่รูปโลโก้)' })}</div>
-      ${fld.image('รูปโลโก้ (ถ้ามี)', 's.logo', S.logo, 160, 'ใช้แทนตัวอักษรในโลโก้มุมซ้ายบน')}</section>
+      <div class="grid2">${fld.image('รูปโลโก้ (ถ้ามี)', 's.logo', S.logo, 200, 'ใช้แทนตัวอักษรในโลโก้มุมซ้ายบน', { embed: true })}${fld.image('รูปพื้นหลังหัวเว็บหน้าแรก (ถ้ามี)', 's.heroImage', S.heroImage, 1800, 'แนะนำภาพแนวนอน — ระบบทำให้จางลงเพื่อให้ตัวอักษรอ่านง่าย')}</div></section>
     <section class="panel"><h2>การเข้าใช้งานของผู้เรียน</h2>
       ${fld.check('อนุญาตให้ผู้สนใจทั่วไปเรียนโดยไม่ต้องมีบัญชี', 's.allowGuests', S.allowGuests, 'ปิด = ทุกคนต้องเข้าสู่ระบบด้วยบัญชีที่เพิ่มไว้ในหน้า "ผู้ใช้งาน" — คอร์สที่ตั้งเป็น "เฉพาะผู้มีบัญชี" หรือ "เฉพาะกลุ่ม" ต้องเข้าสู่ระบบเสมอ ไม่ว่าจะตั้งค่านี้อย่างไร')}
       <p class="small muted mb-0">กำหนดว่าใครเรียนคอร์สไหนได้ที่หน้าแก้ไขคอร์ส → แท็บ "ข้อมูลคอร์ส" → "ใครเรียนคอร์สนี้ได้"</p></section>
@@ -3462,15 +3535,16 @@ route(/^\/admin\/settings$/, () => staffGuard(() => {
     <section class="panel"><h2>ฐานข้อมูล (Google Sheets) — ไม่บังคับ</h2><p class="muted small">ใช้ Google Sheets ของคุณเป็นฐานข้อมูล: (1) รับผลการเรียนจากผู้เรียนทุกเครื่อง (2) รับ<b>คำขอสมัครครู</b>แล้วแจ้งเตือนในกล่องรับเรื่อง (3) เก็บสำรอง/ดึง<b>รายชื่อนักเรียนและครู</b> — ถ้าไม่ตั้งค่า ระบบยังทำงานได้ด้วยไฟล์และรหัสที่ส่งต่อกันเอง</p>
       ${fld.text('Webhook URL (Web app ของ Apps Script)', 's.webhookUrl', S.webhookUrl, { type: 'url', ph: 'https://script.google.com/macros/s/…/exec', help: 'ที่อยู่นี้ถูกฝังในเว็บที่เผยแพร่ — ใครก็ส่งผลการเรียน/คำขอสมัครเข้ามาได้ แต่ดูข้อมูลและอนุมัติได้เฉพาะผู้มีรหัสลับด้านล่าง' })}
       <label class="field"><span class="lb">รหัสลับของผู้ดูแล</span><div class="passwrap"><input type="password" id="db-key" data-on="db-key" value="${esc(dbKey())}" autocomplete="off" spellcheck="false" placeholder="อย่างน้อย 8 ตัวอักษร"><button type="button" class="btn sm" data-action="db-keyshow">แสดง</button><button type="button" class="btn sm" data-action="db-keygen">สุ่มรหัสลับ</button></div><span class="help">เก็บเฉพาะในเบราว์เซอร์นี้ (ไม่อยู่ในไฟล์ที่เผยแพร่) และต้องตรงกับ ADMIN_KEY ในสคริปต์ — ใช้เครื่องอื่นต้องกรอกใหม่</span></label>
-      <div class="row"><button class="btn primary" data-action="db-test">${icon('check', 18)} ทดสอบการเชื่อมต่อฐานข้อมูล</button><button class="btn" data-action="hook-test">ส่งข้อความทดสอบผลการเรียน</button></div>
+      ${fld.check('อัปโหลดรูปภาพเข้า Google Drive อัตโนมัติ', 's.imgDrive', S.imgDrive !== false, 'ปิด = ย่อรูปแล้วฝังไว้ในข้อมูลเว็บแทน (ไฟล์ใหญ่ขึ้น แต่ไม่พึ่ง Drive)')}
+      <div class="row"><button class="btn primary" data-action="db-test">${icon('check', 18)} ทดสอบการเชื่อมต่อฐานข้อมูล</button><button class="btn" data-action="hook-test">ส่งข้อความทดสอบผลการเรียน</button><a class="btn ghost" href="#/admin/setup">${icon('refresh', 18)} ตัวช่วยตั้งค่าทีละขั้น</a></div>
       <div id="db-test-out" class="mt-s"></div>
       <details class="mt"><summary style="cursor:pointer;font-weight:600">วิธีตั้งค่า (ทำครั้งเดียว) และโค้ด Apps Script</summary>
-      <ol class="small muted"><li>กด <b>สุ่มรหัสลับ</b> ด้านบน (หรือพิมพ์รหัสเอง)</li><li>เปิด Google Sheets ใหม่ → เมนู <b>ส่วนขยาย → Apps Script</b> → ลบโค้ดเดิม → กด <b>คัดลอกโค้ด</b> แล้ววาง (รหัสลับของคุณจะอยู่ในโค้ดให้แล้ว) → บันทึก</li><li><b>ทำให้ใช้งานได้ → การทำให้ใช้งานได้ใหม่ → Web app</b> (เรียกใช้ในฐานะ: ฉัน · ผู้มีสิทธิ์เข้าถึง: <b>ทุกคน</b>) → อนุญาตสิทธิ์ → คัดลอก URL มาวางในช่องด้านบน</li><li>กด <b>ทดสอบการเชื่อมต่อฐานข้อมูล</b></li><li>เคยติดตั้งโค้ดเวอร์ชันเก่าไว้แล้ว: วางโค้ดใหม่ทับ → <b>ทำให้ใช้งานได้ → จัดการการทำให้ใช้งานได้ → แก้ไข → เวอร์ชันใหม่</b> (URL เดิมใช้ต่อได้)</li><li>อยากให้ส่งอีเมลแจ้งเตือนเมื่อมีคำขอสมัครครู: ใส่อีเมลที่ <b>NOTIFY_EMAIL</b> ในโค้ด</li></ol>
+      <ol class="small muted"><li>กด <b>สุ่มรหัสลับ</b> ด้านบน (หรือพิมพ์รหัสเอง)</li><li>เปิด Google Sheets ใหม่ → เมนู <b>ส่วนขยาย → Apps Script</b> → ลบโค้ดเดิม → กด <b>คัดลอกโค้ด</b> แล้ววาง (รหัสลับของคุณจะอยู่ในโค้ดให้แล้ว) → บันทึก → เลือกฟังก์ชัน <b>setup</b> แล้วกด <b>เรียกใช้</b> ครั้งเดียว เพื่ออนุญาตสิทธิ์ (ชีต + Drive)</li><li><b>ทำให้ใช้งานได้ → การทำให้ใช้งานได้ใหม่ → Web app</b> (เรียกใช้ในฐานะ: ฉัน · ผู้มีสิทธิ์เข้าถึง: <b>ทุกคน</b>) → อนุญาตสิทธิ์ → คัดลอก URL มาวางในช่องด้านบน</li><li>กด <b>ทดสอบการเชื่อมต่อฐานข้อมูล</b></li><li>เคยติดตั้งโค้ดเวอร์ชันเก่าไว้แล้ว: วางโค้ดใหม่ทับ → <b>ทำให้ใช้งานได้ → จัดการการทำให้ใช้งานได้ → แก้ไข → เวอร์ชันใหม่</b> (URL เดิมใช้ต่อได้)</li><li>อยากให้ส่งอีเมลแจ้งเตือนเมื่อมีคำขอสมัครครู: ใส่อีเมลที่ <b>NOTIFY_EMAIL</b> ในโค้ด</li></ol>
       <pre class="code">${esc(APPS_SCRIPT)}</pre><button class="btn sm" data-action="copy-script">${icon('copy', 16)} คัดลอกโค้ด</button></details></section>
-    <p class="small muted">การตั้งค่าบันทึกอัตโนมัติ — อย่าลืมกด "ดาวน์โหลด index.html" ที่หน้าคอร์สเพื่อเผยแพร่</p></div>`
+    <p class="small muted">การตั้งค่าบันทึกอัตโนมัติ — อย่าลืมกด "เผยแพร่" (หรือ "ดาวน์โหลด index.html") ที่หน้าภาพรวมเพื่อให้ผู้เรียนเห็น</p></div>`
   };
 }, { admin: true }));
-const APPS_SCRIPT = "/* PrommaMooc — Google Apps Script (เวอร์ชัน 2)\n   ใช้ Google Sheets ของคุณเป็นฐานข้อมูล: ผลการเรียน · คำขอสมัครครู · รายชื่อผู้ใช้ */\n\n// 1) รหัสลับของผู้ดูแล (อย่างน้อย 8 ตัวอักษร) — ต้องตรงกับที่ตั้งไว้ในหน้า \"ตั้งค่าเว็บไซต์\" ของ PrommaMooc\nvar ADMIN_KEY = 'เปลี่ยนเป็นรหัสลับของคุณ';\n// 2) (ไม่บังคับ) อีเมลที่ให้แจ้งเตือนเมื่อมีคำขอสมัครครูใหม่ — เว้นว่างไว้ถ้าไม่ต้องการ\nvar NOTIFY_EMAIL = '';\n\nvar DEFAULT_KEY = 'เปลี่ยนเป็นรหัสลับของคุณ';\nvar RESULT_HEAD = ['เวลา', 'เหตุการณ์', 'ชื่อ', 'อีเมล', 'หน่วยงาน', 'คอร์ส', 'บทเรียน', 'คะแนน %', 'ผ่าน', 'รหัสเกียรติบัตร', 'กลุ่ม', 'รหัสประจำตัว', 'รหัสคอร์ส', 'รหัสบทเรียน', 'ครั้งที่'];\nvar REQ_HEAD = ['รหัสคำขอ', 'เวลา', 'ชื่อ-นามสกุล', 'อีเมล', 'โรงเรียน/หน่วยงาน', 'เบอร์โทร', 'วิชา/หัวข้อ', 'หมายเหตุ', 'สถานะ', 'อัปเดตเมื่อ'];\nvar USER_HEAD = ['อีเมล*', 'รหัสผ่าน', 'ชื่อ-นามสกุล*', 'บทบาท', 'รหัสประจำตัว', 'กลุ่ม/ห้อง', 'โรงเรียน/หน่วยงาน'];\n\nfunction json_(o) {\n  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);\n}\nfunction sheet_(name, head) {\n  var ss = SpreadsheetApp.getActiveSpreadsheet();\n  var sh = ss.getSheetByName(name) || ss.insertSheet(name);\n  if (head && sh.getLastRow() === 0) sh.appendRow(head);\n  return sh;\n}\n// ตัดช่องว่างและจำกัดความยาว\nfunction s_(v, n) {\n  return String(v == null ? '' : v).replace(/\\s+/g, ' ').trim().slice(0, n);\n}\n// กันสูตรใน Google Sheets (ค่าที่ขึ้นต้นด้วย = + - @ จะไม่ถูกคำนวณ)\nfunction safe_(v) {\n  return typeof v === 'string' && /^[=+\\-@]/.test(v) ? \"'\" + v : v;\n}\n\nfunction doGet() {\n  return json_({ ok: true, app: 'prommamooc', v: 2 });\n}\n\nfunction doPost(e) {\n  var d;\n  try { d = JSON.parse(e.postData.contents); } catch (err) { return json_({ ok: false, error: 'bad_json' }); }\n  var lock = LockService.getScriptLock();\n  try {\n    lock.waitLock(20000);\n    if (d.action) return json_(admin_(d));\n    if (d.event === 'teacher_request') return json_(request_(d));\n    return json_(result_(d));\n  } catch (err) {\n    return json_({ ok: false, error: String(err) });\n  } finally {\n    try { lock.releaseLock(); } catch (x) {}\n  }\n}\n\n// ผลการเรียนจากผู้เรียน\nfunction result_(d) {\n  var sh = sheet_('results', RESULT_HEAD);\n  var L = d.learner || {}, C = d.course || {}, Ls = d.lesson || {};\n  sh.appendRow([d.at, d.event, L.name, L.email, L.extra, C.title, Ls.title,\n    d.percent != null ? d.percent : (d.post != null ? d.post : ''), d.passed == null ? '' : d.passed,\n    d.certId || '', L.group || '', L.sid || '', C.id || '', Ls.id || '', d.attempt || ''].map(safe_));\n  return { ok: true };\n}\n\n// คำขอสมัครครูจากหน้าเว็บ (ใครก็ส่งได้ — ผู้ดูแลตรวจก่อนอนุมัติ)\nfunction request_(d) {\n  var p = d.person || {};\n  if (d.hp) return { ok: true };   // ช่องดักบอท: คนจริงไม่เห็นและไม่กรอก\n  var name = s_(p.name, 120), email = s_(p.email, 160).toLowerCase();\n  if (name.length < 2 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return { ok: false, error: 'invalid' };\n  var sh = sheet_('requests', REQ_HEAD), vals = sh.getDataRange().getValues();\n  var row = -1, pending = 0, id = '';\n  for (var i = 1; i < vals.length; i++) {\n    if (String(vals[i][8]) !== 'pending') continue;\n    pending++;\n    if (String(vals[i][3]).toLowerCase() === email) { row = i + 1; id = String(vals[i][0]); }\n  }\n  var isNew = row < 0, now = new Date().toISOString();\n  if (isNew) {\n    if (pending >= 500) return { ok: false, error: 'full' };\n    id = 'rq-' + Utilities.getUuid().replace(/-/g, '').slice(0, 8);\n    row = sh.getLastRow() + 1;\n  }\n  var rec = [id, isNew ? now : String(vals[row - 1][1]), name, email, s_(p.org, 160), s_(p.phone, 40), s_(p.subject, 200), s_(p.note, 600), 'pending', now].map(safe_);\n  var rg = sh.getRange(row, 1, 1, rec.length);\n  rg.setNumberFormat('@');\n  rg.setValues([rec]);\n  if (isNew && NOTIFY_EMAIL) {\n    try {\n      MailApp.sendEmail(NOTIFY_EMAIL, 'PrommaMooc: คำขอสมัครครูใหม่ — ' + name,\n        name + ' (' + email + ')\\n' + (p.org ? s_(p.org, 160) + '\\n' : '') + (p.subject ? 'จะสอน: ' + s_(p.subject, 200) + '\\n' : '') +\n        '\\nเปิด PrommaMooc → ส่วนจัดการระบบ → กล่องรับเรื่อง เพื่อตรวจสอบและอนุมัติ');\n    } catch (err) {}\n  }\n  return { ok: true, id: id };\n}\n\nfunction pending_() {\n  var vals = sheet_('requests', REQ_HEAD).getDataRange().getValues(), out = [];\n  for (var i = 1; i < vals.length && out.length < 200; i++) {\n    var r = vals[i];\n    if (String(r[8]) !== 'pending') continue;\n    out.push({ id: String(r[0]), at: String(r[1]), person: { name: String(r[2]), email: String(r[3]), org: String(r[4]), phone: String(r[5]), subject: String(r[6]), note: String(r[7]) } });\n  }\n  return out;\n}\n\n// คำสั่งของผู้ดูแล — ต้องมีรหัสลับ\nfunction admin_(d) {\n  if (ADMIN_KEY.length < 8 || ADMIN_KEY === DEFAULT_KEY || String(d.key || '') !== ADMIN_KEY) return { ok: false, error: 'unauthorized' };\n  var a = d.action;\n  if (a === 'status') {\n    return { ok: true, v: 2, pending: pending_().length, users: Math.max(0, sheet_('users', USER_HEAD).getLastRow() - 1) };\n  }\n  if (a === 'requests') return { ok: true, items: pending_() };\n  if (a === 'mark') {\n    var st = String(d.status);\n    if (st !== 'approved' && st !== 'rejected') return { ok: false, error: 'invalid' };\n    var sh = sheet_('requests', REQ_HEAD), v = sh.getDataRange().getValues();\n    for (var i = 1; i < v.length; i++) {\n      if (String(v[i][0]) === String(d.id)) {\n        var r = sh.getRange(i + 1, 9, 1, 2);\n        r.setNumberFormat('@');\n        r.setValues([[st, new Date().toISOString()]]);\n        return { ok: true };\n      }\n    }\n    return { ok: false, error: 'not_found' };\n  }\n  if (a === 'roster_get') {\n    var u = sheet_('users', USER_HEAD).getDataRange().getValues(), rows = [];\n    for (var k = 1; k < u.length; k++) {\n      var row = u[k].map(function (c) { return String(c == null ? '' : c); });\n      if (row.join('').replace(/\\s/g, '') !== '') rows.push(row);\n    }\n    return { ok: true, head: USER_HEAD, rows: rows };\n  }\n  if (a === 'roster_put') {\n    var list = d.rows;\n    if (!Array.isArray(list) || list.length > 5000) return { ok: false, error: 'invalid' };\n    if (!list.length && !d.force) return { ok: false, error: 'empty' };\n    var us = sheet_('users', USER_HEAD), old = us.getDataRange().getValues();\n    var prev = sheet_('users_prev');   // เก็บฉบับก่อนหน้าไว้ 1 ชุด เผื่อบันทึกทับผิด\n    prev.clear();\n    if (old.length && old[0].length) prev.getRange(1, 1, old.length, old[0].length).setValues(old);\n    us.clear();\n    var all = [USER_HEAD];\n    for (var j = 0; j < list.length; j++) {\n      var x = [];\n      for (var c = 0; c < 7; c++) x.push(list[j][c] == null ? '' : String(list[j][c]));\n      all.push(x);\n    }\n    var g = us.getRange(1, 1, all.length, 7);\n    g.setNumberFormat('@');\n    g.setValues(all);\n    return { ok: true, n: list.length };\n  }\n  return { ok: false, error: 'unknown_action' };\n}\n";   // apps_script.gs is injected by build.py
+const APPS_SCRIPT = "/* PrommaMooc — Google Apps Script (เวอร์ชัน 3)\n   ใช้ Google Sheets ของคุณเป็นฐานข้อมูล: ผลการเรียน · คำขอสมัครครู · รายชื่อผู้ใช้ ·\n   ข้อมูลเว็บไซต์ที่เผยแพร่ (ไม่ต้องอัปโหลด index.html ซ้ำ) · รูปภาพ (เก็บใน Google Drive)\n\n   ติดตั้งครั้งแรก: วางโค้ดนี้ทั้งหมด → บันทึก → เลือกฟังก์ชัน setup ที่แถบด้านบน → กด \"เรียกใช้\" → อนุญาตสิทธิ์\n   → ทำให้ใช้งานได้ (Deploy) แบบ Web app: เรียกใช้ในฐานะ \"ฉัน\" · ผู้มีสิทธิ์เข้าถึง \"ทุกคน\" */\n\n// 1) รหัสลับของผู้ดูแล (อย่างน้อย 8 ตัวอักษร) — ต้องตรงกับที่ตั้งไว้ในหน้า \"ตั้งค่าเว็บไซต์\" ของ PrommaMooc\nvar ADMIN_KEY = 'เปลี่ยนเป็นรหัสลับของคุณ';\n// 2) (ไม่บังคับ) อีเมลที่ให้แจ้งเตือนเมื่อมีคำขอสมัครครูใหม่ — เว้นว่างไว้ถ้าไม่ต้องการ\nvar NOTIFY_EMAIL = '';\n\nvar DEFAULT_KEY = 'เปลี่ยนเป็นรหัสลับของคุณ';\nvar VERSION = 3;\nvar SITE_HEAD = ['ชิ้นที่', 'เวลาเผยแพร่ (ms)', 'จำนวนชิ้น', 'ข้อมูลเว็บไซต์ (JSON) — ห้ามแก้ไขเอง'];\nvar CHUNK = 40000;          // 1 เซลล์เก็บได้ไม่เกิน 50,000 ตัวอักษร จึงแบ่งข้อมูลเว็บเป็นชิ้นๆ\nvar SITE_MAX = 8000000;     // ขนาดข้อมูลเว็บไซต์สูงสุด (ตัวอักษร)\nvar IMG_FOLDER_NAME = 'PrommaMooc-images';\nvar RESULT_HEAD = ['เวลา', 'เหตุการณ์', 'ชื่อ', 'อีเมล', 'หน่วยงาน', 'คอร์ส', 'บทเรียน', 'คะแนน %', 'ผ่าน', 'รหัสเกียรติบัตร', 'กลุ่ม', 'รหัสประจำตัว', 'รหัสคอร์ส', 'รหัสบทเรียน', 'ครั้งที่'];\nvar REQ_HEAD = ['รหัสคำขอ', 'เวลา', 'ชื่อ-นามสกุล', 'อีเมล', 'โรงเรียน/หน่วยงาน', 'เบอร์โทร', 'วิชา/หัวข้อ', 'หมายเหตุ', 'สถานะ', 'อัปเดตเมื่อ'];\nvar USER_HEAD = ['อีเมล*', 'รหัสผ่าน', 'ชื่อ-นามสกุล*', 'บทบาท', 'รหัสประจำตัว', 'กลุ่ม/ห้อง', 'โรงเรียน/หน่วยงาน'];\n\nfunction json_(o) {\n  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);\n}\nfunction sheet_(name, head) {\n  var ss = SpreadsheetApp.getActiveSpreadsheet();\n  var sh = ss.getSheetByName(name) || ss.insertSheet(name);\n  if (head && sh.getLastRow() === 0) sh.appendRow(head);\n  return sh;\n}\n// ตัดช่องว่างและจำกัดความยาว\nfunction s_(v, n) {\n  return String(v == null ? '' : v).replace(/\\s+/g, ' ').trim().slice(0, n);\n}\n// กันสูตรใน Google Sheets (ค่าที่ขึ้นต้นด้วย = + - @ จะไม่ถูกคำนวณ)\nfunction safe_(v) {\n  return typeof v === 'string' && /^[=+\\-@]/.test(v) ? \"'\" + v : v;\n}\n\n// เรียกครั้งเดียวจากเมนู \"เรียกใช้\" เพื่ออนุญาตสิทธิ์ (Google ชีต + Google Drive) และสร้างแท็บให้ครบ\nfunction setup() {\n  sheet_('results', RESULT_HEAD);\n  sheet_('requests', REQ_HEAD);\n  sheet_('users', USER_HEAD);\n  sheet_('site', SITE_HEAD);\n  folder_();\n  return 'พร้อมใช้งาน';\n}\n\nfunction doGet(e) {\n  var p = (e && e.parameter) || {};\n  if (p.a === 'site') return json_(site_get_(p));   // ใครก็อ่านได้ (เป็นข้อมูลเดียวกับที่อยู่ในหน้าเว็บอยู่แล้ว)\n  return json_({ ok: true, app: 'prommamooc', v: VERSION });\n}\n\n// ข้อมูลเว็บไซต์ที่ผู้ดูแลเผยแพร่ — ผู้เรียนทุกเครื่องดึงไปใช้โดยไม่ต้องอัปโหลดไฟล์ใหม่\nfunction site_get_(p) {\n  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('site');\n  if (!sh || sh.getLastRow() < 2) return { ok: true, empty: true, v: VERSION };\n  for (var t = 0; t < 3; t++) {\n    var v = sh.getRange(2, 1, sh.getLastRow() - 1, 4).getValues();\n    var at = String(v[0][1]), n = Number(v[0][2]), good = v.length === n;\n    for (var i = 0; good && i < v.length; i++) {\n      if (String(v[i][1]) !== at || Number(v[i][0]) !== i + 1) good = false;\n    }\n    if (good) {\n      if (String(p.since || '') === at) return { ok: true, same: true, at: Number(at), v: VERSION };\n      return { ok: true, at: Number(at), v: VERSION, data: v.map(function (r) { return String(r[3]); }).join('') };\n    }\n    Utilities.sleep(700);   // กำลังมีการเผยแพร่ชุดใหม่อยู่ — รอสักครู่แล้วอ่านซ้ำ\n  }\n  return { ok: false, error: 'busy' };\n}\nfunction siteAt_() {\n  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('site');\n  if (!sh || sh.getLastRow() < 2) return 0;\n  return Number(sh.getRange(2, 2, 1, 1).getValues()[0][0]) || 0;\n}\n\n// โฟลเดอร์เก็บรูปใน Google Drive ของคุณ (สร้างให้เองครั้งแรก)\nfunction folder_() {\n  var props = PropertiesService.getScriptProperties(), id = props.getProperty('IMG_FOLDER');\n  if (id) {\n    try { var f = DriveApp.getFolderById(id); if (!f.isTrashed()) return f; } catch (e) {}\n  }\n  var nf = DriveApp.createFolder(IMG_FOLDER_NAME);\n  props.setProperty('IMG_FOLDER', nf.getId());\n  return nf;\n}\nfunction drive_ok_() {\n  try { DriveApp.getRootFolder(); return true; } catch (e) { return false; }\n}\nfunction img_put_(d) {\n  var ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp' }[String(d.mime || '')];\n  if (!ext || typeof d.data !== 'string' || d.data.length < 100) return { ok: false, error: 'invalid' };\n  if (d.data.length > 8000000) return { ok: false, error: 'too_big' };\n  var file;\n  try {\n    var blob = Utilities.newBlob(Utilities.base64Decode(d.data), d.mime, 'img-' + Date.now() + '.' + ext);\n    file = folder_().createFile(blob);\n  } catch (err) {\n    return { ok: false, error: 'drive_denied', detail: String(err).slice(0, 200) };\n  }\n  try {\n    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);\n    if (file.getSharingAccess() !== DriveApp.Access.ANYONE_WITH_LINK) throw new Error('not public');\n  } catch (err) {\n    try { file.setTrashed(true); } catch (x) {}\n    return { ok: false, error: 'share_blocked', detail: String(err).slice(0, 200) };\n  }\n  return { ok: true, id: file.getId() };\n}\nfunction site_put_(d) {\n  var s = String(d.json || '');\n  if (s.length > SITE_MAX) return { ok: false, error: 'too_big' };\n  var obj;\n  try { obj = JSON.parse(s); } catch (e) { return { ok: false, error: 'invalid' }; }\n  if (!obj || !Array.isArray(obj.courses) || typeof obj.settings !== 'object') return { ok: false, error: 'invalid' };\n  var sh = sheet_('site', SITE_HEAD), old = sh.getDataRange().getValues();\n  var prev = sheet_('site_prev');   // เก็บชุดก่อนหน้าไว้ 1 ชุด เผื่อต้องย้อนกลับ\n  prev.clear();\n  if (old.length > 1 && old[0].length) {\n    var pg = prev.getRange(1, 1, old.length, old[0].length);\n    pg.setNumberFormat('@');\n    pg.setValues(old);\n  }\n  var at = Date.now(), n = Math.ceil(s.length / CHUNK), rows = [SITE_HEAD];\n  for (var i = 0; i < n; i++) rows.push([i + 1, String(at), n, s.substr(i * CHUNK, CHUNK)]);\n  sh.clear();\n  var g = sh.getRange(1, 1, rows.length, 4);\n  g.setNumberFormat('@');\n  g.setValues(rows);\n  return { ok: true, at: at, n: n, bytes: s.length };\n}\n\nfunction doPost(e) {\n  var d;\n  try { d = JSON.parse(e.postData.contents); } catch (err) { return json_({ ok: false, error: 'bad_json' }); }\n  var lock = LockService.getScriptLock();\n  try {\n    lock.waitLock(20000);\n    if (d.action) return json_(admin_(d));\n    if (d.event === 'teacher_request') return json_(request_(d));\n    return json_(result_(d));\n  } catch (err) {\n    return json_({ ok: false, error: String(err) });\n  } finally {\n    try { lock.releaseLock(); } catch (x) {}\n  }\n}\n\n// ผลการเรียนจากผู้เรียน\nfunction result_(d) {\n  var sh = sheet_('results', RESULT_HEAD);\n  var L = d.learner || {}, C = d.course || {}, Ls = d.lesson || {};\n  sh.appendRow([d.at, d.event, L.name, L.email, L.extra, C.title, Ls.title,\n    d.percent != null ? d.percent : (d.post != null ? d.post : ''), d.passed == null ? '' : d.passed,\n    d.certId || '', L.group || '', L.sid || '', C.id || '', Ls.id || '', d.attempt || ''].map(safe_));\n  return { ok: true };\n}\n\n// คำขอสมัครครูจากหน้าเว็บ (ใครก็ส่งได้ — ผู้ดูแลตรวจก่อนอนุมัติ)\nfunction request_(d) {\n  var p = d.person || {};\n  if (d.hp) return { ok: true };   // ช่องดักบอท: คนจริงไม่เห็นและไม่กรอก\n  var name = s_(p.name, 120), email = s_(p.email, 160).toLowerCase();\n  if (name.length < 2 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return { ok: false, error: 'invalid' };\n  var sh = sheet_('requests', REQ_HEAD), vals = sh.getDataRange().getValues();\n  var row = -1, pending = 0, id = '';\n  for (var i = 1; i < vals.length; i++) {\n    if (String(vals[i][8]) !== 'pending') continue;\n    pending++;\n    if (String(vals[i][3]).toLowerCase() === email) { row = i + 1; id = String(vals[i][0]); }\n  }\n  var isNew = row < 0, now = new Date().toISOString();\n  if (isNew) {\n    if (pending >= 500) return { ok: false, error: 'full' };\n    id = 'rq-' + Utilities.getUuid().replace(/-/g, '').slice(0, 8);\n    row = sh.getLastRow() + 1;\n  }\n  var rec = [id, isNew ? now : String(vals[row - 1][1]), name, email, s_(p.org, 160), s_(p.phone, 40), s_(p.subject, 200), s_(p.note, 600), 'pending', now].map(safe_);\n  var rg = sh.getRange(row, 1, 1, rec.length);\n  rg.setNumberFormat('@');\n  rg.setValues([rec]);\n  if (isNew && NOTIFY_EMAIL) {\n    try {\n      MailApp.sendEmail(NOTIFY_EMAIL, 'PrommaMooc: คำขอสมัครครูใหม่ — ' + name,\n        name + ' (' + email + ')\\n' + (p.org ? s_(p.org, 160) + '\\n' : '') + (p.subject ? 'จะสอน: ' + s_(p.subject, 200) + '\\n' : '') +\n        '\\nเปิด PrommaMooc → ส่วนจัดการระบบ → กล่องรับเรื่อง เพื่อตรวจสอบและอนุมัติ');\n    } catch (err) {}\n  }\n  return { ok: true, id: id };\n}\n\nfunction pending_() {\n  var vals = sheet_('requests', REQ_HEAD).getDataRange().getValues(), out = [];\n  for (var i = 1; i < vals.length && out.length < 200; i++) {\n    var r = vals[i];\n    if (String(r[8]) !== 'pending') continue;\n    out.push({ id: String(r[0]), at: String(r[1]), person: { name: String(r[2]), email: String(r[3]), org: String(r[4]), phone: String(r[5]), subject: String(r[6]), note: String(r[7]) } });\n  }\n  return out;\n}\n\n// คำสั่งของผู้ดูแล — ต้องมีรหัสลับ\nfunction admin_(d) {\n  if (ADMIN_KEY.length < 8 || ADMIN_KEY === DEFAULT_KEY || String(d.key || '') !== ADMIN_KEY) return { ok: false, error: 'unauthorized' };\n  var a = d.action;\n  if (a === 'status') {\n    return { ok: true, v: VERSION, pending: pending_().length, users: Math.max(0, sheet_('users', USER_HEAD).getLastRow() - 1), site: siteAt_(), drive: drive_ok_() };\n  }\n  if (a === 'site_put') return site_put_(d);\n  if (a === 'img_put') return img_put_(d);\n  if (a === 'requests') return { ok: true, items: pending_() };\n  if (a === 'mark') {\n    var st = String(d.status);\n    if (st !== 'approved' && st !== 'rejected') return { ok: false, error: 'invalid' };\n    var sh = sheet_('requests', REQ_HEAD), v = sh.getDataRange().getValues();\n    for (var i = 1; i < v.length; i++) {\n      if (String(v[i][0]) === String(d.id)) {\n        var r = sh.getRange(i + 1, 9, 1, 2);\n        r.setNumberFormat('@');\n        r.setValues([[st, new Date().toISOString()]]);\n        return { ok: true };\n      }\n    }\n    return { ok: false, error: 'not_found' };\n  }\n  if (a === 'roster_get') {\n    var u = sheet_('users', USER_HEAD).getDataRange().getValues(), rows = [];\n    for (var k = 1; k < u.length; k++) {\n      var row = u[k].map(function (c) { return String(c == null ? '' : c); });\n      if (row.join('').replace(/\\s/g, '') !== '') rows.push(row);\n    }\n    return { ok: true, head: USER_HEAD, rows: rows };\n  }\n  if (a === 'roster_put') {\n    var list = d.rows;\n    if (!Array.isArray(list) || list.length > 5000) return { ok: false, error: 'invalid' };\n    if (!list.length && !d.force) return { ok: false, error: 'empty' };\n    var us = sheet_('users', USER_HEAD), old = us.getDataRange().getValues();\n    var prev = sheet_('users_prev');   // เก็บฉบับก่อนหน้าไว้ 1 ชุด เผื่อบันทึกทับผิด\n    prev.clear();\n    if (old.length && old[0].length) prev.getRange(1, 1, old.length, old[0].length).setValues(old);\n    us.clear();\n    var all = [USER_HEAD];\n    for (var j = 0; j < list.length; j++) {\n      var x = [];\n      for (var c = 0; c < 7; c++) x.push(list[j][c] == null ? '' : String(list[j][c]));\n      all.push(x);\n    }\n    var g = us.getRange(1, 1, all.length, 7);\n    g.setNumberFormat('@');\n    g.setValues(all);\n    return { ok: true, n: list.length };\n  }\n  return { ok: false, error: 'unknown_action' };\n}\n";   // apps_script.gs is injected by build.py
 actions['copy-script'] = async () => toast((await copyText(scriptWithKey())) ? (dbKey().length >= 8 ? 'คัดลอกโค้ดแล้ว (มีรหัสลับของคุณใส่ให้แล้ว)' : 'คัดลอกโค้ดแล้ว — อย่าลืมแก้ ADMIN_KEY ในโค้ด') : 'คัดลอกไม่สำเร็จ', 'ok', 5000);
 actions['hook-test'] = () => { if (!DATA.settings.webhookUrl) return toast('ยังไม่ได้ใส่ Webhook URL', 'bad'); emit('test', { course: { id: 'test', title: 'ทดสอบการส่งข้อมูล' }, percent: 100, passed: true }); toast('ส่งข้อความทดสอบแล้ว — ตรวจสอบในชีต "results"', 'ok', 5000); };
 actions['change-pw'] = () => changePasswordDialog();
@@ -3563,6 +3637,7 @@ function lessonItem(l, i) {
     <div class="item-b">${fld.text('ชื่อบทเรียน', p + '.title', l.title)}
     ${fld.text('ลิงก์วิดีโอ YouTube', p + '.youtube', l.youtube, { type: 'url', rf: true, ph: 'https://www.youtube.com/watch?v=…  หรือ  https://youtu.be/…', help: l.youtube ? (vid ? '✓ พบวิดีโอ รหัส ' + vid : '⚠ อ่านลิงก์นี้ไม่ได้ — ตรวจสอบว่าเป็นลิงก์วิดีโอเดี่ยวของ YouTube') : 'เว้นว่างได้ถ้าเป็นบทอ่านล้วน (ผู้เรียนกด "อ่านจบแล้ว")' })}
     ${fld.text('เนื้อหา / คำอธิบายบทเรียน', p + '.description', l.description, { area: true, rows: 4 })}
+    ${lessonImgsHtml(l, i)}
     <div class="grid2">${fld.text('ความยาว (ข้อความ)', p + '.duration', l.duration, { ph: 'เช่น 12 นาที' })}${''}</div>
     ${fld.text('เอกสารประกอบ (บรรทัดละ 1 รายการ: ชื่อ | ลิงก์)', p + '.resources', l.resources, { area: true, rows: 2, ph: 'สไลด์ประกอบ | https://…' })}
     <div class="sub"><h3>แบบทดสอบท้ายบท</h3>${fld.check('เปิดใช้แบบทดสอบท้ายบทนี้', p + '.quiz.enabled', l.quiz.enabled, 'ปลดล็อกหลังดูวิดีโอครบ ต้องผ่านเกณฑ์จึงจะไปบทถัดไป')}
@@ -3699,8 +3774,8 @@ function certTab() {
     ${fld.text('ข้อความก่อนชื่อผู้เรียน', 'c.certificate.preText', C.preText)}${fld.text('ข้อความหลังชื่อผู้เรียน (ก่อนชื่อคอร์ส)', 'c.certificate.postText', C.postText)}
     ${fld.text('ข้อความเพิ่มเติมท้ายชื่อคอร์ส (ไม่บังคับ)', 'c.certificate.note', C.note, { ph: 'เช่น จำนวน 6 ชั่วโมง' })}
     <div class="grid2">${fld.text('ชื่อหน่วยงานบนเกียรติบัตร', 'c.certificate.orgName', C.orgName, { help: 'เว้นว่าง = ใช้ชื่อหน่วยงานจากหน้าตั้งค่าเว็บไซต์' })}${fld.text('อักษรนำหน้ารหัสเกียรติบัตร', 'c.certificate.idPrefix', C.idPrefix)}</div>
-    ${fld.check('แสดงคะแนนก่อน/หลังเรียนบนเกียรติบัตร', 'c.certificate.showScores', C.showScores)}${fld.image('โลโก้หน่วยงาน', 'c.certificate.logo', C.logo, 400)}</section>
-    <section class="panel"><h2>ผู้ลงนาม</h2><div class="grid2">${[0, 1].map(i => `<div class="sub"><h3>คนที่ ${i + 1}</h3>${fld.text('ชื่อ–นามสกุล', `c.certificate.signers.${i}.name`, C.signers[i].name, { help: i ? 'เว้นว่าง = ไม่แสดง' : 'เว้นว่าง = ไม่แสดงผู้ลงนาม' })}${fld.text('ตำแหน่ง', `c.certificate.signers.${i}.title`, C.signers[i].title)}${fld.image('รูปลายเซ็น (พื้นโปร่งใสจะสวยที่สุด)', `c.certificate.signers.${i}.image`, C.signers[i].image, 500)}</div>`).join('')}</div></section>
+    ${fld.check('แสดงคะแนนก่อน/หลังเรียนบนเกียรติบัตร', 'c.certificate.showScores', C.showScores)}${fld.image('โลโก้หน่วยงาน', 'c.certificate.logo', C.logo, 400, '', { embed: true })}</section>
+    <section class="panel"><h2>ผู้ลงนาม</h2><div class="grid2">${[0, 1].map(i => `<div class="sub"><h3>คนที่ ${i + 1}</h3>${fld.text('ชื่อ–นามสกุล', `c.certificate.signers.${i}.name`, C.signers[i].name, { help: i ? 'เว้นว่าง = ไม่แสดง' : 'เว้นว่าง = ไม่แสดงผู้ลงนาม' })}${fld.text('ตำแหน่ง', `c.certificate.signers.${i}.title`, C.signers[i].title)}${fld.image('รูปลายเซ็น (พื้นโปร่งใสจะสวยที่สุด)', `c.certificate.signers.${i}.image`, C.signers[i].image, 500, '', { embed: true })}</div>`).join('')}</div></section>
     <section class="panel"><h2>ตัวอย่างเกียรติบัตร</h2><div class="cert-box"><canvas id="cert-prev" width="1754" height="1240"></canvas></div></section>`;
 }
 async function drawPreview() {
@@ -3723,11 +3798,11 @@ function pickFiles(accept) {
     i.click();
   });
 }
-async function withProgress(title, fn) {
+async function withProgress(title, fn, unit) {
   const root = $('#overlay'), wrap = document.createElement('div'); wrap.className = 'backdrop';
   wrap.innerHTML = `<div class="modal" role="alertdialog" aria-label="${esc(title)}"><div class="modal-b" style="padding:26px 24px"><h3>${esc(title)}</h3><div class="bar-progress mt-s"><i id="pg-fill" style="width:3%"></i></div><p class="small muted mt-s mb-0" id="pg-text">กำลังเตรียม…</p></div></div>`;
   root.appendChild(wrap); document.body.classList.add('modal-open');
-  const upd = (n, t) => { const f = $('#pg-fill'); if (f) f.style.width = Math.max(3, pct(n, t)) + '%'; const x = $('#pg-text'); if (x) x.textContent = `${n} / ${t} บัญชี`; };
+  const upd = (n, t) => { const f = $('#pg-fill'); if (f) f.style.width = Math.max(3, pct(n, t)) + '%'; const x = $('#pg-text'); if (x) x.textContent = `${n} / ${t} ${unit || 'บัญชี'}`; };
   try { await tick(); return await fn(upd); } finally { wrap.remove(); if (!root.children.length) document.body.classList.remove('modal-open'); }
 }
 const roleTag = r => `<span class="tag ${r === 'admin' ? 'gold' : r === 'teacher' ? '' : 'gray'}">${ROLE_TH[r] || r}</span>`;
@@ -3992,6 +4067,240 @@ actions['inbox-del'] = async el => {
   DATA.inbox = (DATA.inbox || []).filter(x => x.id !== el.dataset.id); saveLocalOnly(); refreshInboxBadge(); rerender();
 };
 
+
+/* =====================================================================
+   Images — pick, shrink, keep (Google Drive / inside the site / a link), show
+   A picture is stored as ONE string in the data:
+     "drive:<file id>"          a file in the administrator's Google Drive (uploaded through the database script)
+     "data:image/…;base64,…"    shrunk and embedded in the site data (used when Drive is not available, and by teachers)
+     "https://…"                a link to a picture somewhere else
+   ===================================================================== */
+const IMG_MIME = /^image\/(png|jpe?g|gif|webp|bmp|svg\+xml)$/i;
+const DRIVE_ID = /^[\w-]{10,90}$/;
+const IMGMEM = {};   // ref → data URL: a fresh upload is shown at once (Drive needs a moment to make its thumbnails)
+
+function imgSrc(ref, w) {
+  ref = String(ref || '').trim(); if (!ref) return '';
+  if (IMGMEM[ref]) return IMGMEM[ref];
+  if (ref.slice(0, 6) === 'drive:') { const id = ref.slice(6); return DRIVE_ID.test(id) ? `https://drive.google.com/thumbnail?id=${id}&sz=w${w || 1200}` : ''; }
+  if (/^data:image\/(png|jpe?g|gif|webp);base64,/i.test(ref)) return ref;
+  return /^https:\/\/[^\s"'<>]+$/i.test(ref) ? ref : '';
+}
+function imgTag(ref, o) {
+  o = o || {}; const s = imgSrc(ref, o.w); if (!s) return '';
+  const id = String(ref).slice(0, 6) === 'drive:' ? String(ref).slice(6) : '';
+  return `<img ${o.cls ? `class="${o.cls}"` : ''} src="${esc(s)}" alt="${esc(o.alt || '')}" ${id ? `data-d="${esc(id)}" data-w="${o.w || 1200}"` : ''} ${o.rm ? 'data-rm="1"' : ''} ${o.lazy === false ? '' : 'loading="lazy"'} decoding="async" referrerpolicy="no-referrer">`;
+}
+// a Drive thumbnail that fails gets one more chance through the second Google address; a picture that still fails is hidden
+document.addEventListener('error', e => {
+  const im = e.target; if (!im || im.tagName !== 'IMG') return;
+  if (im.dataset.d && !im.dataset.alt) { im.dataset.alt = '1'; im.src = `https://lh3.googleusercontent.com/d/${im.dataset.d}=w${im.dataset.w || 1200}`; return; }
+  if (im.dataset.rm) im.remove(); else im.classList.add('broken');
+}, true);
+
+/* a link pasted by a person → a stored reference ('' when it is not usable) */
+function parseImgLink(u) {
+  u = String(u || '').trim(); if (!u) return '';
+  const m = u.match(/drive\.google\.com\/file\/d\/([\w-]{10,})/) || u.match(/drive\.google\.com\/(?:open|uc|thumbnail)\?[^#\s]*\bid=([\w-]{10,})/) || u.match(/lh3\.googleusercontent\.com\/d\/([\w-]{10,})/);
+  if (m) return 'drive:' + m[1];
+  return /^https:\/\/[^\s"'<>]+$/i.test(u) ? u : '';
+}
+function imgBadge(ref) {
+  ref = String(ref || '');
+  if (ref.slice(0, 6) === 'drive:') return `<span class="tag ok">${icon('check', 13)} เก็บใน Google Drive</span>`;
+  if (ref.slice(0, 5) === 'data:') return `<span class="tag gray">ฝังในระบบ · ${Math.max(1, Math.round(ref.length * 0.75 / 1024))} KB</span>`;
+  if (ref) return '<span class="tag gray">ลิงก์รูปภายนอก</span>';
+  return '';
+}
+
+/* ---------- shrink in the browser ---------- */
+function loadBitmap(file) {
+  return new Promise((res, rej) => {
+    const u = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { URL.revokeObjectURL(u); res(im); };
+    im.onerror = () => { URL.revokeObjectURL(u); rej(new Error('อ่านไฟล์รูปไม่ได้ — ลองใช้ไฟล์ JPG หรือ PNG')); };
+    im.src = u;
+  });
+}
+const dataUrlBytes = u => Math.round((u.length - u.indexOf(',') - 1) * 0.75);
+/* o: { max: longest side in px, q: JPEG quality, kb: aim for at most this many KB } → { dataUrl, mime } */
+async function shrinkImage(file, o) {
+  const im = await loadBitmap(file), w0 = im.naturalWidth || im.width, h0 = im.naturalHeight || im.height;
+  if (!w0 || !h0) throw new Error('อ่านไฟล์รูปไม่ได้');
+  let scale = Math.min(1, o.max / Math.max(w0, h0)), q = o.q || 0.85;
+  const wantPng = /png|gif|webp|svg/i.test(file.type);
+  const draw = (sc, png) => {
+    const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w0 * sc)); c.height = Math.max(1, Math.round(h0 * sc));
+    const x = c.getContext('2d'); if (!png) { x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); }
+    x.drawImage(im, 0, 0, c.width, c.height); return c;
+  };
+  let out;
+  if (wantPng) {   // keep transparency while the file stays small
+    out = draw(scale, true).toDataURL('image/png');
+    if (dataUrlBytes(out) <= Math.min(o.kb || 1e9, 900) * 1024) return { dataUrl: out, mime: 'image/png' };
+  }
+  for (let i = 0; i < 6; i++) {
+    out = draw(scale, false).toDataURL('image/jpeg', q);
+    if (dataUrlBytes(out) <= (o.kb || 1e9) * 1024) break;
+    if (q > 0.56) q -= 0.09; else scale *= 0.85;
+  }
+  return { dataUrl: out, mime: 'image/jpeg' };
+}
+
+/* ---------- keep it somewhere ---------- */
+const driveBlocked = () => !!(DBS.st && DBS.st.drive === false) || DBS.driveOff === true;
+function driveWhy(e) {
+  return e && e.code === 'drive_denied' ? 'สคริปต์ยังไม่ได้รับอนุญาตให้ใช้ Google Drive'
+    : e && e.code === 'share_blocked' ? 'บัญชี Google นี้ไม่อนุญาตให้แชร์รูปแบบ "ทุกคนที่มีลิงก์" (มักเป็นนโยบายของโรงเรียน)'
+    : (e && e.message) || 'อัปโหลดไม่สำเร็จ';
+}
+/* → { ref, where: 'drive' | 'embed', note } — never throws because of Drive: it falls back to embedding the picture */
+async function storeImage(file, o) {
+  o = o || {};
+  if (!file || !IMG_MIME.test(file.type || '')) throw new Error('ไฟล์นี้ไม่ใช่รูปภาพ — ใช้ไฟล์ JPG, PNG, GIF หรือ WEBP');
+  if (file.size > 25e6) throw new Error('ไฟล์ใหญ่เกิน 25 MB');
+  let note = '';
+  if (!o.embed && dbReady() && (DATA.settings.imgDrive !== false)) {
+    if (driveBlocked()) note = 'Drive ยังใช้ไม่ได้ (ดูที่หน้า "เชื่อมต่อฐานข้อมูล")';
+    else {
+      try {
+        const big = await shrinkImage(file, { max: o.max || 1600, q: 0.86, kb: 1000 });
+        const r = await dbCall('img_put', { name: file.name, mime: big.mime, data: big.dataUrl.split(',')[1] }, { timeout: 90000 });
+        const ref = 'drive:' + r.id; IMGMEM[ref] = big.dataUrl;
+        return { ref, where: 'drive', note: '' };
+      } catch (e) {
+        if (e.code === 'drive_denied' || e.code === 'share_blocked') DBS.driveOff = true;
+        note = driveWhy(e);
+      }
+    }
+  }
+  const small = await shrinkImage(file, { max: Math.min(o.max || 1000, 1000), q: 0.78, kb: 170 });
+  return { ref: small.dataUrl, where: 'embed', note };
+}
+function imgDoneToast(r) {
+  if (r.where === 'drive') toast('อัปโหลดรูปเข้า Google Drive แล้ว', 'ok');
+  else toast(r.note ? `เก็บรูปแบบฝังในระบบแทน (${r.note})` : 'เก็บรูปแล้ว (ฝังในระบบ)', r.note ? '' : 'ok', r.note ? 7000 : 3400);
+}
+
+/* ---------- the picture field used in every editor ---------- */
+// o: { embed: true } → always embedded (certificate logo / signature, site logo: they must stay readable by the canvas and tiny)
+fld.image = function (label, bind, val, max, help, o) {
+  o = o || {};
+  const dz = `data-drop="${bind}" data-max="${max || 1600}" ${o.embed ? 'data-embed="1"' : ''}`;
+  const prev = imgTag(val, { w: 360, lazy: false });
+  return `<div class="field imgf"><span class="lb">${label}</span><div class="img-pick" ${dz}>
+    <span class="imgprev ${prev ? '' : 'empty'}">${prev || icon('image', 26)}</span>
+    <div class="img-ctl"><div class="row" style="gap:8px"><button class="btn sm" data-action="img-pick" data-bind="${bind}" data-max="${max || 1600}" ${o.embed ? 'data-embed="1"' : ''}>${icon('upload', 16)} ${val ? 'เปลี่ยนรูป' : 'เลือกรูป'}</button>${o.embed ? '' : `<button class="btn sm ghost" data-action="img-url" data-bind="${bind}">${icon('link', 16)} วางลิงก์รูป</button>`}${val ? `<button class="btn sm ghost danger-o" data-action="img-clear" data-bind="${bind}">ลบรูป</button>` : ''}</div>
+    <div class="small muted mt-s">${val ? imgBadge(val) : 'หรือลากไฟล์รูปมาวางตรงนี้'}</div></div></div>${help ? `<span class="help">${help}</span>` : ''}</div>`;
+};
+async function imgApply(bind, files, o) {
+  const { root, path } = bindTarget(bind); if (!root) return;
+  let r; try { r = await withProgress('กำลังจัดการรูปภาพ…', () => storeImage(files[0], o)); } catch (e) { return toast(e.message, 'bad', 6000); }
+  setPath(root, path, r.ref); saveData(); refreshEditor(); imgDoneToast(r);
+}
+actions['img-pick'] = async el => {
+  const f = await pickFile('image/*'); if (!f) return;
+  await imgApply(el.dataset.bind, [f], { embed: el.dataset.embed === '1', max: num(el.dataset.max, 1600) });
+};
+actions['img-clear'] = el => { const { root, path } = bindTarget(el.dataset.bind); if (!root) return; setPath(root, path, ''); saveData(); refreshEditor(); };
+actions['img-url'] = async el => {
+  const r = await openModal({
+    title: 'วางลิงก์รูปภาพ',
+    body: `<p class="muted small">วางลิงก์รูปที่ขึ้นต้นด้วย <span class="kbd">https://</span> หรือลิงก์แชร์จาก Google Drive (ต้องตั้งเป็น "ทุกคนที่มีลิงก์")</p><label class="field mb-0"><input type="url" id="img-link" placeholder="https://…" inputmode="url" autocapitalize="off" spellcheck="false"></label>`,
+    actions: [{ label: 'ยกเลิก', value: null, cls: 'ghost' }, { label: 'ใช้ลิงก์นี้', cls: 'primary', collect: m => { const v = parseImgLink($('#img-link', m).value); if (!v) { toast('ลิงก์ต้องขึ้นต้นด้วย https:// และเป็นที่อยู่ของรูปภาพ', 'bad', 5000); return false; } return v; } }]
+  });
+  if (!r) return;
+  const { root, path } = bindTarget(el.dataset.bind); if (!root) return; setPath(root, path, r); saveData(); refreshEditor();
+};
+// drag a picture file onto any picture field
+const dropZone = e => (e.target && e.target.closest ? e.target.closest('.img-pick[data-drop], .img-pick[data-drop-lesson]') : null);
+const hasFiles = e => !!(e.dataTransfer && Array.from(e.dataTransfer.types || []).indexOf('Files') >= 0);
+document.addEventListener('dragover', e => { const z = dropZone(e); if (z && hasFiles(e)) { e.preventDefault(); z.classList.add('drag'); } });
+document.addEventListener('dragleave', e => { const z = dropZone(e); if (z && !z.contains(e.relatedTarget)) z.classList.remove('drag'); });
+document.addEventListener('drop', e => {
+  const z = dropZone(e); if (!z || !hasFiles(e)) return; e.preventDefault(); z.classList.remove('drag');
+  const fs = Array.from(e.dataTransfer.files).filter(f => IMG_MIME.test(f.type));
+  if (!fs.length) return toast('วางได้เฉพาะไฟล์รูปภาพ (JPG, PNG, GIF, WEBP)', 'bad');
+  if (z.dataset.dropLesson !== undefined) lessonImgsAdd(+z.dataset.dropLesson, fs);
+  else imgApply(z.dataset.drop, fs, { embed: z.dataset.embed === '1', max: num(z.dataset.max, 1600) });
+});
+
+/* ---------- zoom (posters are read full size) ---------- */
+actions['img-zoom'] = el => {
+  const ref = el.dataset.ref; if (!imgSrc(ref)) return;
+  openModal({ title: el.dataset.cap || 'ดูรูปภาพ', wide: true, body: `<div class="zoom">${imgTag(ref, { w: 2000, lazy: false, alt: el.dataset.cap || '' })}</div>`, actions: [{ label: 'ปิด', value: true, cls: 'primary' }] });
+};
+
+/* ---------- move embedded pictures to Drive (run when publishing) ---------- */
+function imageSlots() {   // [{ get, set }] for every picture that may live in Drive
+  const out = [], add = (o, k) => { if (o && typeof o[k] === 'string') out.push({ o, k }); };
+  add(DATA.settings, 'heroImage');
+  (DATA.announcements || []).forEach(a => add(a, 'image'));
+  DATA.courses.forEach(c => {
+    add(c, 'cover');
+    c.lessons.forEach(l => { (l.images || []).forEach(g => add(g, 'src')); l.quiz.questions.forEach(q => add(q, 'image')); });
+    c.preTest.questions.forEach(q => add(q, 'image')); c.postTest.questions.forEach(q => add(q, 'image'));
+  });
+  return out;
+}
+const isEmbedded = v => typeof v === 'string' && v.slice(0, 11) === 'data:image/' && v.length > 6000;
+async function migrateImages(upd) {
+  const todo = imageSlots().filter(s => isEmbedded(s.o[s.k])); let n = 0, fail = '';
+  if (!todo.length || driveBlocked()) return { moved: 0, left: todo.length, fail };
+  const cache = {};
+  for (const s of todo) {
+    const v = s.o[s.k];
+    try {
+      if (!cache[v]) {
+        const mime = (v.match(/^data:(image\/[a-z]+);/i) || [])[1] || 'image/jpeg';
+        const r = await dbCall('img_put', { name: 'moved', mime, data: v.split(',')[1] }, { timeout: 90000 });
+        cache[v] = 'drive:' + r.id; IMGMEM[cache[v]] = v;
+      }
+      s.o[s.k] = cache[v]; n++; if (upd) upd(n, todo.length);
+    } catch (e) { fail = driveWhy(e); if (e.code === 'drive_denied' || e.code === 'share_blocked') DBS.driveOff = true; break; }
+  }
+  if (n) { flushSave(); saveData(); }
+  return { moved: n, left: todo.length - n, fail };
+}
+
+/* ---------- pictures inside a lesson ---------- */
+function galleryHtml(imgs) {
+  imgs = (imgs || []).filter(g => imgSrc(g.src)); if (!imgs.length) return '';
+  return `<div class="gal ${imgs.length === 1 ? 'one' : ''}">${imgs.map(g => `<figure><button type="button" class="gal-b" data-action="img-zoom" data-ref="${esc(g.src)}" data-cap="${esc(g.cap)}" aria-label="ขยายรูป${g.cap ? ': ' + esc(g.cap) : ''}">${imgTag(g.src, { w: 1400, alt: g.cap })}</button>${g.cap ? `<figcaption>${esc(g.cap)}</figcaption>` : ''}</figure>`).join('')}</div>`;
+}
+function lessonImgsHtml(l, i) {
+  const gs = l.images || [], p = `c.lessons.${i}.images`;
+  return `<div class="field"><span class="lb">รูปประกอบบทเรียน${gs.length ? ` (${gs.length} รูป)` : ''}</span><div class="img-pick gal-ed" data-drop-lesson="${i}">
+    ${gs.map((g, j) => `<div class="gal-i"><span class="imgprev">${imgTag(g.src, { w: 360 })}</span><div class="gal-c"><input type="text" data-bind="${p}.${j}.cap" value="${esc(g.cap)}" placeholder="คำบรรยายภาพ (ไม่บังคับ)" aria-label="คำบรรยายภาพที่ ${j + 1}"><div class="row" style="gap:6px">${imgBadge(g.src)}<span class="grow"></span><button class="icon-btn" data-action="limg-up" data-i="${i}" data-j="${j}" aria-label="เลื่อนรูปขึ้น" ${j ? '' : 'disabled'}>${icon('up', 17)}</button><button class="icon-btn" data-action="limg-down" data-i="${i}" data-j="${j}" aria-label="เลื่อนรูปลง" ${j < gs.length - 1 ? '' : 'disabled'}>${icon('down', 17)}</button><button class="icon-btn" style="color:var(--bad)" data-action="limg-del" data-i="${i}" data-j="${j}" aria-label="ลบรูป">${icon('trash', 17)}</button></div></div></div>`).join('')}
+    <div class="row"><button class="btn sm" data-action="limg-add" data-i="${i}">${icon('plus', 16)} เพิ่มรูป (เลือกได้หลายรูป)</button><button class="btn sm ghost" data-action="limg-url" data-i="${i}">${icon('link', 16)} วางลิงก์รูป</button>${gs.length ? '' : '<span class="small muted">หรือลากไฟล์รูปมาวางตรงนี้ · ใช้กับสไลด์ อินโฟกราฟิก หรือบทอ่านที่ไม่มีวิดีโอ</span>'}</div></div></div>`;
+}
+async function lessonImgsAdd(i, files) {
+  const l = ED.course && ED.course.lessons[i]; if (!l || !canEditCourse(ED.course)) return;
+  let notes = [], n = 0, bad = 0;
+  await withProgress('กำลังจัดการรูปภาพ…', async upd => {
+    for (const f of files) {
+      try { const r = await storeImage(f, { max: 1600 }); l.images.push({ src: r.ref, cap: '' }); if (r.where === 'embed' && r.note && notes.indexOf(r.note) < 0) notes.push(r.note); }
+      catch (e) { bad++; if (notes.indexOf(e.message) < 0) notes.push(e.message); }
+      n++; upd(n, files.length);
+    }
+  }, 'รูป');
+  saveData(); refreshEditor();
+  if (bad) toast(`เพิ่มรูปไม่สำเร็จ ${bad} รูป: ${notes.join(' · ')}`, 'bad', 7000);
+  else toast(notes.length ? `เพิ่มรูปแล้ว (ฝังในระบบ: ${notes[0]})` : 'เพิ่มรูปแล้ว', notes.length ? '' : 'ok', notes.length ? 7000 : 3400);
+}
+actions['limg-add'] = async el => { const fs = await pickFiles('image/*'); if (fs.length) await lessonImgsAdd(+el.dataset.i, fs); };
+actions['limg-url'] = async el => {
+  const l = ED.course.lessons[+el.dataset.i];
+  const r = await openModal({
+    title: 'วางลิงก์รูปภาพ', body: `<p class="muted small">ลิงก์ที่ขึ้นต้นด้วย <span class="kbd">https://</span> หรือลิงก์แชร์จาก Google Drive (ต้องตั้งเป็น "ทุกคนที่มีลิงก์")</p><label class="field mb-0"><input type="url" id="img-link" placeholder="https://…" inputmode="url" autocapitalize="off" spellcheck="false"></label>`,
+    actions: [{ label: 'ยกเลิก', value: null, cls: 'ghost' }, { label: 'เพิ่มรูป', cls: 'primary', collect: m => { const v = parseImgLink($('#img-link', m).value); if (!v) { toast('ลิงก์ต้องขึ้นต้นด้วย https:// และเป็นที่อยู่ของรูปภาพ', 'bad', 5000); return false; } return v; } }]
+  });
+  if (r) { l.images.push({ src: r, cap: '' }); saveData(); refreshEditor(); }
+};
+actions['limg-up'] = el => { if (move(ED.course.lessons[+el.dataset.i].images, +el.dataset.j, -1)) { saveData(); refreshEditor(); } };
+actions['limg-down'] = el => { if (move(ED.course.lessons[+el.dataset.i].images, +el.dataset.j, 1)) { saveData(); refreshEditor(); } };
+actions['limg-del'] = el => { ED.course.lessons[+el.dataset.i].images.splice(+el.dataset.j, 1); saveData(); refreshEditor(); };
+
 /* =====================================================================
    Database layer — Google Sheets through the Apps Script web app (apps_script.gs)
    - public:  a teacher sign-up request is sent straight to the sheet "requests"
@@ -4006,21 +4315,25 @@ const dbReady = () => isAdmin() && /^https:\/\//.test(dbUrl()) && dbKey().length
 const dbMeta = () => store.get(DB_META, {}) || {};
 const setDbMeta = o => store.set(DB_META, Object.assign(dbMeta(), o));
 const saveLocalOnly = () => { store.set(LS.data, { data: DATA }); };   // admin-only lists (inbox…): kept without marking the site "unpublished"
-const DBS = { reqBusy: false, req: null, pulling: false, pushErr: '' };   // req: { ok, at, err }
+const DBS = { reqBusy: false, req: null, pulling: false, pushErr: '', st: null, driveOff: false };   // req: { ok, at, err } · st: last answer of the script's "status" (version, Drive, last publish)
 const JSON_HDR = { 'Content-Type': 'text/plain;charset=utf-8' };   // text/plain = no CORS pre-flight (Apps Script cannot answer one)
 
 const DB_ERR = {
   unauthorized: 'รหัสลับของผู้ดูแลไม่ตรงกับที่ตั้งไว้ในสคริปต์ — ตรวจที่ ตั้งค่าเว็บไซต์ → ฐานข้อมูล',
   empty: 'รายชื่อว่างเปล่า — ระบบไม่บันทึกทับฐานข้อมูล',
   invalid: 'ข้อมูลไม่ถูกต้อง', not_found: 'ไม่พบรายการนี้ในฐานข้อมูล', full: 'มีคำขอค้างอยู่มากเกินไป กรุณาลองใหม่ภายหลัง',
-  unknown_action: 'สคริปต์ยังเป็นเวอร์ชันเก่า — คัดลอกโค้ดใหม่ไปวาง แล้ว Deploy เป็นเวอร์ชันใหม่'
+  unknown_action: 'สคริปต์ยังเป็นเวอร์ชันเก่า — คัดลอกโค้ดใหม่ไปวาง แล้ว Deploy เป็นเวอร์ชันใหม่',
+  drive_denied: 'สคริปต์ยังไม่ได้รับอนุญาตให้ใช้ Google Drive — เปิด Apps Script เลือกฟังก์ชัน setup แล้วกด "เรียกใช้" หนึ่งครั้ง จากนั้นกดอนุญาต',
+  share_blocked: 'บัญชี Google นี้ไม่อนุญาตให้แชร์รูปแบบ "ทุกคนที่มีลิงก์" (มักเป็นนโยบายของโรงเรียน) — ระบบจะฝังรูปไว้ในเว็บแทน',
+  too_big: 'ข้อมูลใหญ่เกินกว่าที่ฐานข้อมูลรับได้ — ย้ายรูปที่ฝังไว้ไปไว้ใน Google Drive หรือลดจำนวนรูป',
+  busy: 'ฐานข้อมูลกำลังอัปเดต กรุณาลองใหม่อีกครั้ง'
 };
 const OLD_SCRIPT = 'สคริปต์ที่ใช้อยู่เป็นเวอร์ชันเก่าหรือ URL ไม่ถูกต้อง — คัดลอกโค้ดเวอร์ชันใหม่ไปวาง แล้ว Deploy เป็นเวอร์ชันใหม่';
 
 /* administrator call: POST, answer is read back as JSON */
-async function dbCall(action, payload) {
+async function dbCall(action, payload, o) {
   const url = dbUrl(); if (!url) throw new Error('ยังไม่ได้ใส่ Webhook URL');
-  const ctl = typeof AbortController === 'function' ? new AbortController() : null, tm = setTimeout(() => { if (ctl) ctl.abort(); }, 25000);
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null, tm = setTimeout(() => { if (ctl) ctl.abort(); }, (o && o.timeout) || 25000);
   let text;
   try {
     const res = await fetch(url, { method: 'POST', headers: JSON_HDR, body: JSON.stringify(Object.assign({ action, key: dbKey() }, payload || {})), signal: ctl ? ctl.signal : undefined });
@@ -4028,7 +4341,7 @@ async function dbCall(action, payload) {
   } catch (e) { throw new Error(e && e.name === 'AbortError' ? 'ฐานข้อมูลตอบช้าเกินไป ลองใหม่อีกครั้ง' : 'เชื่อมต่อฐานข้อมูลไม่ได้ — ตรวจอินเทอร์เน็ต และตรวจว่า Deploy แบบ "ทุกคน (Anyone)"'); }
   finally { clearTimeout(tm); }
   let j; try { j = JSON.parse(text); } catch (e) { throw new Error(OLD_SCRIPT); }
-  if (!j || !j.ok) { const er = new Error(DB_ERR[j && j.error] || 'ฐานข้อมูลปฏิเสธคำสั่ง (' + (j && j.error) + ')'); er.code = j && j.error; throw er; }
+  if (!j || !j.ok) { const er = new Error(DB_ERR[j && j.error] || 'ฐานข้อมูลปฏิเสธคำสั่ง (' + (j && j.error) + ')'); er.code = j && j.error; er.detail = j && j.detail; throw er; }
   return j;
 }
 
@@ -4103,6 +4416,12 @@ actions['db-refresh'] = async () => {
   if (r && !(r.added || r.removed) && onLivePage()) rerender();
 };
 
+/* what the script can do right now (version, Drive permission, last publish) — checked once per visit and whenever a page needs it */
+async function dbCheckStatus(silent) {
+  if (!dbReady()) return null;
+  try { const j = await dbCall('status'); DBS.st = j; if (j.drive !== false) DBS.driveOff = false; return j; }
+  catch (e) { if (!silent) throw e; return null; }
+}
 let dbTimer = null;
 function startDbWatch() {
   if (dbTimer) return;
@@ -4110,6 +4429,7 @@ function startDbWatch() {
   dbTimer = setInterval(tick, 90000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(tick, 400); });
   setTimeout(tick, 1500);
+  setTimeout(() => { if (dbReady() && !DBS.st) dbCheckStatus(true).then(() => { if (typeof healthChipUpdate === 'function') healthChipUpdate(); }); }, 2200);
 }
 
 /* ---------------- roster: save / load ---------------- */
@@ -4175,9 +4495,152 @@ actions['db-test'] = async () => {
   if (!/^https:\/\//.test(dbUrl())) return say('bad', 'ใส่ Webhook URL (ขึ้นต้นด้วย https://) ก่อน');
   if (dbKey().length < 8) return say('bad', 'ตั้งรหัสลับของผู้ดูแลก่อน (อย่างน้อย 8 ตัวอักษร) — กด "สุ่มรหัสลับ" ได้');
   say('', 'กำลังทดสอบ…');
-  try { const j = await dbCall('status'); say('ok', `<b>เชื่อมต่อสำเร็จ</b> — คำขอสมัครครูที่รอตรวจ ${j.pending} รายการ · รายชื่อในฐานข้อมูล ${j.users} คน`); }
-  catch (e) { say('bad', esc(e.message)); }
+  try {
+    const j = await dbCall('status'); DBS.st = j; if (j.drive !== false) DBS.driveOff = false;
+    const more = (j.v >= 3 ? ` · สคริปต์เวอร์ชัน ${j.v} · รูปภาพใน Drive ${j.drive ? 'พร้อมใช้' : '<b>ยังไม่ได้อนุญาตสิทธิ์</b>'} · ${j.site ? 'เผยแพร่ล่าสุด ' + fmtDT(j.site) : 'ยังไม่เคยเผยแพร่ผ่านฐานข้อมูล'}` : ' · <b>สคริปต์เวอร์ชันเก่า</b> (ยังไม่มีการเผยแพร่ผ่านฐานข้อมูลและรูปใน Drive — วางสคริปต์ใหม่)');
+    say(j.v >= 3 && j.drive ? 'ok' : 'warn', `<b>เชื่อมต่อสำเร็จ</b> — คำขอสมัครครูที่รอตรวจ ${j.pending} รายการ · รายชื่อในฐานข้อมูล ${j.users} คน${more}`);
+  } catch (e) { say('bad', esc(e.message)); }
 };
+
+
+/* =====================================================================
+   Live site data — publish through the database, every browser follows it
+   • The administrator presses "เผยแพร่": the same data that goes into index.html is saved in the sheet "site".
+   • Every visitor's browser asks the script for it (cheap "nothing new" answer when unchanged) and uses the newest copy,
+     so courses, announcements and new accounts reach everyone without uploading index.html to GitHub again.
+   • The page always opens from the copy it already has (file or the last copy kept in the browser) — never blocked by the network.
+   ===================================================================== */
+const SITE = { busy: false, pending: null, seenAt: '', last: 0, err: '', timer: null, pubBusy: false, qt: null, autoErr: '' };
+const siteLive = () => /^https:\/\//.test(BAKED.url) && (BAKED.live || !!store.get(LS.remote, null));
+
+function cacheRemote(at, data) {
+  const rec = { at: String(at), url: BAKED.url, salt: BAKED.salt, data };
+  let ok = true; try { ok = JSON.stringify(rec).length < 3.2e6 && store.set(LS.remote, rec); } catch (e) { ok = false; }
+  if (!ok) store.del(LS.remote);
+  SITE.seenAt = String(at);
+}
+
+/* ---------- visitors: follow the published copy ---------- */
+function siteCanApplyNow() {
+  const path = currentPath();
+  if (/^\/learn\//.test(path) || document.body.classList.contains('modal-open')) return false;   // never swap the data under a lesson, a quiz or a dialog
+  if (isStaff() && (/^\/admin\/(course\/|new)/.test(path) || isDirty())) return false;           // never over somebody's unpublished edits
+  return true;
+}
+function siteCommit(p) {
+  EMBEDDED = normData(deep(p.data));
+  cacheRemote(p.at, p.data);
+  loadData(); applyTeacherOverlay(); applyTheme(DATA.settings);
+}
+function siteApplyPending() {
+  const p = SITE.pending; if (!p || !siteCanApplyNow()) return false;
+  SITE.pending = null; siteCommit(p); return true;
+}
+/* → 'new' (a newer copy is now in use) | 'pending' (downloaded, will be used at the next page change) | 'same' | 'none' | null (not possible now) */
+async function siteFetch(o) {
+  o = o || {};
+  if (!siteLive() || SITE.busy) return null;
+  SITE.busy = true;
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null, tm = setTimeout(() => { if (ctl) ctl.abort(); }, 20000);
+  try {
+    const rec = store.get(LS.remote, null), have = SITE.seenAt || (rec && rec.at) || '';
+    const res = await fetch(BAKED.url + (BAKED.url.indexOf('?') >= 0 ? '&' : '?') + 'a=site' + (have && !o.force ? '&since=' + encodeURIComponent(have) : ''), { cache: 'no-store', signal: ctl ? ctl.signal : undefined });
+    const j = JSON.parse(await res.text());
+    SITE.last = Date.now(); SITE.err = '';
+    if (!j || !j.ok) { SITE.err = (j && j.error) || 'bad'; return null; }
+    if (j.empty) return 'none';
+    if (j.same) { SITE.seenAt = String(j.at); return 'same'; }
+    const data = JSON.parse(j.data);
+    if (!data || !Array.isArray(data.courses) || !data.settings || typeof data.settings !== 'object') throw new Error('bad data');
+    SITE.seenAt = String(j.at);
+    if ((data.updatedAt || 0) <= BAKED.at) return 'none';   // older than the file this browser opened: never go backwards
+    SITE.pending = { at: j.at, data };
+    if (siteApplyPending()) { if (!o.noRender) { if (isStaff()) pubChipUpdate(); rerender(); } return 'new'; }
+    return 'pending';
+  } catch (e) { SITE.err = e.name === 'AbortError' ? 'timeout' : (e.message || 'error'); return null; }
+  finally { clearTimeout(tm); SITE.busy = false; }
+}
+function startSiteWatch() {
+  if (SITE.timer || !siteLive()) return;
+  setTimeout(() => siteFetch(), 300);
+  SITE.timer = setInterval(() => { if (!document.hidden) siteFetch(); }, 120000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - SITE.last > 45000) siteFetch(); });
+  window.addEventListener('online', () => siteFetch());
+}
+
+/* ---------- administrator: publish ---------- */
+const siteHasCopy = () => !!DATA.settings.dbPublish && !!dbMeta().pubAt;
+function pubChipHtml() {
+  if (!isAdmin()) return '';
+  let h;
+  if (SITE.pubBusy) h = `<span class="pubchip busy">กำลังเผยแพร่…</span>`;
+  else if (!dbReady()) h = `<a class="pubchip off" href="#/admin/setup" title="เชื่อมต่อฐานข้อมูลเพื่อเผยแพร่ด้วยปุ่มเดียว">${icon('refresh', 14)} ตั้งค่าเผยแพร่อัตโนมัติ</a>`;
+  else if (!siteHasCopy()) h = `<button class="pubchip dirty" data-action="site-publish">เผยแพร่ครั้งแรก</button>`;
+  else if (isDirty()) h = `<button class="pubchip dirty" data-action="site-publish" title="การแก้ไขอยู่ในเครื่องนี้เท่านั้น ผู้เรียนยังไม่เห็น — กดเพื่อเผยแพร่เลย">● ยังไม่ได้เผยแพร่</button>`;
+  else h = `<span class="pubchip ok" title="ผู้เรียนเห็นข้อมูลล่าสุดแล้ว · เผยแพร่ล่าสุด ${esc(fmtDT(dbMeta().pubAt))}">${icon('check', 14)} เผยแพร่แล้ว</span>`;
+  return `<span id="pubchip">${h}</span>`;
+}
+function pubChipUpdate() { const e = $('#pubchip'); if (e) e.outerHTML = pubChipHtml(); }
+actions['site-publish'] = () => sitePublish();
+
+async function sitePublish(o) {
+  o = o || {};
+  if (!isAdmin() || SITE.pubBusy) return false;
+  if (!dbReady()) { toast('ยังไม่ได้ตั้งค่าฐานข้อมูล — เปิด "เชื่อมต่อฐานข้อมูล" เพื่อตั้งค่าก่อน', 'bad', 5000); if (!o.auto) location.hash = '#/admin/setup'; return false; }
+  SITE.pubBusy = true; pubChipUpdate();
+  try {
+    const st = o.auto ? await dbCheckStatus() : await withProgress('กำลังตรวจฐานข้อมูล…', () => dbCheckStatus());
+    if (!st || !(st.v >= 3)) throw new Error('สคริปต์ในฐานข้อมูลเป็นเวอร์ชันเก่า — วางสคริปต์ใหม่ (ดูที่หน้า "เชื่อมต่อฐานข้อมูล") แล้วลองอีกครั้ง');
+    const known = dbMeta().siteAt ? String(dbMeta().siteAt) : '';
+    if (st.site && String(st.site) !== known) {
+      if (o.auto) throw new Error('มีการเผยแพร่ใหม่กว่าจากอุปกรณ์อื่น — กดเผยแพร่ด้วยตนเองเพื่อยืนยันก่อน');
+      const go = await confirmDlg(known
+        ? 'ฐานข้อมูลมีการเผยแพร่ที่ใหม่กว่าที่เครื่องนี้เคยเห็น (อาจเผยแพร่จากเครื่องอื่น) — การเผยแพร่ตอนนี้จะแทนที่ด้วยข้อมูลของเครื่องนี้ ระบบเก็บฉบับก่อนหน้าไว้ในชีต site_prev ต้องการทำต่อหรือไม่?'
+        : 'ฐานข้อมูลนี้มีข้อมูลเว็บที่เผยแพร่ไว้แล้ว — การเผยแพร่จะแทนที่ด้วยข้อมูลของเครื่องนี้ ระบบเก็บฉบับก่อนหน้าไว้ในชีต site_prev ต้องการทำต่อหรือไม่?', { ok: 'เผยแพร่ทับ', danger: true });
+      if (!go) return false;
+    }
+    const run = async upd => {
+      let mv = null;
+      if (st.drive !== false && !DBS.driveOff) mv = await migrateImages(upd);
+      if (!o.auto && hasRoster()) await syncAccounts();
+      DATA.settings.dbPublish = true; flushSave(); DATA.updatedAt = Date.now(); store.set(LS.data, { data: DATA });
+      const out = exportData(), json = JSON.stringify(out);
+      if (json.length > 7800000) { const er = new Error(DB_ERR.too_big); er.code = 'too_big'; throw er; }
+      const r = await dbCall('site_put', { json }, { timeout: 90000 });
+      setDbMeta({ siteAt: String(r.at), pubAt: Date.now() });
+      EMBEDDED = normData(JSON.parse(json)); cacheRemote(r.at, out);
+      return { r, mv, bytes: json.length };
+    };
+    const res = o.auto ? await run() : await withProgress('กำลังเผยแพร่ถึงทุกคน…', run, 'รูป');
+    SITE.autoErr = '';
+    const left = res.mv ? res.mv.left : 0;
+    toast(o.auto ? 'เผยแพร่อัตโนมัติแล้ว' : `เผยแพร่แล้ว — ผู้เรียนจะเห็นข้อมูลใหม่ภายในไม่กี่วินาที${res.mv && res.mv.moved ? ` · ย้ายรูป ${res.mv.moved} รูปไป Google Drive แล้ว` : ''}`, 'ok', o.auto ? 2500 : 5000);
+    if (left && !o.auto) toast(`ยังมีรูป ${left} รูปที่ฝังอยู่ในข้อมูล (${res.mv.fail || 'ย้ายไป Drive ไม่ได้'})`, '', 7000);
+    return true;
+  } catch (e) {
+    const msg = e && e.message ? e.message : 'ไม่ทราบสาเหตุ';
+    if (o.auto) { if (SITE.autoErr !== msg) toast('เผยแพร่อัตโนมัติไม่สำเร็จ: ' + msg, 'bad', 7000); SITE.autoErr = msg; }
+    else toast('เผยแพร่ไม่สำเร็จ: ' + msg, 'bad', 8000);
+    return false;
+  } finally { SITE.pubBusy = false; pubChipUpdate(); if (/^#\/admin\/?$/.test(location.hash || '#/admin') || /^#\/admin\/setup/.test(location.hash)) rerender(); }
+}
+// "publish by itself": a few seconds after the last edit
+function sitePublishQueue() {
+  if (!isAdmin() || SITE.pubBusy || !dbReady() || !DATA.settings.dbPublish || dbMeta().autopub !== true) return;
+  clearTimeout(SITE.qt);
+  SITE.qt = setTimeout(() => { if (isDirty() && !SITE.pubBusy) sitePublish({ auto: true }); }, 8000);
+}
+handlers['db-autopub'] = el => { setDbMeta({ autopub: !!el.checked }); if (el.checked) sitePublishQueue(); };
+
+/* ---------- the "publish" block shown on the dashboard ---------- */
+function pubPanelHtml() {
+  const m = dbMeta(), ready = dbReady();
+  if (!ready) return `<section class="panel"><h2>เผยแพร่ด้วยปุ่มเดียว</h2><p class="muted">เชื่อมต่อ Google Sheets แล้วทุกครั้งที่แก้ไขคอร์ส ประกาศ หรือรายชื่อ แค่กด <b>เผยแพร่</b> — ผู้เรียนเห็นทันที ไม่ต้องดาวน์โหลด index.html ไปอัปโหลดซ้ำบน GitHub</p><div class="row"><a class="btn primary" href="#/admin/setup">${icon('refresh', 18)} เริ่มตั้งค่า (ใช้เวลาประมาณ 10 นาที)</a></div></section>`;
+  return `<section class="panel"><div class="row between" style="gap:12px"><div><h2 class="mb-0">เผยแพร่ถึงทุกคน</h2><div class="small muted mt-s">${siteHasCopy() ? `เผยแพร่ล่าสุด ${fmtDT(m.pubAt)}${isDirty() ? ' · <b>มีการแก้ไขที่ยังไม่ได้เผยแพร่</b>' : ' · ข้อมูลเป็นปัจจุบัน'}` : 'ยังไม่เคยเผยแพร่ผ่านฐานข้อมูล'}</div></div>
+    <button class="btn primary" data-action="site-publish" ${SITE.pubBusy ? 'disabled' : ''}>${icon('upload', 18)} ${siteHasCopy() ? 'เผยแพร่ตอนนี้' : 'เผยแพร่ครั้งแรก'}</button></div>
+    <label class="check mt-s"><input type="checkbox" data-on="db-autopub" ${m.autopub === true ? 'checked' : ''}><span>เผยแพร่ให้อัตโนมัติหลังแก้ไขเสร็จ<span class="help">ระบบจะเผยแพร่เองประมาณ 8 วินาทีหลังการแก้ไขครั้งล่าสุด — ปิดไว้ถ้าอยากตรวจก่อนทุกครั้ง</span></span></label>
+    ${siteHasCopy() ? '' : `<p class="small muted mb-0 mt-s">หลังเผยแพร่ครั้งแรก ให้กด "ดาวน์โหลด index.html" แล้วอัปโหลดขึ้น GitHub <b>อีกครั้งเดียว</b> เพื่อให้หน้าเว็บรู้ว่าต้องดึงข้อมูลจากฐานข้อมูล ต่อจากนั้นไม่ต้องอัปโหลดอีก</p>`}</section>`;
+}
 
 /* =====================================================================
    Administrator: learner analytics — overview, course detail, learner detail, imports, export
@@ -4588,6 +5051,226 @@ actions['an-export'] = el => {
   toast(`ส่งออก ${rows.length} รายการแล้ว`, 'ok');
 };
 
+
+/* =====================================================================
+   Connect the database — a step-by-step page with automatic checks, plus the helpers on the administrator's dashboard
+   ===================================================================== */
+const SETUP = { h: null, busy: false, t: null, img: null };
+
+/* ---------- health check: asks the script, explains every answer ---------- */
+async function dbHealth() {
+  const out = [], add = (state, t) => out.push({ state, t }), url = dbUrl();
+  if (!/^https:\/\//.test(url)) { add('bad', 'ยังไม่ได้ใส่ URL ของ Web app (ต้องขึ้นต้นด้วย https://)'); return out; }
+  if (/\/dev(\?|$)/.test(url)) add('warn', 'URL นี้ลงท้ายด้วย /dev (ใช้ทดสอบเฉพาะเจ้าของ) — ต้องใช้ลิงก์ Web app ที่ลงท้ายด้วย /exec');
+  if (dbKey().length < 8) { add('bad', 'ยังไม่ได้ตั้งรหัสลับ (อย่างน้อย 8 ตัวอักษร)'); return out; }
+  let j; try { j = await dbCall('status'); } catch (e) { add('bad', e.message); DBS.st = null; return out; }
+  DBS.st = j; if (j.drive !== false) DBS.driveOff = false;
+  add('ok', 'เชื่อมต่อสคริปต์ได้ และรหัสลับตรงกัน');
+  if (j.v >= 3) {
+    add('ok', `สคริปต์เป็นเวอร์ชัน ${j.v} (ล่าสุด)`);
+    add(j.drive ? 'ok' : 'warn', j.drive ? 'Google Drive พร้อมเก็บรูปภาพ' : 'ยังไม่ได้อนุญาตสิทธิ์ Google Drive — กลับไปที่ขั้น ③ เลือกฟังก์ชัน setup แล้วกด "เรียกใช้" อีกครั้ง (ถ้าไม่ทำ ระบบจะฝังรูปไว้ในเว็บแทน)');
+    add(j.site ? 'ok' : 'warn', j.site ? `เผยแพร่ล่าสุด ${fmtDT(j.site)}` : 'ยังไม่เคยเผยแพร่ข้อมูลเว็บผ่านฐานข้อมูล — ทำที่ขั้น ⑥');
+  } else add('warn', 'สคริปต์เป็นเวอร์ชันเก่า (ผลการเรียน คำขอสมัครครู และรายชื่อใช้ได้ แต่ยังเผยแพร่ผ่านฐานข้อมูลและเก็บรูปใน Drive ไม่ได้) — คัดลอกสคริปต์ใหม่ไปวางทับ แล้ว Deploy เป็นเวอร์ชันใหม่');
+  add('ok', `คำขอสมัครครูที่รอตรวจ ${j.pending} รายการ · รายชื่อในฐานข้อมูล ${j.users} คน`);
+  return out;
+}
+const healthIcon = s => (s === 'ok' ? `<span class="hs ok">${icon('check', 15)}</span>` : s === 'warn' ? `<span class="hs warn">${icon('alert', 15)}</span>` : `<span class="hs bad">${icon('x', 15)}</span>`);
+const healthHtml = h => (h && h.length ? `<ul class="health">${h.map(x => `<li>${healthIcon(x.state)}<span>${esc(x.t)}</span></li>`).join('')}</ul>` : '');
+function paintHealth() { const e = $('#setup-health'); if (e) e.innerHTML = SETUP.busy ? '<p class="small muted mb-0">กำลังตรวจ…</p>' : healthHtml(SETUP.h); const b = $('#setup-img-out'); if (b && SETUP.img) b.innerHTML = healthHtml([SETUP.img]); }
+async function setupCheck() {
+  if (SETUP.busy) return; SETUP.busy = true; paintHealth();
+  try { SETUP.h = await dbHealth(); } finally { SETUP.busy = false; }
+  paintHealth(); healthChipUpdate();
+  if (location.hash === '#/admin/setup') {   // redraw so the ticks of steps 2–5 and the "publish" button follow the result; keep the cursor where the admin was typing
+    const ae = document.activeElement, id = ae && ae.id, pos = ae && typeof ae.selectionStart === 'number' ? ae.selectionStart : null;
+    rerender();
+    const f = id && document.getElementById(id); if (f && f !== document.activeElement) { try { f.focus({ preventScroll: true }); if (pos !== null) f.setSelectionRange(pos, pos); } catch (e) { /* ignore */ } }
+  }
+}
+handlers['setup-url'] = () => { clearTimeout(SETUP.t); SETUP.t = setTimeout(() => { if (/^https:\/\//.test(dbUrl()) && location.hash === '#/admin/setup') setupCheck(); }, 800); };
+actions['setup-check'] = () => setupCheck();
+actions['setup-copy'] = async () => {
+  if (dbKey().length < 8) store.set(DB_KEY, genKey());
+  toast((await copyText(scriptWithKey())) ? 'คัดลอกสคริปต์แล้ว (มีรหัสลับของคุณใส่ให้แล้ว) — ไปวางที่ Apps Script ได้เลย' : 'คัดลอกไม่สำเร็จ — เปิดหัวข้อ "ดูโค้ดสคริปต์" แล้วคัดลอกเอง', 'ok', 6000);
+};
+// a real round trip: send a tiny picture to Drive, then load it back the way a visitor's browser will
+actions['setup-img'] = async () => {
+  const out = $('#setup-img-out'); if (!dbReady()) return toast('ยังไม่ได้ตั้งค่าฐานข้อมูล', 'bad');
+  if (out) out.innerHTML = '<p class="small muted mb-0">กำลังทดสอบอัปโหลดรูปเล็ก ๆ เข้า Google Drive…</p>';
+  const c = document.createElement('canvas'); c.width = c.height = 48; const x = c.getContext('2d'); x.fillStyle = '#26418f'; x.fillRect(0, 0, 48, 48); x.fillStyle = '#f2a900'; x.beginPath(); x.arc(24, 24, 14, 0, 7); x.fill();
+  const data = c.toDataURL('image/png').split(',')[1];
+  try {
+    const r = await dbCall('img_put', { name: 'test', mime: 'image/png', data }, { timeout: 60000 });
+    const ok = await new Promise(res => { const im = new Image(); const t = setTimeout(() => res(false), 12000); im.onload = () => { clearTimeout(t); res(true); }; im.onerror = () => { clearTimeout(t); res(false); }; im.src = imgSrc('drive:' + r.id, 64) + '&t=' + Date.now(); });
+    SETUP.img = ok ? { state: 'ok', t: 'อัปโหลดรูปเข้า Drive และแสดงรูปกลับมาได้จริง — พร้อมใช้งานรูปภาพ' } : { state: 'warn', t: 'อัปโหลดสำเร็จแต่แสดงรูปกลับมาไม่ได้ — ตรวจว่าบัญชี Google ของคุณอนุญาตให้แชร์ "ทุกคนที่มีลิงก์" ได้ หรือรอสักครู่แล้วลองใหม่ (ถ้ายังไม่ได้ ระบบจะฝังรูปไว้ในเว็บแทน)' };
+    if (ok) DBS.driveOff = false;
+  } catch (e) { SETUP.img = { state: 'bad', t: e.message }; if (e.code === 'drive_denied' || e.code === 'share_blocked') DBS.driveOff = true; }
+  paintHealth();
+};
+
+/* ---------- the page ---------- */
+const stepCard = (n, title, done, body) => `<section class="panel step ${done ? 'done' : ''}"><div class="step-h"><span class="sn ${done ? 'ok' : ''}">${done ? icon('check', 17) : n}</span><h2 class="mb-0">${title}</h2></div><div class="step-b">${body}</div></section>`;
+function setupStateHtml(connected) {
+  if (!connected) return '';
+  return `<div class="callout ok">${icon('checkc')}<div class="small"><b>เชื่อมต่อฐานข้อมูลสำเร็จ</b> — ผลการเรียน คำขอสมัครครู รายชื่อ และรูปภาพจะบันทึกลงชีตของคุณ ต่อไปทำขั้น ⑥ เพื่อเผยแพร่เว็บผ่านฐานข้อมูล</div></div>`;
+}
+function setupHtml() {
+  const S = DATA.settings, m = dbMeta(), key = dbKey(), url = dbUrl(), h = SETUP.h;
+  const connected = !!(h && h.length && h.every(x => x.state !== 'bad') && h.some(x => x.state === 'ok'));
+  const pubd = siteHasCopy();
+  return `<div class="wrap mt" style="max-width:860px"><div class="crumbs"><a href="#/admin">ภาพรวม</a><span>›</span><span>เชื่อมต่อฐานข้อมูล</span></div>
+    <h1>เชื่อมต่อฐานข้อมูล (Google ชีต)</h1>
+    <p class="lead muted" style="font-size:1.08rem">ตั้งค่าครั้งเดียวประมาณ 10 นาที หลังจากนั้นแก้ไขคอร์ส ประกาศ หรือรายชื่อ แล้วกด <b>เผยแพร่</b> ปุ่มเดียว ผู้เรียนทุกคนเห็นทันที — ไม่ต้องอัปโหลดไฟล์ขึ้น GitHub ซ้ำ และอัปโหลดรูปเข้า Google Drive ของคุณได้อัตโนมัติ</p>
+    <div class="callout">${icon('info')}<div class="small"><b>ไม่บังคับ</b> — ถ้าไม่ตั้งค่า ระบบยังใช้งานได้ด้วยไฟล์ index.html เหมือนเดิม ข้อมูลทั้งหมดอยู่ในบัญชี Google ของคุณเอง (ชีตและ Drive) ไม่ผ่านผู้ให้บริการอื่น</div></div>
+    ${stepCard(1, 'รหัสลับของผู้ดูแล', key.length >= 8, `<p class="muted small">ระบบสร้างรหัสให้แล้ว ใช้ยืนยันว่าคำสั่งมาจากคุณ เก็บไว้ในเบราว์เซอร์นี้และในสคริปต์เท่านั้น ไม่อยู่ในไฟล์เว็บที่เผยแพร่ — ใช้เครื่องอื่นต้องกรอกรหัสนี้อีกครั้ง</p>
+      <label class="field mb-0"><div class="passwrap"><input type="password" id="db-key" data-on="db-key" value="${esc(key)}" autocomplete="off" spellcheck="false" aria-label="รหัสลับของผู้ดูแล"><button type="button" class="btn sm" data-action="db-keyshow">แสดง</button><button type="button" class="btn sm" data-action="db-keygen">สุ่มรหัสใหม่</button></div></label>`)}
+    ${stepCard(2, 'สร้าง Google ชีต', connected, `<p class="muted small">ใช้บัญชี Google ที่คุณจะดูแลระบบ ตั้งชื่อชีตอะไรก็ได้ เช่น PrommaMooc</p><a class="btn" href="https://sheets.new" target="_blank" rel="noopener">${icon('external', 18)} เปิด Google ชีตใหม่</a>`)}
+    ${stepCard(3, 'วางสคริปต์ แล้วอนุญาตสิทธิ์', connected, `<ol class="steps small">
+      <li>กดปุ่มด้านล่างเพื่อคัดลอกสคริปต์ (มีรหัสลับของคุณใส่ให้แล้ว)</li><li>ในชีต เลือกเมนู <b>ส่วนขยาย → Apps Script</b></li>
+      <li>ลบโค้ดเดิมทั้งหมด วางสคริปต์ที่คัดลอก แล้วกดบันทึก</li>
+      <li>ที่แถบด้านบน เลือกฟังก์ชัน <b>setup</b> แล้วกด <b>เรียกใช้</b> → เลือกบัญชีของคุณ → อนุญาต<br><span class="muted">ถ้า Google ขึ้นคำเตือนว่ายังไม่ได้ยืนยันแอป ให้กด <b>ขั้นสูง → ไปที่ … (ไม่ปลอดภัย)</b> → อนุญาต สคริปต์นี้เป็นของคุณเอง จึงขึ้นคำเตือนตามปกติ</span></li></ol>
+      <div class="row"><button class="btn primary" data-action="setup-copy">${icon('copy', 18)} คัดลอกสคริปต์</button></div>
+      <details class="mt-s"><summary style="cursor:pointer">ดูโค้ดสคริปต์</summary><pre class="code">${esc(APPS_SCRIPT)}</pre></details>`)}
+    ${stepCard(4, 'ทำให้ใช้งานได้เป็น Web app', connected, `<ol class="steps small"><li>ใน Apps Script กดปุ่ม <b>ทำให้ใช้งานได้ (Deploy) → การทำให้ใช้งานได้รายการใหม่</b></li>
+      <li>กดไอคอนฟันเฟืองเลือก <b>เว็บแอป (Web app)</b> → เรียกใช้ในฐานะ <b>ฉัน</b> → ผู้มีสิทธิ์เข้าถึง <b>ทุกคน</b> → กด <b>ทำให้ใช้งานได้</b></li>
+      <li>คัดลอก <b>URL ของเว็บแอป</b> (ลงท้ายด้วย <span class="kbd">/exec</span>) ไปวางในขั้นถัดไป</li></ol>
+      <p class="small muted mb-0">เคยติดตั้งเวอร์ชันเก่าไว้แล้ว: วางสคริปต์ใหม่ทับ → <b>ทำให้ใช้งานได้ → จัดการการทำให้ใช้งานได้ → ไอคอนดินสอ → เวอร์ชัน: เวอร์ชันใหม่ → ทำให้ใช้งานได้</b> (URL เดิมใช้ต่อได้)</p>`)}
+    ${stepCard(5, 'วาง URL แล้วให้ระบบตรวจให้', connected, `<label class="field"><span class="lb">URL ของเว็บแอป</span><input type="url" id="su-url" data-bind="s.webhookUrl" data-on="setup-url" value="${esc(url)}" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+      <div id="setup-health" aria-live="polite">${SETUP.busy ? '<p class="small muted mb-0">กำลังตรวจ…</p>' : healthHtml(h)}</div><div id="setup-state" class="mt-s">${setupStateHtml(connected)}</div>
+      <div class="row mt-s"><button class="btn" data-action="setup-check">${icon('refresh', 18)} ตรวจใหม่</button><button class="btn" data-action="setup-img">${icon('image', 18)} ทดสอบอัปโหลดรูปเข้า Drive</button></div><div id="setup-img-out" class="mt-s">${SETUP.img ? healthHtml([SETUP.img]) : ''}</div>`)}
+    ${stepCard(6, 'เผยแพร่ครั้งแรก', pubd, `<p class="muted small">กดเผยแพร่เพื่อส่งคอร์ส ประกาศ ตั้งค่า และบัญชีผู้ใช้ปัจจุบันขึ้นฐานข้อมูล แล้วโหลดไฟล์ index.html ไปอัปโหลดขึ้น GitHub <b>อีกครั้งเดียว</b> เพื่อให้หน้าเว็บรู้ว่าต้องดึงข้อมูลจากฐานข้อมูล จากนั้นไม่ต้องอัปโหลดไฟล์อีก</p>
+      <div class="row"><button class="btn primary" data-action="site-publish" ${connected ? '' : 'disabled'}>${icon('upload', 18)} ${pubd ? 'เผยแพร่อีกครั้ง' : 'เผยแพร่ครั้งแรก'}</button><button class="btn" data-action="pub-html" ${pubd ? '' : 'disabled'}>${icon('download', 18)} ดาวน์โหลด index.html (อัปขึ้น GitHub ครั้งเดียว)</button></div>
+      ${pubd ? `<div class="callout ok mt-s mb-0">${icon('checkc')}<div class="small"><b>เผยแพร่แล้ว ${fmtDT(m.pubAt)}</b> — หลังอัปโหลด index.html ใหม่ขึ้น GitHub แล้ว ต่อไปนี้แก้ไขอะไรก็กดปุ่ม "เผยแพร่" ที่มุมขวาบนของแถบผู้ดูแลได้เลย หรือเปิด "เผยแพร่อัตโนมัติ" ที่หน้าภาพรวม</div></div>` : ''}`)}
+    </div>`;
+}
+route(/^\/admin\/setup$/, () => staffGuard(() => {
+  if (dbKey().length < 8) store.set(DB_KEY, genKey());
+  return { title: 'เชื่อมต่อฐานข้อมูล', admin: true, html: setupHtml(), mount() { if (/^https:\/\//.test(dbUrl()) && !SETUP.h && !SETUP.busy) setupCheck(); } };
+}, { admin: true }));
+
+/* ---------- administrator's dashboard: what needs attention ---------- */
+function healthChipUpdate() { if (/^#\/admin\/?$/.test(location.hash || '#/admin')) rerender(); }
+function onboardHtml() {
+  if (dbMeta().onboardOff) return '';
+  const S = DATA.settings, students = (DATA.users || []).filter(u => u.role !== 'admin').length;
+  const steps = [
+    [!!(S.orgName || S.logo || S.heroImage), 'ตั้งชื่อหน่วยงาน โลโก้ และภาพหัวเว็บ', '#/admin/settings'],
+    [dbReady() && siteHasCopy(), 'เชื่อมต่อฐานข้อมูลและเผยแพร่ครั้งแรก', '#/admin/setup'],
+    [DATA.courses.length > 0, 'สร้างคอร์สแรก', '#/admin/new'],
+    [students > 0, 'เพิ่มรายชื่อนักเรียนและครูผู้สอน', '#/admin/users'],
+    [(DATA.announcements || []).length > 0, 'ลงประกาศ (ใส่ภาพโปสเตอร์ได้)', '#/admin/announcements']
+  ];
+  const done = steps.filter(s => s[0]).length; if (done === steps.length) return '';
+  return `<section class="panel onb"><div class="row between"><h2 class="mb-0">เริ่มต้นใช้งาน <span class="muted small" style="font-weight:400">${done}/${steps.length}</span></h2><button class="btn sm ghost" data-action="onb-hide">ซ่อน</button></div>
+    <ul class="chk mt-s">${steps.map(s => `<li class="${s[0] ? 'd' : ''}"><span class="ck">${s[0] ? icon('check', 14) : ''}</span><a href="${s[2]}">${s[1]}</a></li>`).join('')}</ul></section>`;
+}
+actions['onb-hide'] = () => { setDbMeta({ onboardOff: true }); rerender(); };
+function adminHelpHtml() {
+  const b = [];
+  if (dbReady() && DBS.st && !(DBS.st.v >= 3)) b.push(`<div class="banner">${icon('alert')}<div class="grow"><b>สคริปต์ฐานข้อมูลเป็นเวอร์ชันเก่า</b><div class="small">ยังเผยแพร่ผ่านฐานข้อมูลและเก็บรูปใน Google Drive ไม่ได้ — วางสคริปต์ใหม่ทับแล้ว Deploy เป็นเวอร์ชันใหม่</div></div><a class="btn primary" href="#/admin/setup">ดูวิธีอัปเดต</a></div>`);
+  else if (dbReady() && DBS.st && DBS.st.drive === false && DATA.settings.imgDrive !== false) b.push(`<div class="banner">${icon('alert')}<div class="grow"><b>ยังไม่ได้อนุญาตสิทธิ์ Google Drive</b><div class="small">รูปที่เพิ่มจะถูกย่อแล้วฝังไว้ในเว็บแทน — เปิด Apps Script เลือกฟังก์ชัน setup แล้วกด "เรียกใช้" หนึ่งครั้งเพื่ออนุญาต</div></div><a class="btn" href="#/admin/setup">ตรวจสอบ</a></div>`);
+  if (isDirty()) {
+    b.push(dbReady()
+      ? `<div class="banner">${icon('alert')}<div class="grow"><b>มีการแก้ไขที่ยังไม่ได้เผยแพร่</b><div class="small">การแก้ไขอยู่ในเบราว์เซอร์เครื่องนี้เท่านั้น ผู้เรียนยังไม่เห็น</div></div><button class="btn primary" data-action="site-publish">${icon('upload', 18)} เผยแพร่ถึงทุกคนตอนนี้</button><button class="btn" data-action="pub-html">${icon('download', 18)} ดาวน์โหลด index.html</button></div>`
+      : `<div class="banner">${icon('alert')}<div class="grow"><b>มีการแก้ไขที่ยังไม่ได้เผยแพร่</b><div class="small">การแก้ไขอยู่ในเบราว์เซอร์เครื่องนี้เท่านั้น ผู้เรียนยังไม่เห็น — ดาวน์โหลด index.html แล้วอัปโหลดทับไฟล์เดิมบน GitHub (หรือ <a href="#/admin/setup">เชื่อมต่อฐานข้อมูล</a> เพื่อเผยแพร่ด้วยปุ่มเดียว)</div></div><button class="btn primary" data-action="pub-html">${icon('download', 18)} ดาวน์โหลด index.html</button></div>`);
+  }
+  return b.join('') + onboardHtml();
+}
+
+
+/* =====================================================================
+   Announcements — pictures / posters on the home page (a swipeable strip, optional pop-up) and the page that manages them
+   ===================================================================== */
+const two = n => String(n).padStart(2, '0');
+const annToday = () => { const d = new Date(); return d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()); };
+const annActive = (a, today) => a.on !== false && (!a.from || a.from <= today) && (!a.to || a.to >= today);
+function annState(a) {
+  const t = annToday();
+  if (a.on === false) return { t: 'ซ่อนอยู่', cls: 'gray' };
+  if (a.from && a.from > t) return { t: 'ยังไม่ถึงเวลาแสดง', cls: 'warn' };
+  if (a.to && a.to < t) return { t: 'หมดเวลาแสดงแล้ว', cls: 'gray' };
+  return { t: 'แสดงอยู่', cls: 'ok' };
+}
+const annList = () => (DATA.announcements || []).filter(a => annActive(a, annToday())).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.createdAt || 0) - (a.createdAt || 0));
+const annKey = a => a.id + ':' + fnv([a.title, a.body, a.image, a.linkType, a.linkCourse, a.linkUrl].join('|'));
+function annLink(a) {
+  if (a.linkType === 'course') { const c = getCourse(a.linkCourse); return c && listedFor(c) ? { href: '#/course/' + c.id, label: a.linkLabel || 'ดูคอร์ส', ext: false } : null; }
+  if (a.linkType === 'url' && /^https:\/\/[^\s"'<>]+$/i.test(a.linkUrl || '')) return { href: a.linkUrl, label: a.linkLabel || 'อ่านต่อ', ext: true };
+  return null;
+}
+function annCard(a, idx) {
+  const L = annLink(a);
+  return `<article class="ann ${a.image ? 'has-img' : ''}" aria-label="${esc(a.title)}">
+    ${a.image && imgSrc(a.image) ? `<button type="button" class="ann-img" data-action="img-zoom" data-ref="${esc(a.image)}" data-cap="${esc(a.title)}" aria-label="ขยายภาพประกาศ">${imgTag(a.image, { w: 1600, alt: a.title, lazy: idx > 0 })}</button>` : ''}
+    <div class="ann-b"><div class="row" style="gap:8px">${a.pinned ? `<span class="tag gold">ปักหมุด</span>` : ''}<span class="small muted">${fmtDate(a.createdAt || Date.now(), { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
+    <h3>${esc(a.title)}</h3>${a.body ? `<div class="ann-t">${rich(a.body)}</div>` : ''}
+    ${L ? `<div class="mt-s"><a class="btn primary sm" href="${esc(L.href)}" ${L.ext ? 'target="_blank" rel="noopener"' : ''}>${esc(L.label)} ${icon(L.ext ? 'external' : 'right', 16)}</a></div>` : ''}</div></article>`;
+}
+function annSectionHtml() {
+  const list = annList(); if (!list.length) return '';
+  const many = list.length > 1;
+  return `<section class="ann-sec" id="anns" aria-label="ประกาศ" ${many ? 'aria-roledescription="carousel"' : ''}>
+    <div class="sec-h"><h2>ประกาศ</h2>${many ? `<div class="ann-nav"><button class="icon-btn" data-action="ann-prev" aria-label="ประกาศก่อนหน้า">${icon('left', 20)}</button><span class="ann-dots" id="ann-dots">${list.map((a, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</span><button class="icon-btn" data-action="ann-next" aria-label="ประกาศถัดไป">${icon('right', 20)}</button></div>` : ''}</div>
+    <div class="ann-track" id="ann-track" ${many ? 'tabindex="0"' : ''}>${list.map(annCard).join('')}</div></section>`;
+}
+const annStep = d => { const t = $('#ann-track'); if (t) t.scrollBy({ left: d * (t.clientWidth + 16), behavior: 'smooth' }); };
+actions['ann-prev'] = () => annStep(-1);
+actions['ann-next'] = () => { const t = $('#ann-track'); if (t && t.scrollLeft + t.clientWidth >= t.scrollWidth - 8) t.scrollTo({ left: 0, behavior: 'smooth' }); else annStep(1); };
+function annMount() {
+  const t = $('#ann-track'); if (!t) return;
+  const dots = () => { const n = t.children.length, i = clamp(Math.round(t.scrollLeft / (t.clientWidth + 16)), 0, n - 1); $$('#ann-dots i').forEach((d, k) => d.classList.toggle('on', k === i)); };
+  t.addEventListener('scroll', dots, { passive: true });
+  if (t.children.length > 1 && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    let hold = false; const stop = () => { hold = true; }, go = () => { hold = false; };
+    ['mouseenter', 'focusin', 'touchstart'].forEach(ev => t.addEventListener(ev, stop, { passive: true })); ['mouseleave', 'focusout'].forEach(ev => t.addEventListener(ev, go));
+    const timer = setInterval(() => { if (!hold && !document.hidden && !document.body.classList.contains('modal-open')) actions['ann-next'](); }, 7000);
+    onLeave(() => clearInterval(timer));
+  }
+}
+/* pop-up: once per announcement (and per edit of it) on each device */
+function annPopupShow(a) {
+  const L = annLink(a);
+  return openModal({
+    title: a.title, wide: true,
+    body: `${a.image && imgSrc(a.image) ? `<div class="zoom">${imgTag(a.image, { w: 1600, lazy: false, alt: a.title })}</div>` : ''}${a.body ? `<div class="ann-t mt-s">${rich(a.body)}</div>` : ''}`,
+    actions: [{ label: 'ปิด', value: true, cls: 'ghost' }].concat(L ? [{ label: L.label, value: 'go', cls: 'primary' }] : [])
+  }).then(v => { if (v === 'go' && L) { if (L.ext) window.open(L.href, '_blank', 'noopener'); else location.hash = L.href; } });
+}
+function annPopup() {
+  const seen = store.get(LS.annseen, {}) || {}, a = annList().find(x => x.popup && !seen[annKey(x)]); if (!a) return;
+  setTimeout(() => {
+    if (currentPath() !== '/' || document.body.classList.contains('modal-open')) return;
+    const s = store.get(LS.annseen, {}) || {}; s[annKey(a)] = Date.now(); const ks = Object.keys(s); if (ks.length > 80) delete s[ks[0]]; store.set(LS.annseen, s);
+    annPopupShow(a);
+  }, 900);
+}
+
+/* ---------- administrator: manage ---------- */
+route(/^\/admin\/announcements$/, () => staffGuard(() => {
+  const list = DATA.announcements || [];
+  return {
+    title: 'ประกาศ', admin: true, html: `<div class="wrap mt" style="max-width:900px"><div class="row between mb"><div><h1 class="mb-0">ประกาศ</h1><div class="muted small">แสดงที่หน้าแรกของผู้เรียน ใส่ภาพโปสเตอร์ ลิงก์ไปคอร์ส และกำหนดช่วงเวลาแสดงได้</div></div><button class="btn primary" data-action="ann-add">${icon('plus', 18)} เพิ่มประกาศ</button></div>
+    ${list.length ? list.map(annItem).join('') : `<div class="empty"><div class="big">📣</div><p>ยังไม่มีประกาศ กด "เพิ่มประกาศ" เพื่อลงข่าว กิจกรรม หรือโปสเตอร์ให้ผู้เรียนเห็นที่หน้าแรก</p></div>`}
+    <p class="small muted mt">ประกาศที่แก้ไขแล้วต้องกด <b>เผยแพร่</b> ที่มุมขวาบนของแถบผู้ดูแล ผู้เรียนจึงจะเห็น · ผู้เรียนกดที่ภาพประกาศเพื่อดูขนาดเต็มได้</p></div>`
+  };
+}, { admin: true }));
+function annItem(a, i) {
+  const p = `d.announcements.${i}`, k = 'a:' + a.id, st = annState(a);
+  const link = a.linkType === 'course'
+    ? fld.select('คอร์สที่ต้องการให้เปิด', p + '.linkCourse', a.linkCourse, [['', '— เลือกคอร์ส —']].concat(DATA.courses.map(c => [c.id, c.title + (c.published ? '' : ' (ฉบับร่าง)')])))
+    : a.linkType === 'url' ? fld.text('ลิงก์ปลายทาง', p + '.linkUrl', a.linkUrl, { type: 'url', ph: 'https://…', help: 'ต้องขึ้นต้นด้วย https://' }) : '';
+  return `<details class="item" data-key="${k}" ${openAttr(k)}><summary><span class="sn">${i + 1}</span>${a.image && imgSrc(a.image) ? `<span class="thumb" style="width:64px;display:block;overflow:hidden;padding:0">${imgTag(a.image, { w: 200, rm: true })}</span>` : ''}<span class="st">${esc(a.title)}</span><span class="tag ${st.cls}">${st.t}</span>${a.pinned ? '<span class="tag gold">ปักหมุด</span>' : ''}${a.popup ? '<span class="tag">ป๊อปอัป</span>' : ''}</summary>
+    <div class="item-b">${fld.text('หัวข้อประกาศ', p + '.title', a.title)}${fld.text('ข้อความ (ไม่บังคับ)', p + '.body', a.body, { area: true, rows: 4, help: 'ขึ้นบรรทัดใหม่ได้ และวางลิงก์ได้' })}
+    ${fld.image('ภาพประกาศ (โปสเตอร์ / แบนเนอร์)', p + '.image', a.image, 1600, 'ภาพแนวนอนหรือแนวตั้งก็ได้ — ผู้เรียนกดดูภาพขนาดเต็มได้')}
+    <div class="grid2">${fld.select('ปุ่มลิงก์ใต้ประกาศ', p + '.linkType', a.linkType, [['', 'ไม่มีปุ่ม'], ['course', 'เปิดคอร์สในระบบ'], ['url', 'เปิดเว็บไซต์อื่น']], '', { refresh: true })}${a.linkType ? fld.text('ข้อความบนปุ่ม', p + '.linkLabel', a.linkLabel, { ph: a.linkType === 'course' ? 'ดูคอร์ส' : 'อ่านต่อ' }) : ''}</div>${link}
+    <div class="grid2">${fld.text('เริ่มแสดงวันที่ (เว้นว่าง = ทันที)', p + '.from', a.from, { type: 'date' })}${fld.text('แสดงถึงวันที่ (เว้นว่าง = ไม่มีกำหนด)', p + '.to', a.to, { type: 'date' })}</div>
+    <div class="row">${fld.check('แสดงประกาศนี้', p + '.on', a.on !== false, '', { refresh: true })}${fld.check('ปักหมุดไว้บนสุด', p + '.pinned', a.pinned)}${fld.check('แสดงเป็นป๊อปอัปเมื่อเปิดเว็บ', p + '.popup', a.popup, 'แสดงครั้งเดียวต่อเครื่อง')}</div>
+    <div class="tools"><button class="btn sm" data-action="ann-preview" data-i="${i}">${icon('eye', 16)} ดูตัวอย่างป๊อปอัป</button><button class="btn sm danger-o" data-action="ann-del" data-i="${i}">${icon('trash', 16)} ลบประกาศ</button></div></div></details>`;
+}
+actions['ann-add'] = () => { const a = newAnn(); DATA.announcements.unshift(a); UI.open.add('a:' + a.id); saveData(); rerender(); };
+actions['ann-del'] = async el => { const a = DATA.announcements[+el.dataset.i]; if (a && await confirmDlg(`ลบประกาศ "${a.title}"?`, { danger: true, ok: 'ลบประกาศ' })) { DATA.announcements.splice(+el.dataset.i, 1); saveData(); rerender(); } };
+actions['ann-preview'] = el => { const a = DATA.announcements[+el.dataset.i]; if (a) annPopupShow(a); };
+
 /* =====================================================================
    Course registration wizard (teachers & administrators):
    details → video links → tests → completion conditions → review & create
@@ -4884,6 +5567,7 @@ function boot() {
   flushQueue();
   render();
   startDbWatch();
+  startSiteWatch();
 }
 boot();
 })();
