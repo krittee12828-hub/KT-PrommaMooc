@@ -558,6 +558,11 @@ details.lq summary{cursor:pointer;font-weight:600;display:flex;justify-content:s
 @media (max-width:640px){.wz{padding:20px 16px}.stepper .tx{display:none}.stepper li.cur .tx{display:block;position:absolute;top:44px;left:0;right:0;font-size:.8rem}.stepper{margin-bottom:54px}.kpis.rv{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .h-sm{font-size:1.1rem;margin:20px 0 10px}
 
+/* database panels */
+.hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.dbp{margin-bottom:16px}
+.dbp .check{align-items:flex-start}
+
 </style>
 <style id="theme-vars"></style>
 </head>
@@ -2144,6 +2149,7 @@ async function syncAccounts(progress) {   // roster → encrypted accounts (only
   }
   Object.keys(DATA.fp).forEach(id => { if (!keep.has(id)) { delete byId[id]; delete DATA.fp[id]; } });
   A.accounts = Object.keys(byId).map(k => byId[k]);
+  if (typeof dbQueuePush === 'function') dbQueuePush();
 }
 const countByRole = () => { const o = { admin: 0, teacher: 0, student: 0 }; (DATA.users || []).forEach(u => { o[u.role] = (o[u.role] || 0) + 1; }); return o; };
 
@@ -2154,7 +2160,7 @@ function upsertAccountProfile() {
   if (p) Object.assign(p, d); else PROFILES.push(Object.assign({ createdAt: Date.now(), certName: '' }, d));
   saveProfiles();
 }
-function reloadForSession() { loadData(); applyTeacherOverlay(); applyTheme(DATA.settings); }
+function reloadForSession() { loadData(); applyTeacherOverlay(); applyTheme(DATA.settings); if (typeof dbSyncRequests === 'function') setTimeout(() => dbSyncRequests({ silent: true, notify: true }), 900); }
 async function login(email, password) {
   email = normEmail(email); password = String(password || '').trim();
   if (!email || !password) return { ok: false, msg: 'กรุณากรอกอีเมลและรหัสผ่าน' };
@@ -3453,26 +3459,19 @@ route(/^\/admin\/settings$/, () => staffGuard(() => {
       ${fld.check('อนุญาตให้ผู้สนใจทั่วไปเรียนโดยไม่ต้องมีบัญชี', 's.allowGuests', S.allowGuests, 'ปิด = ทุกคนต้องเข้าสู่ระบบด้วยบัญชีที่เพิ่มไว้ในหน้า "ผู้ใช้งาน" — คอร์สที่ตั้งเป็น "เฉพาะผู้มีบัญชี" หรือ "เฉพาะกลุ่ม" ต้องเข้าสู่ระบบเสมอ ไม่ว่าจะตั้งค่านี้อย่างไร')}
       <p class="small muted mb-0">กำหนดว่าใครเรียนคอร์สไหนได้ที่หน้าแก้ไขคอร์ส → แท็บ "ข้อมูลคอร์ส" → "ใครเรียนคอร์สนี้ได้"</p></section>
     <section class="panel"><h2>บัญชีของฉัน</h2><p class="muted small">${esc(SESS.name)} · ${esc(SESS.email)}</p><button class="btn" data-action="change-pw">${icon('lock', 18)} เปลี่ยนรหัสผ่าน</button></section>
-    <section class="panel"><h2>รวบรวมผลการเรียน (ไม่บังคับ)</h2><p class="muted small">ความคืบหน้าของผู้เรียนเก็บในเบราว์เซอร์ของแต่ละคน หากต้องการให้ผลส่งมาที่ Google Sheets ของผู้สอน ให้วาง URL ของ Google Apps Script (Web app) ที่นี่ ระบบจะส่งผลเมื่อผู้เรียนลงทะเบียน ทำข้อสอบ จบบทเรียน และเรียนจบ</p>
-      ${fld.text('Webhook URL', 's.webhookUrl', S.webhookUrl, { type: 'url', ph: 'https://script.google.com/macros/s/…/exec' })}
-      <div class="row"><button class="btn" data-action="hook-test">ส่งข้อความทดสอบ</button></div>
-      <details class="mt"><summary style="cursor:pointer;font-weight:600">วิธีสร้าง Google Apps Script รับผล (คัดลอกโค้ด)</summary>
-      <ol class="small muted"><li>เปิด Google Sheets ใหม่ → เมนู <b>ส่วนขยาย → Apps Script</b></li><li>วางโค้ดด้านล่างแทนของเดิม → <b>ทำให้ใช้งานได้ → การทำให้ใช้งานได้ใหม่ → Web app</b> (เรียกใช้ในฐานะ: ฉัน, ผู้มีสิทธิ์เข้าถึง: ทุกคน)</li><li>คัดลอก URL ที่ได้มาวางในช่องด้านบน</li></ol>
+    <section class="panel"><h2>ฐานข้อมูล (Google Sheets) — ไม่บังคับ</h2><p class="muted small">ใช้ Google Sheets ของคุณเป็นฐานข้อมูล: (1) รับผลการเรียนจากผู้เรียนทุกเครื่อง (2) รับ<b>คำขอสมัครครู</b>แล้วแจ้งเตือนในกล่องรับเรื่อง (3) เก็บสำรอง/ดึง<b>รายชื่อนักเรียนและครู</b> — ถ้าไม่ตั้งค่า ระบบยังทำงานได้ด้วยไฟล์และรหัสที่ส่งต่อกันเอง</p>
+      ${fld.text('Webhook URL (Web app ของ Apps Script)', 's.webhookUrl', S.webhookUrl, { type: 'url', ph: 'https://script.google.com/macros/s/…/exec', help: 'ที่อยู่นี้ถูกฝังในเว็บที่เผยแพร่ — ใครก็ส่งผลการเรียน/คำขอสมัครเข้ามาได้ แต่ดูข้อมูลและอนุมัติได้เฉพาะผู้มีรหัสลับด้านล่าง' })}
+      <label class="field"><span class="lb">รหัสลับของผู้ดูแล</span><div class="passwrap"><input type="password" id="db-key" data-on="db-key" value="${esc(dbKey())}" autocomplete="off" spellcheck="false" placeholder="อย่างน้อย 8 ตัวอักษร"><button type="button" class="btn sm" data-action="db-keyshow">แสดง</button><button type="button" class="btn sm" data-action="db-keygen">สุ่มรหัสลับ</button></div><span class="help">เก็บเฉพาะในเบราว์เซอร์นี้ (ไม่อยู่ในไฟล์ที่เผยแพร่) และต้องตรงกับ ADMIN_KEY ในสคริปต์ — ใช้เครื่องอื่นต้องกรอกใหม่</span></label>
+      <div class="row"><button class="btn primary" data-action="db-test">${icon('check', 18)} ทดสอบการเชื่อมต่อฐานข้อมูล</button><button class="btn" data-action="hook-test">ส่งข้อความทดสอบผลการเรียน</button></div>
+      <div id="db-test-out" class="mt-s"></div>
+      <details class="mt"><summary style="cursor:pointer;font-weight:600">วิธีตั้งค่า (ทำครั้งเดียว) และโค้ด Apps Script</summary>
+      <ol class="small muted"><li>กด <b>สุ่มรหัสลับ</b> ด้านบน (หรือพิมพ์รหัสเอง)</li><li>เปิด Google Sheets ใหม่ → เมนู <b>ส่วนขยาย → Apps Script</b> → ลบโค้ดเดิม → กด <b>คัดลอกโค้ด</b> แล้ววาง (รหัสลับของคุณจะอยู่ในโค้ดให้แล้ว) → บันทึก</li><li><b>ทำให้ใช้งานได้ → การทำให้ใช้งานได้ใหม่ → Web app</b> (เรียกใช้ในฐานะ: ฉัน · ผู้มีสิทธิ์เข้าถึง: <b>ทุกคน</b>) → อนุญาตสิทธิ์ → คัดลอก URL มาวางในช่องด้านบน</li><li>กด <b>ทดสอบการเชื่อมต่อฐานข้อมูล</b></li><li>เคยติดตั้งโค้ดเวอร์ชันเก่าไว้แล้ว: วางโค้ดใหม่ทับ → <b>ทำให้ใช้งานได้ → จัดการการทำให้ใช้งานได้ → แก้ไข → เวอร์ชันใหม่</b> (URL เดิมใช้ต่อได้)</li><li>อยากให้ส่งอีเมลแจ้งเตือนเมื่อมีคำขอสมัครครู: ใส่อีเมลที่ <b>NOTIFY_EMAIL</b> ในโค้ด</li></ol>
       <pre class="code">${esc(APPS_SCRIPT)}</pre><button class="btn sm" data-action="copy-script">${icon('copy', 16)} คัดลอกโค้ด</button></details></section>
     <p class="small muted">การตั้งค่าบันทึกอัตโนมัติ — อย่าลืมกด "ดาวน์โหลด index.html" ที่หน้าคอร์สเพื่อเผยแพร่</p></div>`
   };
 }, { admin: true }));
-const APPS_SCRIPT = `function doPost(e) {
-  var d = JSON.parse(e.postData.contents);
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sh = ss.getSheetByName('results') || ss.insertSheet('results');
-  if (sh.getLastRow() === 0) sh.appendRow(['เวลา','เหตุการณ์','ชื่อ','อีเมล','หน่วยงาน','คอร์ส','บทเรียน','คะแนน %','ผ่าน','รหัสเกียรติบัตร','กลุ่ม','รหัสประจำตัว','รหัสคอร์ส','รหัสบทเรียน','ครั้งที่']);
-  var L = d.learner || {}, C = d.course || {}, Ls = d.lesson || {};
-  sh.appendRow([d.at, d.event, L.name, L.email, L.extra, C.title, Ls.title,
-    d.percent != null ? d.percent : (d.post != null ? d.post : ''), d.passed == null ? '' : d.passed, d.certId || '', L.group || '', L.sid || '', C.id || '', Ls.id || '', d.attempt || '']);
-  return ContentService.createTextOutput('ok');
-}`;
-actions['copy-script'] = async () => toast((await copyText(APPS_SCRIPT)) ? 'คัดลอกโค้ดแล้ว' : 'คัดลอกไม่สำเร็จ', 'ok');
+const APPS_SCRIPT = "/* PrommaMooc — Google Apps Script (เวอร์ชัน 2)\n   ใช้ Google Sheets ของคุณเป็นฐานข้อมูล: ผลการเรียน · คำขอสมัครครู · รายชื่อผู้ใช้ */\n\n// 1) รหัสลับของผู้ดูแล (อย่างน้อย 8 ตัวอักษร) — ต้องตรงกับที่ตั้งไว้ในหน้า \"ตั้งค่าเว็บไซต์\" ของ PrommaMooc\nvar ADMIN_KEY = 'เปลี่ยนเป็นรหัสลับของคุณ';\n// 2) (ไม่บังคับ) อีเมลที่ให้แจ้งเตือนเมื่อมีคำขอสมัครครูใหม่ — เว้นว่างไว้ถ้าไม่ต้องการ\nvar NOTIFY_EMAIL = '';\n\nvar DEFAULT_KEY = 'เปลี่ยนเป็นรหัสลับของคุณ';\nvar RESULT_HEAD = ['เวลา', 'เหตุการณ์', 'ชื่อ', 'อีเมล', 'หน่วยงาน', 'คอร์ส', 'บทเรียน', 'คะแนน %', 'ผ่าน', 'รหัสเกียรติบัตร', 'กลุ่ม', 'รหัสประจำตัว', 'รหัสคอร์ส', 'รหัสบทเรียน', 'ครั้งที่'];\nvar REQ_HEAD = ['รหัสคำขอ', 'เวลา', 'ชื่อ-นามสกุล', 'อีเมล', 'โรงเรียน/หน่วยงาน', 'เบอร์โทร', 'วิชา/หัวข้อ', 'หมายเหตุ', 'สถานะ', 'อัปเดตเมื่อ'];\nvar USER_HEAD = ['อีเมล*', 'รหัสผ่าน', 'ชื่อ-นามสกุล*', 'บทบาท', 'รหัสประจำตัว', 'กลุ่ม/ห้อง', 'โรงเรียน/หน่วยงาน'];\n\nfunction json_(o) {\n  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);\n}\nfunction sheet_(name, head) {\n  var ss = SpreadsheetApp.getActiveSpreadsheet();\n  var sh = ss.getSheetByName(name) || ss.insertSheet(name);\n  if (head && sh.getLastRow() === 0) sh.appendRow(head);\n  return sh;\n}\n// ตัดช่องว่างและจำกัดความยาว\nfunction s_(v, n) {\n  return String(v == null ? '' : v).replace(/\\s+/g, ' ').trim().slice(0, n);\n}\n// กันสูตรใน Google Sheets (ค่าที่ขึ้นต้นด้วย = + - @ จะไม่ถูกคำนวณ)\nfunction safe_(v) {\n  return typeof v === 'string' && /^[=+\\-@]/.test(v) ? \"'\" + v : v;\n}\n\nfunction doGet() {\n  return json_({ ok: true, app: 'prommamooc', v: 2 });\n}\n\nfunction doPost(e) {\n  var d;\n  try { d = JSON.parse(e.postData.contents); } catch (err) { return json_({ ok: false, error: 'bad_json' }); }\n  var lock = LockService.getScriptLock();\n  try {\n    lock.waitLock(20000);\n    if (d.action) return json_(admin_(d));\n    if (d.event === 'teacher_request') return json_(request_(d));\n    return json_(result_(d));\n  } catch (err) {\n    return json_({ ok: false, error: String(err) });\n  } finally {\n    try { lock.releaseLock(); } catch (x) {}\n  }\n}\n\n// ผลการเรียนจากผู้เรียน\nfunction result_(d) {\n  var sh = sheet_('results', RESULT_HEAD);\n  var L = d.learner || {}, C = d.course || {}, Ls = d.lesson || {};\n  sh.appendRow([d.at, d.event, L.name, L.email, L.extra, C.title, Ls.title,\n    d.percent != null ? d.percent : (d.post != null ? d.post : ''), d.passed == null ? '' : d.passed,\n    d.certId || '', L.group || '', L.sid || '', C.id || '', Ls.id || '', d.attempt || ''].map(safe_));\n  return { ok: true };\n}\n\n// คำขอสมัครครูจากหน้าเว็บ (ใครก็ส่งได้ — ผู้ดูแลตรวจก่อนอนุมัติ)\nfunction request_(d) {\n  var p = d.person || {};\n  if (d.hp) return { ok: true };   // ช่องดักบอท: คนจริงไม่เห็นและไม่กรอก\n  var name = s_(p.name, 120), email = s_(p.email, 160).toLowerCase();\n  if (name.length < 2 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return { ok: false, error: 'invalid' };\n  var sh = sheet_('requests', REQ_HEAD), vals = sh.getDataRange().getValues();\n  var row = -1, pending = 0, id = '';\n  for (var i = 1; i < vals.length; i++) {\n    if (String(vals[i][8]) !== 'pending') continue;\n    pending++;\n    if (String(vals[i][3]).toLowerCase() === email) { row = i + 1; id = String(vals[i][0]); }\n  }\n  var isNew = row < 0, now = new Date().toISOString();\n  if (isNew) {\n    if (pending >= 500) return { ok: false, error: 'full' };\n    id = 'rq-' + Utilities.getUuid().replace(/-/g, '').slice(0, 8);\n    row = sh.getLastRow() + 1;\n  }\n  var rec = [id, isNew ? now : String(vals[row - 1][1]), name, email, s_(p.org, 160), s_(p.phone, 40), s_(p.subject, 200), s_(p.note, 600), 'pending', now].map(safe_);\n  var rg = sh.getRange(row, 1, 1, rec.length);\n  rg.setNumberFormat('@');\n  rg.setValues([rec]);\n  if (isNew && NOTIFY_EMAIL) {\n    try {\n      MailApp.sendEmail(NOTIFY_EMAIL, 'PrommaMooc: คำขอสมัครครูใหม่ — ' + name,\n        name + ' (' + email + ')\\n' + (p.org ? s_(p.org, 160) + '\\n' : '') + (p.subject ? 'จะสอน: ' + s_(p.subject, 200) + '\\n' : '') +\n        '\\nเปิด PrommaMooc → ส่วนจัดการระบบ → กล่องรับเรื่อง เพื่อตรวจสอบและอนุมัติ');\n    } catch (err) {}\n  }\n  return { ok: true, id: id };\n}\n\nfunction pending_() {\n  var vals = sheet_('requests', REQ_HEAD).getDataRange().getValues(), out = [];\n  for (var i = 1; i < vals.length && out.length < 200; i++) {\n    var r = vals[i];\n    if (String(r[8]) !== 'pending') continue;\n    out.push({ id: String(r[0]), at: String(r[1]), person: { name: String(r[2]), email: String(r[3]), org: String(r[4]), phone: String(r[5]), subject: String(r[6]), note: String(r[7]) } });\n  }\n  return out;\n}\n\n// คำสั่งของผู้ดูแล — ต้องมีรหัสลับ\nfunction admin_(d) {\n  if (ADMIN_KEY.length < 8 || ADMIN_KEY === DEFAULT_KEY || String(d.key || '') !== ADMIN_KEY) return { ok: false, error: 'unauthorized' };\n  var a = d.action;\n  if (a === 'status') {\n    return { ok: true, v: 2, pending: pending_().length, users: Math.max(0, sheet_('users', USER_HEAD).getLastRow() - 1) };\n  }\n  if (a === 'requests') return { ok: true, items: pending_() };\n  if (a === 'mark') {\n    var st = String(d.status);\n    if (st !== 'approved' && st !== 'rejected') return { ok: false, error: 'invalid' };\n    var sh = sheet_('requests', REQ_HEAD), v = sh.getDataRange().getValues();\n    for (var i = 1; i < v.length; i++) {\n      if (String(v[i][0]) === String(d.id)) {\n        var r = sh.getRange(i + 1, 9, 1, 2);\n        r.setNumberFormat('@');\n        r.setValues([[st, new Date().toISOString()]]);\n        return { ok: true };\n      }\n    }\n    return { ok: false, error: 'not_found' };\n  }\n  if (a === 'roster_get') {\n    var u = sheet_('users', USER_HEAD).getDataRange().getValues(), rows = [];\n    for (var k = 1; k < u.length; k++) {\n      var row = u[k].map(function (c) { return String(c == null ? '' : c); });\n      if (row.join('').replace(/\\s/g, '') !== '') rows.push(row);\n    }\n    return { ok: true, head: USER_HEAD, rows: rows };\n  }\n  if (a === 'roster_put') {\n    var list = d.rows;\n    if (!Array.isArray(list) || list.length > 5000) return { ok: false, error: 'invalid' };\n    if (!list.length && !d.force) return { ok: false, error: 'empty' };\n    var us = sheet_('users', USER_HEAD), old = us.getDataRange().getValues();\n    var prev = sheet_('users_prev');   // เก็บฉบับก่อนหน้าไว้ 1 ชุด เผื่อบันทึกทับผิด\n    prev.clear();\n    if (old.length && old[0].length) prev.getRange(1, 1, old.length, old[0].length).setValues(old);\n    us.clear();\n    var all = [USER_HEAD];\n    for (var j = 0; j < list.length; j++) {\n      var x = [];\n      for (var c = 0; c < 7; c++) x.push(list[j][c] == null ? '' : String(list[j][c]));\n      all.push(x);\n    }\n    var g = us.getRange(1, 1, all.length, 7);\n    g.setNumberFormat('@');\n    g.setValues(all);\n    return { ok: true, n: list.length };\n  }\n  return { ok: false, error: 'unknown_action' };\n}\n";   // apps_script.gs is injected by build.py
+actions['copy-script'] = async () => toast((await copyText(scriptWithKey())) ? (dbKey().length >= 8 ? 'คัดลอกโค้ดแล้ว (มีรหัสลับของคุณใส่ให้แล้ว)' : 'คัดลอกโค้ดแล้ว — อย่าลืมแก้ ADMIN_KEY ในโค้ด') : 'คัดลอกไม่สำเร็จ', 'ok', 5000);
 actions['hook-test'] = () => { if (!DATA.settings.webhookUrl) return toast('ยังไม่ได้ใส่ Webhook URL', 'bad'); emit('test', { course: { id: 'test', title: 'ทดสอบการส่งข้อมูล' }, percent: 100, passed: true }); toast('ส่งข้อความทดสอบแล้ว — ตรวจสอบในชีต "results"', 'ok', 5000); };
 actions['change-pw'] = () => changePasswordDialog();
 
@@ -3741,6 +3740,7 @@ function usersPageHtml() {
     <div class="row between mb"><div><h1 class="mb-0">ผู้ใช้งาน</h1><div class="muted small" id="u-sum">${usersSummary()}</div></div>
       <div class="row"><button class="btn" data-action="u-template">${icon('download', 18)} เทมเพลต Excel</button><button class="btn" data-action="u-import">${icon('upload', 18)} นำเข้าจาก Excel</button><button class="btn" data-action="u-export">${icon('download', 18)} ส่งออกรายชื่อ</button><button class="btn primary" data-action="u-add">${icon('plus', 18)} เพิ่มผู้ใช้</button></div></div>
     ${nAcc > known ? `<div class="callout warn">${icon('alert')}<div class="small"><b>มีบัญชีในไฟล์นี้ ${nAcc - known} บัญชีที่ไม่มีรายชื่ออยู่ในเครื่องนี้</b> (เช่น นำเข้าไว้จากเครื่องอื่น) ข้อมูลของบัญชีเหล่านั้นถูกเข้ารหัสไว้ จะแก้ไขหรือดูรหัสผ่านได้เมื่อนำเข้าไฟล์ Excel รายชื่อเดิมอีกครั้งเท่านั้น</div></div>` : ''}
+    ${dbPanelHtml()}
     ${known || nAcc ? '' : `<div class="callout">${icon('info')}<div class="small"><b>เริ่มต้น:</b> กด "เทมเพลต Excel" → กรอกรายชื่อ → "นำเข้าจาก Excel" หรือเพิ่มทีละคนด้วยปุ่ม "เพิ่มผู้ใช้"</div></div>`}
     <div class="panel"><div class="toolbar"><label class="search-s">${icon('search', 18)}<input type="search" data-on="u-search" placeholder="ค้นหาชื่อ อีเมล รหัส กลุ่ม" value="${esc(UX.q)}" aria-label="ค้นหาผู้ใช้"></label>
       <select data-on="u-role" aria-label="กรองตามบทบาท"><option value="all">ทุกบทบาท</option>${ROLES.map(r => `<option value="${r}" ${UX.role === r ? 'selected' : ''}>${ROLE_TH[r]}</option>`).join('')}</select>
@@ -3847,19 +3847,24 @@ actions['u-import'] = async () => {
     else if (/\.xls$/i.test(f.name)) throw new Error('ไฟล์ .xls (Excel รุ่นเก่า) ยังไม่รองรับ — เปิดใน Excel แล้ว "บันทึกเป็น" .xlsx');
     else rows = xlsxRead(await readBuf(f), TEMPLATE_SHEET).rows;
   } catch (e) { return toast('อ่านไฟล์ไม่ได้: ' + e.message, 'bad', 7000); }
+  return importRosterRows(rows, f.name);
+};
+
+/* rows = header row + user rows (same layout as the Excel template) — used by Excel import and by the database */
+async function importRosterRows(rows, label) {
   const pr = parseUserRows(rows);
-  if (pr.missing.length) return toast(`ไม่พบคอลัมน์ "${pr.missing.join('", "')}" ในไฟล์ — ใช้ไฟล์จากเทมเพลตของระบบ (ปุ่ม "เทมเพลต Excel")`, 'bad', 7000);
-  if (!pr.items.length) return toast('ไม่พบรายชื่อในไฟล์ (มีแต่แถวหัวคอลัมน์)', 'bad', 5000);
+  if (pr.missing.length) { toast(`ไม่พบคอลัมน์ "${pr.missing.join('", "')}" ในไฟล์ — ใช้ไฟล์จากเทมเพลตของระบบ (ปุ่ม "เทมเพลต Excel")`, 'bad', 7000); return false; }
+  if (!pr.items.length) { toast('ไม่พบรายชื่อในไฟล์ (มีแต่แถวหัวคอลัมน์)', 'bad', 5000); return false; }
   const known = new Set((DATA.users || []).map(u => u.email)), accIds = new Set(DATA.auth.accounts.map(a => a.i));
   const isUpdate = e => known.has(e) || (!!DATA.auth.salt && accIds.has(acctIdOf(e, DATA.auth.salt)));
   const good = pr.items.filter(i => !i.skipped && !i.errors.length);
   const plan = { isUpdate, nNew: good.filter(i => !isUpdate(i.user.email)).length, nUpd: good.filter(i => isUpdate(i.user.email)).length, nSkip: pr.items.filter(i => i.skipped).length, nErr: pr.items.filter(i => !i.skipped && i.errors.length).length, nGen: good.filter(i => i.gen && !known.has(i.user.email)).length };
-  if (!good.length) { await alertDlg('นำเข้าไม่ได้', importPreviewHtml(pr, plan)); return; }
+  if (!good.length) { await alertDlg('นำเข้าไม่ได้', importPreviewHtml(pr, plan)); return false; }
   const go = await openModal({
-    title: `ตรวจสอบก่อนนำเข้า — ${f.name}`, wide: true, body: importPreviewHtml(pr, plan),
+    title: `ตรวจสอบก่อนนำเข้า — ${label}`, wide: true, body: importPreviewHtml(pr, plan),
     actions: [{ label: 'ยกเลิก', value: null, cls: 'ghost' }, { label: `นำเข้า ${good.length} รายการ`, cls: 'primary', collect: m => ({ replace: !!($('#imp-replace', m) && $('#imp-replace', m).checked) }) }]
   });
-  if (!go) return;
+  if (!go) return false;
   const out = await withProgress('กำลังเข้ารหัสบัญชี…', async upd => {
     ensureRoster(); const imported = [], inFile = new Set(pr.items.filter(i => EMAIL_RE.test(i.user.email)).map(i => i.user.email));
     good.forEach(i => {
@@ -3883,10 +3888,11 @@ actions['u-import'] = async () => {
   });
   if (v === 'dl') xlsxFile('prommamooc-users-imported-' + new Date().toISOString().slice(0, 10) + '.xlsx', usersXlsx(out.imported));
   else if (v === 'pub') location.hash = '#/admin';
-};
+  return true;
+}
 
 /* ---------- courses sent by teachers ---------- */
-route(/^\/admin\/inbox$/, () => staffGuard(() => ({ title: 'กล่องรับเรื่อง', admin: true, html: inboxHtml() }), { admin: true }));
+route(/^\/admin\/inbox$/, () => staffGuard(() => ({ title: 'กล่องรับเรื่อง', admin: true, html: inboxHtml(), mount() { if (dbReady() && (!DBS.req || Date.now() - DBS.req.at > 4000)) dbSyncRequests({ silent: true, notify: false }); } }), { admin: true }));
 function inboxRow(it) {
   if (!it.course) return requestRow(it);
   const c = it.course, ex = DATA.courses.find(x => x.id === c.id), sameOwner = !!ex && !!ex.owner && ownerIs(ex, c.owner);
@@ -3908,7 +3914,8 @@ function requestRow(it) {
 }
 function inboxHtml() {
   const list = DATA.inbox || [], reqs = list.filter(x => !x.course), pk = list.filter(x => x.course);
-  return `<div class="wrap mt"><div class="row between mb"><div><h1 class="mb-0">กล่องรับเรื่อง</h1><div class="muted small">คำขอสมัครครู และคอร์สที่ครูส่งมาให้ตรวจ</div></div><div class="row"><button class="btn" data-action="inbox-paste">${icon('copy', 18)} วางรหัสคำขอ</button><button class="btn primary" data-action="inbox-import">${icon('upload', 18)} นำเข้าไฟล์ (คอร์ส / คำขอ)</button></div></div>
+  return `<div class="wrap mt"><div class="row between mb"><div><h1 class="mb-0">กล่องรับเรื่อง</h1><div class="muted small">คำขอสมัครครู และคอร์สที่ครูส่งมาให้ตรวจ</div></div><div class="row">${dbUrl() ? `<button class="btn" data-action="db-refresh">${icon('refresh', 18)} ตรวจคำขอใหม่</button>` : ''}<button class="btn" data-action="inbox-paste">${icon('copy', 18)} วางรหัสคำขอ</button><button class="btn primary" data-action="inbox-import">${icon('upload', 18)} นำเข้าไฟล์ (คอร์ส / คำขอ)</button></div></div>
+    <div class="mb" id="db-req-stat">${reqStatusHtml()}</div>
     ${reqs.length ? `<h2 class="h-sm">คำขอสมัครเป็นครู <span class="tag">${reqs.length}</span></h2><div class="callout">${icon('info')}<div class="small">ใครก็ส่งคำขอได้ — ตรวจสอบตัวตนก่อนอนุมัติ (เช่น เทียบอีเมลโรงเรียนหรือโทรยืนยัน) เมื่ออนุมัติ ระบบจะสร้างบัญชีครูและสุ่มรหัสผ่านให้ แล้วคุณส่งรหัสให้ครูเอง</div></div>${reqs.map(requestRow).join('')}` : ''}
     <h2 class="h-sm mt">คอร์สจากครู ${pk.length ? `<span class="tag">${pk.length}</span>` : ''}</h2>
     ${pk.map(inboxRow).join('') || `<div class="empty"><div class="big">📥</div><p>ยังไม่มีคอร์สที่รอตรวจ — ครูกด "ส่งให้ผู้ดูแล" แล้วส่งไฟล์มาให้ จากนั้นกด "นำเข้าไฟล์"</p></div>`}
@@ -3916,8 +3923,9 @@ function inboxHtml() {
 }
 function addRequest(x) {
   if (!Array.isArray(DATA.inbox)) DATA.inbox = [];
+  const old = DATA.inbox.find(i => i.req && i.req.email === x.person.email);
   DATA.inbox = DATA.inbox.filter(i => !(i.req && i.req.email === x.person.email));
-  DATA.inbox.push({ id: uid('rq-'), at: Date.now(), kind: 'teacher', req: x.person });
+  DATA.inbox.push({ id: uid('rq-'), at: Date.now(), kind: 'teacher', req: x.person, rid: old && old.rid ? old.rid : undefined });
 }
 actions['inbox-paste'] = async () => {
   const t = await openModal({ title: 'วางรหัสคำขอสมัครครู', body: `<p class="muted small">วางข้อความที่ครูส่งมา (ขึ้นต้นด้วย <span class="kbd">${REQ_PREFIX}</span>)</p><textarea id="req-code" rows="5" placeholder="${REQ_PREFIX}…"></textarea>`, actions: [{ label: 'ยกเลิก', value: null, cls: 'ghost' }, { label: 'เพิ่มคำขอ', cls: 'primary', collect: m => $('#req-code', m).value }] });
@@ -3933,6 +3941,7 @@ actions['req-approve'] = async el => {
   upsertUser({ email: r.email, name: ex ? ex.name : r.name, role: 'teacher', password: pw, org: ex ? ex.org || r.org : r.org, sid: ex ? ex.sid : '', group: ex ? ex.group : '' });
   DATA.inbox = DATA.inbox.filter(x => x.id !== it.id);
   await withProgress('กำลังเข้ารหัสบัญชี…', upd => syncAccounts(upd)); saveData();
+  if (it.rid) dbMark(it.rid, 'approved').then(ok => { if (!ok) toast('สร้างบัญชีแล้ว แต่แจ้งสถานะ "อนุมัติ" ไปที่ฐานข้อมูลไม่สำเร็จ (คำขอจะไม่กลับมาซ้ำในเครื่องนี้)', 'bad', 7000); });
   const url = location.href.split('#')[0].replace(/^file:.*/, '(ที่อยู่เว็บของคุณ)'), msg = `เรียน ${r.name}
 บัญชีครูผู้สอนของคุณพร้อมแล้ว
 เข้าสู่ระบบที่: ${url}#/login
@@ -3975,7 +3984,200 @@ async function acceptInbox(id, publish) {
 }
 actions['inbox-accept'] = el => acceptInbox(el.dataset.id, false);
 actions['inbox-publish'] = el => acceptInbox(el.dataset.id, true);
-actions['inbox-del'] = async el => { if (await confirmDlg('ลบรายการนี้ออกจากกล่องคอร์สจากครู?', { danger: true, ok: 'ลบ' })) { DATA.inbox = (DATA.inbox || []).filter(x => x.id !== el.dataset.id); saveData(); rerender(); } };
+actions['inbox-del'] = async el => {
+  const it = (DATA.inbox || []).find(x => x.id === el.dataset.id); if (!it) return;
+  const isReq = !it.course;
+  if (!(await confirmDlg(isReq ? `ปฏิเสธคำขอสมัครครูของ ${it.req.name}? ${it.rid ? 'ระบบจะบันทึกสถานะ "ไม่อนุมัติ" ในฐานข้อมูลด้วย' : ''}` : 'ลบรายการนี้ออกจากกล่องคอร์สจากครู?', { danger: true, ok: isReq ? 'ปฏิเสธคำขอ' : 'ลบ' }))) return;
+  if (it.rid) dbMark(it.rid, 'rejected');
+  DATA.inbox = (DATA.inbox || []).filter(x => x.id !== el.dataset.id); saveLocalOnly(); refreshInboxBadge(); rerender();
+};
+
+/* =====================================================================
+   Database layer — Google Sheets through the Apps Script web app (apps_script.gs)
+   - public:  a teacher sign-up request is sent straight to the sheet "requests"
+   - admin:   the secret key (kept ONLY in this browser, never in index.html) unlocks
+              requests → inbox notification, approve/reject status, roster save / load
+   Nothing here is required: without a Webhook URL everything falls back to files / codes.
+   ===================================================================== */
+const DB_KEY = 'pmooc.dbkey.v1', DB_META = 'pmooc.dbmeta.v1', DB_SKIP = 'pmooc.dbskip.v1';
+const dbUrl = () => String(DATA.settings.webhookUrl || '').trim();
+const dbKey = () => String(store.get(DB_KEY, '') || '');
+const dbReady = () => isAdmin() && /^https:\/\//.test(dbUrl()) && dbKey().length >= 8;
+const dbMeta = () => store.get(DB_META, {}) || {};
+const setDbMeta = o => store.set(DB_META, Object.assign(dbMeta(), o));
+const saveLocalOnly = () => { store.set(LS.data, { data: DATA }); };   // admin-only lists (inbox…): kept without marking the site "unpublished"
+const DBS = { reqBusy: false, req: null, pulling: false, pushErr: '' };   // req: { ok, at, err }
+const JSON_HDR = { 'Content-Type': 'text/plain;charset=utf-8' };   // text/plain = no CORS pre-flight (Apps Script cannot answer one)
+
+const DB_ERR = {
+  unauthorized: 'รหัสลับของผู้ดูแลไม่ตรงกับที่ตั้งไว้ในสคริปต์ — ตรวจที่ ตั้งค่าเว็บไซต์ → ฐานข้อมูล',
+  empty: 'รายชื่อว่างเปล่า — ระบบไม่บันทึกทับฐานข้อมูล',
+  invalid: 'ข้อมูลไม่ถูกต้อง', not_found: 'ไม่พบรายการนี้ในฐานข้อมูล', full: 'มีคำขอค้างอยู่มากเกินไป กรุณาลองใหม่ภายหลัง',
+  unknown_action: 'สคริปต์ยังเป็นเวอร์ชันเก่า — คัดลอกโค้ดใหม่ไปวาง แล้ว Deploy เป็นเวอร์ชันใหม่'
+};
+const OLD_SCRIPT = 'สคริปต์ที่ใช้อยู่เป็นเวอร์ชันเก่าหรือ URL ไม่ถูกต้อง — คัดลอกโค้ดเวอร์ชันใหม่ไปวาง แล้ว Deploy เป็นเวอร์ชันใหม่';
+
+/* administrator call: POST, answer is read back as JSON */
+async function dbCall(action, payload) {
+  const url = dbUrl(); if (!url) throw new Error('ยังไม่ได้ใส่ Webhook URL');
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null, tm = setTimeout(() => { if (ctl) ctl.abort(); }, 25000);
+  let text;
+  try {
+    const res = await fetch(url, { method: 'POST', headers: JSON_HDR, body: JSON.stringify(Object.assign({ action, key: dbKey() }, payload || {})), signal: ctl ? ctl.signal : undefined });
+    text = await res.text();
+  } catch (e) { throw new Error(e && e.name === 'AbortError' ? 'ฐานข้อมูลตอบช้าเกินไป ลองใหม่อีกครั้ง' : 'เชื่อมต่อฐานข้อมูลไม่ได้ — ตรวจอินเทอร์เน็ต และตรวจว่า Deploy แบบ "ทุกคน (Anyone)"'); }
+  finally { clearTimeout(tm); }
+  let j; try { j = JSON.parse(text); } catch (e) { throw new Error(OLD_SCRIPT); }
+  if (!j || !j.ok) { const er = new Error(DB_ERR[j && j.error] || 'ฐานข้อมูลปฏิเสธคำสั่ง (' + (j && j.error) + ')'); er.code = j && j.error; throw er; }
+  return j;
+}
+
+/* public call: a teacher asks for an account. → 'sent' | 'unverified' | 'failed' | 'none' */
+async function dbSendRequest(person, hp) {
+  const url = dbUrl(); if (!/^https:\/\//.test(url)) return 'none';
+  const body = JSON.stringify({ event: 'teacher_request', person, hp: hp || '', at: new Date().toISOString(), site: DATA.settings.siteName });
+  let text;
+  try { const res = await fetch(url, { method: 'POST', headers: JSON_HDR, body }); text = await res.text(); }
+  catch (e) {   // network error or the browser would not let us read the answer — try once more blind (the script de-duplicates by e-mail)
+    try { await fetch(url, { method: 'POST', mode: 'no-cors', headers: JSON_HDR, body }); return 'unverified'; } catch (e2) { return 'failed'; }
+  }
+  try { const j = JSON.parse(text); return j && j.ok ? 'sent' : 'failed'; } catch (e) { return 'unverified'; }   // not JSON = old script version
+}
+
+/* ---------------- requests → inbox ---------------- */
+const skipList = () => store.get(DB_SKIP, []) || [];
+function skipAdd(id) { const s = skipList(); if (!s.includes(id)) { s.push(id); store.set(DB_SKIP, s.slice(-500)); } }
+async function dbMark(rid, status) { skipAdd(rid); try { await dbCall('mark', { id: rid, status }); return true; } catch (e) { return false; } }
+const onLivePage = () => /^#\/admin(\/inbox)?\/?$/.test(location.hash || '');
+function refreshInboxBadge() {
+  const a = document.querySelector('.admin-bar a[href="#/admin/inbox"]'); if (!a) return;
+  const n = (DATA.inbox || []).length; let c = a.querySelector('.count');
+  if (n && !c) { c = document.createElement('span'); c.className = 'count'; a.appendChild(c); }
+  if (c) { if (n) c.textContent = n; else c.remove(); }
+}
+function paintReqStatus() { const e = $('#db-req-stat'); if (e) e.innerHTML = reqStatusHtml(); }
+async function dbSyncRequests(o) {
+  o = o || {}; if (!dbReady() || DBS.reqBusy) return null;
+  DBS.reqBusy = true;
+  try {
+    const j = await dbCall('requests'), skip = new Set(skipList());
+    if (!Array.isArray(DATA.inbox)) DATA.inbox = [];
+    const remote = (j.items || []).filter(it => it && !skip.has(it.id)), ids = new Set(remote.map(x => x.id));
+    const before = DATA.inbox.length; let added = 0;
+    DATA.inbox = DATA.inbox.filter(x => !(x.rid && !ids.has(x.rid)));   // decided somewhere else
+    const removed = before - DATA.inbox.length;
+    for (const it of remote) {
+      let p; try { p = cleanReq(it.person); } catch (e) { continue; }
+      if (!EMAIL_RE.test(p.email) || p.name.length < 2) continue;
+      const ex = findUser(p.email);
+      if (ex && (ex.role === 'teacher' || ex.role === 'admin')) { dbMark(it.id, 'approved'); continue; }   // already a teacher: close the stale request
+      if (DATA.inbox.some(x => x.rid === it.id)) continue;
+      const same = DATA.inbox.find(x => x.req && x.req.email === p.email);
+      if (same) { same.rid = it.id; continue; }
+      DATA.inbox.push({ id: uid('rq-'), rid: it.id, at: Date.parse(it.at) || Date.now(), kind: 'teacher', req: p }); added++;
+    }
+    DBS.req = { ok: true, at: Date.now() };
+    if (added || removed) saveLocalOnly();
+    refreshInboxBadge(); paintReqStatus();
+    if (added && o.notify) toast(`มีคำขอสมัครครูใหม่ ${added} รายการ — ดูที่ "กล่องรับเรื่อง"`, 'ok', 7000);
+    if ((added || removed) && onLivePage()) rerender();
+    return { added, removed };
+  } catch (e) {
+    DBS.req = { ok: false, at: Date.now(), err: e.message }; paintReqStatus();
+    if (!o.silent) toast(e.message, 'bad', 7000);
+    return null;
+  } finally { DBS.reqBusy = false; }
+}
+function reqStatusHtml() {
+  if (!dbUrl()) return `<span class="tag gray">ยังไม่ได้เชื่อมต่อฐานข้อมูล</span> <span class="small muted">คำขอจะมาถึงเมื่อครูส่งไฟล์/รหัสให้เท่านั้น · <a href="#/admin/settings">ตั้งค่าฐานข้อมูล</a></span>`;
+  if (dbKey().length < 8) return `<span class="tag warn">ยังไม่ได้ตั้งรหัสลับผู้ดูแล</span> <span class="small muted"><a href="#/admin/settings">ตั้งค่าฐานข้อมูล</a></span>`;
+  const s = DBS.req;
+  if (!s) return '<span class="tag">กำลังตรวจฐานข้อมูล…</span>';
+  return s.ok ? `<span class="tag ok">${icon('check', 13)} เชื่อมต่อฐานข้อมูลแล้ว</span> <span class="small muted">ตรวจล่าสุด ${fmtDT(s.at)} · ตรวจอัตโนมัติทุก 90 วินาทีขณะเปิดหน้านี้</span>`
+    : `<span class="tag warn">${icon('alert', 13)} ตรวจฐานข้อมูลไม่สำเร็จ</span> <span class="small muted">${esc(s.err)}</span>`;
+}
+actions['db-refresh'] = async () => {
+  if (!dbReady()) return toast('ยังไม่ได้ตั้งค่าฐานข้อมูล', 'bad');
+  const r = await dbSyncRequests({ silent: false });
+  if (r) toast(r.added ? `มีคำขอใหม่ ${r.added} รายการ` : 'ไม่มีคำขอใหม่', r.added ? 'ok' : '');
+  if (r && !(r.added || r.removed) && onLivePage()) rerender();
+};
+
+let dbTimer = null;
+function startDbWatch() {
+  if (dbTimer) return;
+  const tick = () => { if (!document.hidden && dbReady()) dbSyncRequests({ silent: true, notify: true }); };
+  dbTimer = setInterval(tick, 90000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(tick, 400); });
+  setTimeout(tick, 1500);
+}
+
+/* ---------------- roster: save / load ---------------- */
+const dbRosterRows = () => (DATA.users || []).map(u => [u.email, u.password, u.name, ROLE_LABELS[u.role] || 'นักเรียน', u.sid, u.group, u.org]);
+function paintRosterStatus() { const e = $('#db-roster-stat'); if (e) e.innerHTML = rosterStatusHtml(); }
+function rosterStatusHtml() {
+  if (!dbUrl() || dbKey().length < 8) return `<span class="tag gray">ยังไม่ได้เชื่อมต่อ</span> <span class="small muted">ตั้งค่า Webhook URL และรหัสลับที่ <a href="#/admin/settings">ตั้งค่าเว็บไซต์ → ฐานข้อมูล</a></span>`;
+  const m = dbMeta(), bits = [];
+  if (m.push) bits.push('บันทึกล่าสุด ' + fmtDT(m.push)); if (m.pull) bits.push('ดึงล่าสุด ' + fmtDT(m.pull));
+  if (DBS.pushErr) return `<span class="tag warn">${icon('alert', 13)} บันทึกไม่สำเร็จ</span> <span class="small muted">${esc(DBS.pushErr)}</span>`;
+  return `<span class="tag ok">${icon('check', 13)} เชื่อมต่อแล้ว</span> <span class="small muted">${bits.join(' · ') || (m.base ? '' : 'ยังไม่เคยซิงก์ในเครื่องนี้')}</span>`;
+}
+function dbPanelHtml() {
+  const m = dbMeta(), ready = !!dbUrl() && dbKey().length >= 8;
+  return `<section class="panel dbp"><div class="row between" style="gap:12px"><div><h3 class="mb-0">ฐานข้อมูลรายชื่อ (Google Sheets)</h3><div class="mt-s" id="db-roster-stat">${rosterStatusHtml()}</div></div>
+    <div class="row"><button class="btn sm" data-action="db-pull" ${ready ? '' : 'disabled'}>${icon('download', 16)} ดึงรายชื่อจากฐานข้อมูล</button><button class="btn sm primary" data-action="db-push" ${ready ? '' : 'disabled'}>${icon('upload', 16)} บันทึกรายชื่อขึ้นฐานข้อมูล</button></div></div>
+    <label class="check mt-s"><input type="checkbox" data-on="db-auto" ${m.auto === false ? '' : 'checked'}><span>บันทึกขึ้นฐานข้อมูลอัตโนมัติเมื่อเพิ่ม/แก้ไข/ลบผู้ใช้<span class="help">เริ่มทำงานหลังจากกด "บันทึก" หรือ "ดึง" ครั้งแรกในเครื่องนี้ (กันไม่ให้เครื่องที่ยังไม่มีรายชื่อไปทับฐานข้อมูล)</span></span></label>
+    <p class="small muted mb-0 mt-s">ชีตชื่อ <b>users</b> เก็บรหัสผ่านแบบอ่านได้ — <b>อย่าแชร์ Google Sheets นี้ให้ผู้อื่น</b> · เพิ่มรายชื่อในชีตโดยตรงแล้วกด "ดึงรายชื่อ" ก็ได้ · ฉบับก่อนหน้าเก็บไว้ในชีต users_prev</p></section>`;
+}
+handlers['db-auto'] = el => { setDbMeta({ auto: !!el.checked }); };
+async function dbPush(auto) {
+  ensureRoster();
+  const rows = dbRosterRows(); if (!rows.length) { if (!auto) toast('ยังไม่มีรายชื่อในเครื่องนี้ — ใช้ "ดึงรายชื่อจากฐานข้อมูล" แทน', 'bad', 6000); return false; }
+  try {
+    if (!auto) {
+      const st = await withProgress('กำลังตรวจฐานข้อมูล…', () => dbCall('status'));
+      if (st.users > rows.length && !(await confirmDlg(`ฐานข้อมูลมีรายชื่อ ${st.users} คน แต่เครื่องนี้มี ${rows.length} คน — การบันทึกจะแทนที่รายชื่อในฐานข้อมูลทั้งหมด (ระบบเก็บฉบับก่อนหน้าไว้ในชีต users_prev) ถ้าไม่แน่ใจ ให้กด "ดึงรายชื่อ" มารวมก่อน`, { ok: 'แทนที่ฐานข้อมูล', danger: true }))) return false;
+      await withProgress('กำลังบันทึกรายชื่อ…', () => dbCall('roster_put', { rows }));
+    } else await dbCall('roster_put', { rows });
+    setDbMeta({ push: Date.now(), base: Date.now() }); DBS.pushErr = ''; paintRosterStatus();
+    toast(auto ? 'บันทึกรายชื่อขึ้นฐานข้อมูลแล้ว' : `บันทึกรายชื่อ ${rows.length} คนขึ้นฐานข้อมูลแล้ว`, 'ok', auto ? 2500 : 4000);
+    return true;
+  } catch (e) { DBS.pushErr = e.message; paintRosterStatus(); toast('บันทึกรายชื่อขึ้นฐานข้อมูลไม่สำเร็จ: ' + e.message, 'bad', 7000); return false; }
+}
+actions['db-push'] = () => { if (!dbReady()) return toast('ยังไม่ได้ตั้งค่าฐานข้อมูล', 'bad'); return dbPush(false); };
+actions['db-pull'] = async () => {
+  if (!dbReady()) return toast('ยังไม่ได้ตั้งค่าฐานข้อมูล', 'bad');
+  let j; try { j = await withProgress('กำลังดึงรายชื่อ…', () => dbCall('roster_get')); } catch (e) { return toast(e.message, 'bad', 7000); }
+  if (!j.rows || !j.rows.length) return toast('ฐานข้อมูลยังไม่มีรายชื่อ — เพิ่มรายชื่อที่นี่แล้วกด "บันทึกรายชื่อขึ้นฐานข้อมูล"', 'bad', 6000);
+  DBS.pulling = true; let done = false;
+  try { done = await importRosterRows([j.head].concat(j.rows), 'ฐานข้อมูล (Google Sheets)'); }
+  finally { DBS.pulling = false; }
+  if (done) { setDbMeta({ pull: Date.now(), base: Date.now() }); paintRosterStatus(); dbQueuePush(); }   // the merged roster goes back, so the database holds everyone
+};
+let pushT = null;
+function dbQueuePush() {   // called by syncAccounts() after every roster change
+  if (DBS.pulling || !dbReady()) return; const m = dbMeta(); if (!m.base || m.auto === false) return;
+  clearTimeout(pushT); pushT = setTimeout(() => dbPush(true), 2500);
+}
+
+/* ---------------- settings panel (administrator) ---------------- */
+const KEYCHARS = 'abcdefghjkmnpqrstuvwxyz23456789';
+const genKey = () => Array.from(randBytes(24)).map(b => KEYCHARS[b % KEYCHARS.length]).join('');
+handlers['db-key'] = el => { store.set(DB_KEY, el.value.trim()); };
+actions['db-keygen'] = () => { const k = genKey(), i = $('#db-key'); store.set(DB_KEY, k); if (i) { i.value = k; i.type = 'text'; } toast('สุ่มรหัสลับแล้ว — กด "คัดลอกโค้ด" เพื่อนำไปวางในสคริปต์ (โค้ดจะมีรหัสนี้ติดไปให้)', 'ok', 7000); };
+actions['db-keyshow'] = () => { const i = $('#db-key'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; };
+function scriptWithKey() {
+  const k = dbKey(); if (k.length < 8) return APPS_SCRIPT;
+  return APPS_SCRIPT.replace("var ADMIN_KEY = 'เปลี่ยนเป็นรหัสลับของคุณ';", () => "var ADMIN_KEY = '" + k.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "';");
+}
+actions['db-test'] = async () => {
+  const out = $('#db-test-out'); const say = (cls, t) => { if (out) out.innerHTML = `<div class="callout ${cls} mb-0">${icon(cls === 'ok' ? 'checkc' : 'alert')}<div class="small">${t}</div></div>`; };
+  if (!/^https:\/\//.test(dbUrl())) return say('bad', 'ใส่ Webhook URL (ขึ้นต้นด้วย https://) ก่อน');
+  if (dbKey().length < 8) return say('bad', 'ตั้งรหัสลับของผู้ดูแลก่อน (อย่างน้อย 8 ตัวอักษร) — กด "สุ่มรหัสลับ" ได้');
+  say('', 'กำลังทดสอบ…');
+  try { const j = await dbCall('status'); say('ok', `<b>เชื่อมต่อสำเร็จ</b> — คำขอสมัครครูที่รอตรวจ ${j.pending} รายการ · รายชื่อในฐานข้อมูล ${j.users} คน`); }
+  catch (e) { say('bad', esc(e.message)); }
+};
 
 /* =====================================================================
    Administrator: learner analytics — overview, course detail, learner detail, imports, export
@@ -4598,16 +4800,23 @@ function reqFromText(t) {
   const p = cleanReq(d.person); if (!EMAIL_RE.test(p.email) || p.name.length < 2) throw new Error('คำขอไม่ครบถ้วน (ต้องมีชื่อและอีเมล)');
   return { person: p, at: Date.parse(d.at) || Date.now() };
 }
-let TS_DONE = null;
+let TS_DONE = null, TS_STATE = '', TS_BUSY = false;   // TS_STATE: sent | unverified | failed | none
 route(/^\/teacher-signup$/, () => {
   const S = DATA.settings;
-  if (TS_DONE) return {
-    title: 'ส่งคำขอสมัครครู', html: `<div class="wrap" style="max-width:640px"><div class="panel mt"><div class="center"><div class="big" style="font-size:2.4rem">✅</div><h2>สร้างคำขอเรียบร้อยแล้ว</h2></div>
-      <div class="callout warn">${icon('alert')}<div class="small"><b>ยังไม่ได้ส่งถึงผู้ดูแลระบบ</b> — เว็บนี้ไม่มีเซิร์ฟเวอร์รับข้อมูล กรุณาส่งไฟล์หรือรหัสด้านล่างให้ผู้ดูแล (LINE / อีเมล / ฝากไว้ที่ห้องธุรการ) ผู้ดูแลจะตรวจสอบแล้วส่งรหัสผ่านเข้าสู่ระบบกลับให้คุณ</div></div>
-      <div class="row"><button class="btn primary" data-action="ts-download">${icon('download', 18)} ดาวน์โหลดไฟล์คำขอ</button><button class="btn" data-action="ts-copy">${icon('copy', 18)} คัดลอกรหัสคำขอ</button></div>
-      <p class="small muted mt">รหัสคำขอคือข้อความยาว ๆ ขึ้นต้นด้วย <span class="kbd">${REQ_PREFIX}</span> วางในแชตส่งให้ผู้ดูแลได้เลย (ไม่มีรหัสผ่านอยู่ในนั้น)</p>
+  if (TS_DONE) {
+    const sent = TS_STATE === 'sent', unv = TS_STATE === 'unverified';
+    const head = sent ? `<div class="callout ok">${icon('checkc')}<div class="small"><b>ส่งคำขอถึงผู้ดูแลระบบแล้ว</b> — ผู้ดูแลจะได้รับแจ้งเตือนในส่วนจัดการระบบ เมื่อตรวจสอบและอนุมัติแล้วจะส่งอีเมลและรหัสผ่านสำหรับเข้าสู่ระบบมาให้คุณ</div></div>`
+      : unv ? `<div class="callout warn">${icon('alert')}<div class="small"><b>ส่งคำขอแล้ว แต่ยืนยันการรับไม่ได้</b> — เพื่อความมั่นใจ แจ้งผู้ดูแลอีกทางหนึ่งด้วย (ส่งไฟล์หรือรหัสด้านล่างให้ผู้ดูแล)</div></div>`
+      : `<div class="callout warn">${icon('alert')}<div class="small"><b>ยังไม่ได้ส่งถึงผู้ดูแลระบบ</b> — ${TS_STATE === 'failed' ? 'ส่งไม่สำเร็จ (ตรวจอินเทอร์เน็ตแล้วลองใหม่ หรือ' : 'เว็บนี้ยังไม่ได้เชื่อมต่อฐานข้อมูล'} กรุณาส่งไฟล์หรือรหัสด้านล่างให้ผู้ดูแล (LINE / อีเมล / ฝากไว้ที่ห้องธุรการ) ผู้ดูแลจะตรวจสอบแล้วส่งรหัสผ่านเข้าสู่ระบบกลับให้คุณ${TS_STATE === 'failed' ? ')' : ''}</div></div>`;
+    const backup = `<div class="row"><button class="btn ${sent ? '' : 'primary'}" data-action="ts-download">${icon('download', 18)} ดาวน์โหลดไฟล์คำขอ</button><button class="btn" data-action="ts-copy">${icon('copy', 18)} คัดลอกรหัสคำขอ</button></div>
+      <p class="small muted mt">รหัสคำขอคือข้อความยาว ๆ ขึ้นต้นด้วย <span class="kbd">${REQ_PREFIX}</span> วางในแชตส่งให้ผู้ดูแลได้เลย (ไม่มีรหัสผ่านอยู่ในนั้น)</p>`;
+    return {
+      title: 'ส่งคำขอสมัครครู', html: `<div class="wrap" style="max-width:640px"><div class="panel mt"><div class="center"><div class="big" style="font-size:2.4rem">${sent ? '✅' : '📨'}</div><h2>${sent ? 'ส่งคำขอเรียบร้อยแล้ว' : 'สร้างคำขอเรียบร้อยแล้ว'}</h2></div>
+      ${head}${sent ? `<details><summary style="cursor:pointer" class="small muted">ส่งสำรองให้ผู้ดูแลด้วยตัวเอง (ไม่จำเป็น)</summary><div class="mt-s">${backup}</div></details>` : backup}
       <div class="row between mt"><a class="btn ghost" href="#/login">ไปหน้าเข้าสู่ระบบ</a><button class="btn ghost" data-action="ts-again">กรอกคำขอใหม่</button></div></div></div>`
-  };
+    };
+  }
+  const live = /^https:\/\//.test(dbUrl());
   return {
     title: 'ขอสมัครเป็นครูผู้สอน', html: `<div class="wrap" style="max-width:640px"><div class="panel mt"><h2>ขอสมัครเป็นครูผู้สอน</h2>
       <p class="muted">กรอกข้อมูลเพื่อขอสิทธิ์สร้างคอร์สใน ${esc(S.orgName || S.siteName)} — ผู้ดูแลระบบจะตรวจสอบและสร้างบัญชีให้ คุณจะได้รับอีเมลและรหัสผ่านสำหรับเข้าสู่ระบบ</p>
@@ -4616,20 +4825,25 @@ route(/^\/teacher-signup$/, () => {
       <div class="grid2"><label class="field"><span class="lb">โรงเรียน / หน่วยงาน</span><input type="text" id="ts-org" value="${esc(S.orgName || '')}"></label><label class="field"><span class="lb">เบอร์โทรติดต่อ</span><input type="tel" id="ts-phone" autocomplete="tel" inputmode="tel"></label></div>
       <label class="field"><span class="lb">วิชา / หัวข้อที่จะสอน</span><input type="text" id="ts-subject" placeholder="เช่น คณิตศาสตร์ ม.ต้น"></label>
       <label class="field"><span class="lb">หมายเหตุถึงผู้ดูแล</span><textarea id="ts-note" rows="3"></textarea></label>
-      <button class="btn primary lg" data-action="ts-make" style="width:100%">สร้างคำขอสมัคร</button>
-      <p class="help center mt-s">ข้อมูลนี้ไม่ถูกส่งออกจากเครื่องคุณ จนกว่าคุณจะส่งไฟล์ให้ผู้ดูแลเอง</p></div></div>`,
+      <div class="hp" aria-hidden="true"><label>เว็บไซต์ (เว้นว่าง)<input type="text" id="ts-web" tabindex="-1" autocomplete="off"></label></div>
+      <button class="btn primary lg" data-action="ts-make" style="width:100%">${live ? 'ส่งคำขอสมัคร' : 'สร้างคำขอสมัคร'}</button>
+      <p class="help center mt-s">${live ? 'คำขอจะถูกส่งถึงผู้ดูแลระบบทันที และผู้ดูแลจะได้รับแจ้งเตือน' : 'ข้อมูลนี้ไม่ถูกส่งออกจากเครื่องคุณ จนกว่าคุณจะส่งไฟล์ให้ผู้ดูแลเอง'}</p></div></div>`,
     mount() { const e = $('#ts-name'); if (e) e.focus(); }
   };
 });
-actions['ts-make'] = () => {
+actions['ts-make'] = async () => {
+  if (TS_BUSY) return;
   const r = cleanReq({ name: $('#ts-name').value, email: $('#ts-email').value, org: $('#ts-org').value, phone: $('#ts-phone').value, subject: $('#ts-subject').value, note: $('#ts-note').value });
   if (r.name.length < 2) return toast('กรุณากรอกชื่อ–นามสกุล', 'bad');
   if (!EMAIL_RE.test(r.email)) return toast('รูปแบบอีเมลไม่ถูกต้อง', 'bad');
+  const hp = ($('#ts-web') || {}).value || '', btn = document.querySelector('[data-action="ts-make"]');
+  TS_BUSY = true; if (btn) { btn.disabled = true; btn.textContent = 'กำลังส่งคำขอ…'; }
+  try { TS_STATE = await dbSendRequest(r, hp); } finally { TS_BUSY = false; }
   TS_DONE = r; rerender(); window.scrollTo(0, 0);
 };
 actions['ts-download'] = () => { if (!TS_DONE) return; downloadText('teacher-request-' + TS_DONE.email.replace(/[^a-z0-9]+/g, '_') + '.pmooc.json', JSON.stringify({ app: 'prommamooc', kind: 'teacher-request', v: 1, at: new Date().toISOString(), person: TS_DONE }), 'application/json'); toast('ดาวน์โหลดไฟล์คำขอแล้ว — ส่งให้ผู้ดูแลระบบ', 'ok', 5000); };
 actions['ts-copy'] = async () => { if (!TS_DONE) return; toast((await copyText(reqToText(TS_DONE))) ? 'คัดลอกรหัสคำขอแล้ว — วางส่งให้ผู้ดูแลได้เลย' : 'คัดลอกไม่สำเร็จ ใช้ปุ่มดาวน์โหลดไฟล์แทน', 'ok', 5000); };
-actions['ts-again'] = () => { TS_DONE = null; rerender(); };
+actions['ts-again'] = () => { TS_DONE = null; TS_STATE = ''; rerender(); };
 
 
 /* =====================================================================
@@ -4669,6 +4883,7 @@ function boot() {
   applyTheme(DATA.settings);
   flushQueue();
   render();
+  startDbWatch();
 }
 boot();
 })();
