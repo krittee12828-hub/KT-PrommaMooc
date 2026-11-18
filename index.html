@@ -740,6 +740,29 @@ ul.chk li.d a{color:var(--ink-3);text-decoration:line-through}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
+/* ---------- certificate templates ---------- */
+.tp-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:10px;margin-top:10px}
+.tp-opt{display:flex;flex-direction:column;gap:3px;text-align:left;padding:7px;border:2px solid var(--line-2);border-radius:14px;background:#fff;cursor:pointer;min-width:0;font:inherit;color:inherit}
+.tp-opt:hover,.tp-opt:focus-visible{border-color:var(--primary-300,#8aa0dc);box-shadow:0 0 0 3px var(--primary-100)}
+.tp-opt.on{border-color:var(--primary);background:var(--primary-50);box-shadow:0 0 0 3px var(--primary-100)}
+.tp-opt canvas{width:100%;height:auto;border-radius:8px;background:#f2f4fa;display:block;aspect-ratio:1.414/1}
+.tp-opt b{font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tp-opt small{color:var(--ink-3);font-size:.78rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tp-card.fresh{box-shadow:0 0 0 3px var(--accent)}
+.tp-more .btn.ghost{padding-left:8px;padding-right:8px}
+.tp-pv{display:block;width:100%;height:auto;border-radius:8px;background:#f2f4fa}
+.tp-picks{display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow:auto}
+.tp-pick{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:#fff}
+.tp-pick input{width:20px;height:20px;min-height:0;margin-top:2px;flex:none}.tp-pick span{display:flex;flex-direction:column;min-width:0}.tp-pick small{color:var(--ink-3)}
+.tw .dz-box{pointer-events:none;cursor:default}
+.tw-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;width:min(560px,92%);min-height:300px;padding:28px 22px;border:3px dashed var(--line-2);border-radius:22px;background:rgba(255,255,255,.92);color:var(--ink-2);cursor:pointer}
+.tw-drop:hover,.tw-drop:focus-visible,.tw-drop.over{border-color:var(--primary);background:#fff;box-shadow:0 0 0 4px var(--primary-100)}
+.tw-drop .big{color:var(--primary)}.tw-drop b{font-family:var(--head);font-size:1.1rem;color:var(--ink)}.tw-drop small{color:var(--ink-3);max-width:40ch}
+.tw-steps,.tw-tips{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:7px;font-size:.88rem;color:var(--ink-2)}
+.tw-chk{display:flex;gap:10px;align-items:flex-start;padding:6px 2px;cursor:pointer}
+.tw-chk input{width:20px;height:20px;min-height:0;margin-top:2px;flex:none}.tw-chk span{display:flex;flex-direction:column;min-width:0}.tw-chk small{color:var(--ink-3);font-weight:400}
+.tw input[type=range]{width:100%;min-height:28px;padding:0}
+@media (max-width:560px){.tw .dz-top{gap:6px;padding:6px 10px}.tw .dz-simsel span{display:none}.tw .dz-simsel select{max-width:120px}.tw .dz-title{display:none}.tw-drop{min-height:220px}}
+
 </style>
 <style id="theme-vars"></style>
 </head>
@@ -1999,6 +2022,21 @@ function parseUserRows(rows) {
   return { items, missing };
 }
 
+/* =====================================================================
+   Limits and checkers for certificate designs.
+   Kept in its own early file on purpose: the published page data is normalised (normData → normDesign) while 10_data.js is being evaluated,
+   so everything normDesign() touches has to exist before that — a `const` declared in a later file is still in its temporal dead zone then.
+   ===================================================================== */
+const VAR_MAX = 6;   // custom text fields of a design: {v1} … {v6}
+const FONT_FILE_MAX = 450 * 1024, FONT_TOTAL_MAX = 1300 * 1024;
+const FONT_EXT = { ttf: 'font/ttf', otf: 'font/otf', woff: 'font/woff', woff2: 'font/woff2' };
+const DS_LIM = { x: [-4000, 6000], y: [-4000, 6000], w: [1, 6000], h: [0, 6000], r: [0, 3000], size: [8, 700], ls: [-30, 200], lh: [0.7, 4], ml: [0, 20], sw: [0, 60], minp: [10, 100], op: [0, 1] };
+const DS_MAX_EL = 80, DS_MAX_FONTS = 6;
+const dsNum = (v, k, d) => { const L = DS_LIM[k], n = num(v, d); return Math.max(L[0], Math.min(L[1], isFinite(n) ? n : d)); };
+const dsColor = (v, d) => (/^(#[0-9a-f]{3,8}|@P|@G|@ink|@grey|@mute|@white)$/i.test(String(v == null ? '' : v)) ? String(v) : d);
+const dsImgOk = v => /^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(v);
+const dsFontSpec = v => { const t = String(v || 'Prompt').replace(/["'\;{}<>\n\r]/g, '').trim().slice(0, 70); return t || 'Prompt'; };
+
 
 /* =====================================================================
    Data model, persistence, progress
@@ -2012,7 +2050,8 @@ const DEF_SETTINGS = {
   orgName: '', logo: '', logoText: '', heroImage: '',
   primary: '#26418f', accent: '#f2a900',
   footerText: '', profileExtraLabel: 'โรงเรียน / หน่วยงาน (ถ้ามี)',
-  showAdminLink: true, adminPinHash: '', webhookUrl: '', allowGuests: true, dbPublish: false, imgDrive: true
+  showAdminLink: true, adminPinHash: '', webhookUrl: '', allowGuests: true, dbPublish: false, imgDrive: true,
+  certTplDefault: ''   // id of the certificate template used by courses that follow the system default ('' = the ready-made style)
 };
 const newQuiz = () => ({ enabled: false, passPercent: 60, shuffleQ: false, shuffleC: true, showFeedback: true, questions: [] });
 const newLesson = () => ({ id: uid('l-'), title: 'บทเรียนใหม่', youtube: '', description: '', images: [], resources: '', duration: '', quiz: newQuiz() });
@@ -2025,7 +2064,9 @@ const newCert = () => ({
   showScores: true, note: '', orgName: '', logo: '',
   signers: [{ name: '', title: '', image: '' }, { name: '', title: '', image: '' }], idPrefix: 'PM',
   num: { on: true, fmt: '{P}-{BE}-{N}', digits: 4, start: 1, scope: 'course', reset: 'never' },   // certificate number issued by the system
-  design: null   // custom layout from the designer (null = one of the ready-made styles above)
+  design: null,   // layout made only for this course in the designer — when present it wins over everything below
+  tplId: '',      // certificate template: '' = the system default · 'preset' = the ready-made style above · otherwise the id of a template (certTpl)
+  tplVars: {}     // this course's values for the template's extra text fields { v1: '…' }
 });
 const newCourse = () => ({
   id: uid('c-'), title: 'คอร์สใหม่', subtitle: '', description: '', instructor: '', category: '', level: '', duration: '',
@@ -2066,6 +2107,10 @@ function normCourse(c) {
   const s = c.certificate.signers || []; while (s.length < 2) s.push({ name: '', title: '', image: '' });
   c.certificate.signers = s.slice(0, 2).map(x => merge({ name: '', title: '', image: '' }, x));
   if (c.certificate.design) c.certificate.design = normDesign(c.certificate.design);
+  c.certificate.tplId = String(c.certificate.tplId || '').replace(/[^\w\-]/g, '').slice(0, 60);
+  const tv = c.certificate.tplVars && typeof c.certificate.tplVars === 'object' && !Array.isArray(c.certificate.tplVars) ? c.certificate.tplVars : {}, tvo = {};
+  Object.keys(tv).forEach(k => { if (/^v[1-6]$/.test(k) && tv[k] != null && String(tv[k]).trim() !== '') tvo[k] = String(tv[k]).slice(0, 300); });
+  c.certificate.tplVars = tvo;
   return c;
 }
 function normData(d) {
@@ -2074,8 +2119,9 @@ function normData(d) {
   d.settings = merge(DEF_SETTINGS, d.settings || {});
   d.courses = (d.courses || []).map(normCourse);
   d.announcements = (Array.isArray(d.announcements) ? d.announcements : []).filter(a => a && typeof a === 'object').map(a => merge(newAnn(), a));
-  // certificate designs saved for re-use (administrator): { id, name, at, colors: {p, g}, design }
-  d.certLib = (Array.isArray(d.certLib) ? d.certLib : []).filter(x => x && typeof x === 'object' && x.design).map(x => ({ id: String(x.id || uid('lb-')), name: String(x.name || 'แบบเกียรติบัตร').slice(0, 80), at: num(x.at, 0), colors: { p: String((x.colors && x.colors.p) || '#26418f'), g: String((x.colors && x.colors.g) || '#b88a2e') }, design: normDesign(x.design) }));
+  // certificate templates (artwork + where the data goes) shared by many courses. Older files kept them in `certLib` (administrator only).
+  const seenT = {}; d.certTpl = (Array.isArray(d.certTpl) ? d.certTpl : []).concat(Array.isArray(d.certLib) ? d.certLib : []).map(normTpl).filter(t => t && !seenT[t.id] && (seenT[t.id] = 1)); delete d.certLib;
+  if (d.settings.certTplDefault && !seenT[d.settings.certTplDefault]) d.settings.certTplDefault = '';
   d.updatedAt = d.updatedAt || 0;
   d.auth = merge({ setup: false, salt: '', accounts: [] }, d.auth || {});
   if (!Array.isArray(d.auth.accounts)) d.auth.accounts = [];
@@ -2096,8 +2142,10 @@ const remoteCacheFits = r => !!(r && r.data && r.url === BAKED.url && (r.salt ||
 })();
 let DATA;
 const HASH = {};   // course id → fingerprint at last save (so we can stamp updatedAt only on courses that really changed)
+const THASH = {};  // the same for certificate templates (their picture is fingerprinted by length + tail, not byte by byte)
+const tplHash = t => fnv(JSON.stringify(Object.assign({}, t, { at: 0, design: Object.assign({}, t.design, { bgImage: t.design.bgImage ? t.design.bgImage.length + t.design.bgImage.slice(-40) : '' }) })));
 const courseHash = c => fnv(JSON.stringify(Object.assign({}, c, { updatedAt: 0, sentRev: 0 })));
-const rebaseHashes = () => { DATA.courses.forEach(c => { HASH[c.id] = courseHash(c); }); };
+const rebaseHashes = () => { DATA.courses.forEach(c => { HASH[c.id] = courseHash(c); }); Object.keys(THASH).forEach(k => delete THASH[k]); (DATA.certTpl || []).forEach(t => { THASH[t.id] = tplHash(t); }); };
 function loadData() {
   const local = store.get(LS.data, null), ld = local && local.data;
   if (ld && (ld.updatedAt || 0) > (EMBEDDED.updatedAt || 0)) DATA = normData(ld);
@@ -2116,6 +2164,11 @@ let saveTimer = null;
 function touchChanged() {
   const now = Date.now();
   DATA.courses.forEach(c => { const h = courseHash(c); if (HASH[c.id] !== h) { c.updatedAt = now; HASH[c.id] = h; } });
+  (DATA.certTpl || []).forEach(t => {   // an edited template counts as an edit of every course that uses it (a teacher's package must be re-sent)
+    const h = tplHash(t); if (THASH[t.id] === h) return;
+    if (THASH[t.id] !== undefined) { t.at = now; DATA.courses.forEach(c => { if (certTplOf(c.certificate) === t) c.updatedAt = now; }); }
+    THASH[t.id] = h;
+  });
 }
 function saveData() {
   clearTimeout(saveTimer); saveTimer = null;
@@ -2283,6 +2336,7 @@ function resolveOwners(D) {
   if (!Array.isArray(D.users) || !D.auth.salt) return;
   const m = {}; D.users.forEach(u => { m['h:' + acctIdOf(u.email, D.auth.salt)] = u.email; });
   D.courses.forEach(c => { if (c.owner && m[c.owner]) c.owner = m[c.owner]; });
+  (D.certTpl || []).forEach(t => { if (t.owner && m[t.owner]) t.owner = m[t.owner]; });
 }
 function canEditCourse(c) { return isAdmin() || (isTeacher() && ownsCourse(c)); }
 function canViewCourse(c) { return !!c.published || canEditCourse(c); }
@@ -2409,7 +2463,7 @@ async function changeMyPassword(oldPw, newPw) {
 function persistTeacher() {
   const all = store.get(LS.tc, {}), mine = {};
   DATA.courses.forEach(c => { if (ownsCourse(c)) mine[c.id] = c; });
-  all[SESS.id] = { at: Date.now(), courses: mine };
+  all[SESS.id] = { at: Date.now(), courses: mine, tpls: (DATA.certTpl || []).filter(tplMine) };
   if (!store.set(LS.tc, all)) toast('พื้นที่เก็บข้อมูลในเบราว์เซอร์เต็ม — กรุณาส่งคอร์สให้ผู้ดูแลระบบทันที', 'bad', 6000);
 }
 function applyTeacherOverlay() {
@@ -2419,6 +2473,11 @@ function applyTeacherOverlay() {
     const d = normCourse(ov[id]); if (!ownsCourse(d)) return;
     const i = DATA.courses.findIndex(c => c.id === id);
     if (i < 0) DATA.courses.push(d); else if ((d.updatedAt || 0) > (DATA.courses[i].updatedAt || 0)) DATA.courses[i] = d;
+  });
+  (((store.get(LS.tc, {}) || {})[SESS.id] || {}).tpls || []).forEach(x => {   // the teacher's own certificate templates
+    const t = normTpl(x); if (!t || !tplMine(t)) return; if (!Array.isArray(DATA.certTpl)) DATA.certTpl = [];
+    const i = DATA.certTpl.findIndex(y => y.id === t.id);
+    if (i < 0) DATA.certTpl.push(t); else if ((t.at || 0) > (DATA.certTpl[i].at || 0)) DATA.certTpl[i] = t;
   });
   rebaseHashes();
 }
@@ -2431,7 +2490,8 @@ function courseState(c) {   // where a teacher's course stands
 function buildPackage(courses) {
   return {
     app: 'prommamooc', kind: 'course-package', v: 1, from: { email: SESS.email, name: SESS.name, org: SESS.org }, at: new Date().toISOString(),
-    courses: courses.map(c => { const x = deep(c); x.published = false; x.owner = SESS.email; x.ownerName = SESS.name; return x; })
+    courses: courses.map(c => { const x = deep(c); x.published = false; x.owner = SESS.email; x.ownerName = SESS.name; return x; }),
+    templates: pkgTemplates(courses)   // the teacher's own certificate templates that these courses use
   };
 }
 
@@ -2440,6 +2500,7 @@ function exportData() {
   const d = Object.assign({}, DATA); delete d.users; delete d.fp; delete d.inbox;
   const x = deep(d); x.settings.adminPinHash = '';
   x.courses.forEach(c => { if (c.owner && !/^h:/.test(c.owner)) c.owner = x.auth.salt ? 'h:' + acctIdOf(normEmail(c.owner), x.auth.salt) : ''; });   // no teacher e-mail in the public file
+  (x.certTpl || []).forEach(t => { if (t.owner && !/^h:/.test(t.owner)) t.owner = x.auth.salt ? 'h:' + acctIdOf(normEmail(t.owner), x.auth.salt) : ''; });
   return x;
 }
 
@@ -3355,9 +3416,8 @@ function drawDeco(ctx, tpl, CW, CH, P, G, nobase) {   // nobase: the designer pa
 /* Every certificate is painted by the layout engine (42_certdraw.js): a ready-made style is turned into a layout on the fly (never saved), so the
    same guarantees hold for all of them — text stays inside its frame, nothing prints on top of anything else, and the certificate number appears. */
 async function drawCert(canvas, o) {
-  const C = o.cert;
-  if (C && C.design) return drawDesign(canvas, o);
-  return drawDesign(canvas, Object.assign({}, o, { cert: Object.assign({}, C, { design: normDesign(designFromPreset(C)) }) }));
+  const C = effCert(o.cert);   // own layout · a template · or the ready-made style turned into a layout (67_certtpl.js)
+  return drawDesign(canvas, C === o.cert ? o : Object.assign({}, o, { cert: C }));
 }
 
 function certOpts(c, cpv, name) {
@@ -3477,8 +3537,6 @@ const FONTS = [
 const FONT_GROUPS = [['sans', 'ทันสมัย (ไม่มีหัว)'], ['serif', 'ทางการ (มีหัว)'], ['fun', 'โดดเด่น / ลายมือ']];
 const FONT_BY = {}; FONTS.forEach(x => { FONT_BY[x.f] = x; });
 const WT_NAME = { 300: 'บาง', 400: 'ปกติ', 500: 'กลาง', 600: 'กึ่งหนา', 700: 'หนา' };
-const FONT_FILE_MAX = 450 * 1024, FONT_TOTAL_MAX = 1300 * 1024;
-const FONT_EXT = { ttf: 'font/ttf', otf: 'font/otf', woff: 'font/woff', woff2: 'font/woff2' };
 
 /* "Prompt" · "up:DB Heavent" · "local:DB Heavent" */
 function parseFont(spec) {
@@ -3621,7 +3679,6 @@ const CERT_FIELDS = [
 ];
 const FIELD_LABEL = {}; CERT_FIELDS.forEach(f => { FIELD_LABEL[f[0]] = f[1]; });
 const FIELD_GROUPS = ['ผู้รับเกียรติบัตร', 'หลักสูตร', 'เลขที่และวันที่', 'หน่วยงานและผู้ลงนาม'];
-const VAR_MAX = 6;   // custom text fields of a design: {v1} … {v6}
 const INK = { '@ink': '#1d2433', '@grey': '#5b6477', '@mute': '#8a93a6', '@white': '#ffffff' };
 
 const certDims = C => (C && C.design && C.design.orient === 'p' ? { W: 1240, H: 1754 } : { W: CW, H: CH });
@@ -3871,12 +3928,7 @@ const STARTERS = [
 /* A design may arrive from a teacher's package or from the database, so everything is checked and clamped here:
    unknown keys are dropped, numbers are kept inside sane ranges, colours / fonts / pictures are whitelisted. A broken or hostile design can
    therefore never freeze the page, reach another website (pictures must be embedded) or paint outside the page. */
-const DS_LIM = { x: [-4000, 6000], y: [-4000, 6000], w: [1, 6000], h: [0, 6000], r: [0, 3000], size: [8, 700], ls: [-30, 200], lh: [0.7, 4], ml: [0, 20], sw: [0, 60], minp: [10, 100], op: [0, 1] };
-const DS_MAX_EL = 80, DS_MAX_FONTS = 6;
-const dsNum = (v, k, d) => { const L = DS_LIM[k], n = num(v, d); return Math.max(L[0], Math.min(L[1], isFinite(n) ? n : d)); };
-const dsColor = (v, d) => (/^(#[0-9a-f]{3,8}|@P|@G|@ink|@grey|@mute|@white)$/i.test(String(v == null ? '' : v)) ? String(v) : d);
-const dsImgOk = v => /^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(v);
-const dsFontSpec = v => { const t = String(v || 'Prompt').replace(/["'\;{}<>\n\r]/g, '').trim().slice(0, 70); return t || 'Prompt'; };
+// DS_LIM, dsNum, dsColor … live in 08_dsnorm.js: normDesign() runs while the page data loads, before this file is evaluated
 function normDesign(D) {
   D = D && typeof D === 'object' ? D : newDesign();
   const out = newDesign(D.orient === 'p' ? 'p' : 'l', ['none', 'classic', 'modern', 'minimal'].indexOf(D.deco) >= 0 ? D.deco : 'none');
@@ -4127,7 +4179,7 @@ const keepOpen = () => $$('details[data-key]').filter(d => d.open).forEach(d => 
 const openAttr = k => (UI.open.has(k) ? 'open' : '');
 document.addEventListener('toggle', e => { const d = e.target; if (d && d.matches && d.matches('details[data-key]')) { if (d.open) UI.open.add(d.dataset.key); else UI.open.delete(d.dataset.key); } }, true);
 function refreshEditor() {
-  if ($('#ed')) { const y = window.scrollY; $('#ed').innerHTML = editorInner(); window.scrollTo(0, y); if (ED.tab === 'cert') drawPreview(); }
+  if ($('#ed')) { const y = window.scrollY; $('#ed').innerHTML = editorInner(); window.scrollTo(0, y); if (ED.tab === 'cert') certTabMounted(); }
   else rerender();
 }
 const move = (arr, i, d) => { const j = i + d; if (j < 0 || j >= arr.length) return false; [arr[i], arr[j]] = [arr[j], arr[i]]; return true; };
@@ -4323,7 +4375,7 @@ route(/^\/admin\/course\/([^/]+)$/, id => staffGuard(() => {
     html: `<div class="wrap mt"><div class="crumbs"><a href="#/admin">${isAdmin() ? 'คอร์สทั้งหมด' : 'คอร์สของฉัน'}</a><span>›</span><span>${esc(c.title)}</span></div>
       <div class="row between"><h1 class="mb-0">${esc(c.title)}</h1><div class="row"><a class="btn" href="#/course/${c.id}">${icon('eye', 18)} ดูตัวอย่าง</a>${c.published ? '<span class="tag ok">เผยแพร่</span>' : '<span class="tag warn">ฉบับร่าง</span>'}${isTeacher() ? `<button class="btn primary" data-action="pkg-send" data-id="${c.id}">${icon('upload', 18)} ส่งให้ผู้ดูแล</button>` : ''}</div></div>
       <div id="ed">${editorInner()}</div></div>`,
-    mount() { if (ED.tab === 'cert') drawPreview(); }
+    mount() { if (ED.tab === 'cert') certTabMounted(); }
   };
 }));
 const TABS = [['general', 'ข้อมูลคอร์ส'], ['lessons', 'บทเรียน'], ['pre', 'ข้อสอบก่อนเรียน'], ['post', 'ข้อสอบหลังเรียน'], ['cert', 'เกียรติบัตร'], ['rules', 'กติกาการเรียน']];
@@ -4514,16 +4566,28 @@ actions['dz-reset'] = async () => {
   c.certificate.design = null; saveData(); refreshEditor();
 };
 function certTab() {
-  const c = ED.course, C = c.certificate, D = C.design, N = numCfg(C), anyRows = DATA.courses.length;
-  const style = D ? `<div class="callout ok">${icon('award')}<div class="grow"><b>ใช้แบบที่ออกแบบเอง</b> — ${D.els.length} องค์ประกอบ · ${D.orient === 'p' ? 'แนวตั้ง' : 'แนวนอน'}${D.fonts.length ? ` · ฟอนต์ที่อัปโหลด ${D.fonts.length} ไฟล์ (${fmtKB(fontBytes(D))})` : ''}<div class="small muted">ลากวางช่องข้อมูล เลือกฟอนต์ ปรับขนาดกรอบ และทดสอบด้วยข้อมูลจำลองได้ในตัวออกแบบ</div></div></div>
-      <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn primary" data-action="dz-open">${icon('edit', 18)} เปิดตัวออกแบบ</button><a class="btn" href="#/admin/certs">คลังแบบเกียรติบัตร</a><button class="btn" data-action="dz-reset">กลับไปใช้แบบสำเร็จรูป</button></div>
-      <div class="grid2 mt">${fld.color('สีหลัก', 'c.certificate.primary', C.primary)}${fld.color('สีทอง / สีเน้น', 'c.certificate.gold', C.gold)}</div>`
-    : `<div class="grid3">${fld.select('แบบ', 'c.certificate.template', C.template, [['classic', 'คลาสสิก (ขอบทอง)'], ['modern', 'โมเดิร์น (แถบสี)'], ['minimal', 'เรียบง่าย']])}${fld.color('สีหลัก', 'c.certificate.primary', C.primary)}${fld.color('สีทอง / สีเน้น', 'c.certificate.gold', C.gold)}</div>
+  const c = ED.course, C = c.certificate, D = C.design, N = numCfg(C), anyRows = DATA.courses.length, T = certTplOf(C), def = tplDefault();
+  const cur = D ? 'own' : C.tplId === 'preset' ? 'preset' : tplById(C.tplId) ? C.tplId : '';
+  const opts = [{ v: '', t: 'ตามค่าเริ่มต้นของระบบ', s: def ? def.name : 'แบบสำเร็จรูป' }, { v: 'preset', t: 'แบบสำเร็จรูป', s: 'คลาสสิก · โมเดิร์น · เรียบง่าย' }]
+    .concat(visibleTpls().map(t => ({ v: t.id, t: t.name, s: tplOwnerLabel(t) }))).concat([{ v: 'own', t: 'ออกแบบเฉพาะหลักสูตรนี้', s: D ? 'มีแบบที่ออกแบบไว้แล้ว' : 'เริ่มจากแบบที่ใช้อยู่ แล้วจัดวางเอง' }]);
+  const pick = `<div class="tp-opts" role="group" aria-label="เลือกแม่แบบเกียรติบัตร">${opts.map(o => `<button type="button" class="tp-opt ${cur === o.v ? 'on' : ''}" data-action="tpl-pick" data-v="${esc(o.v)}" aria-pressed="${cur === o.v}"><canvas data-opt="${esc(o.v)}" width="420" height="300" aria-hidden="true"></canvas><b>${esc(o.t)}</b><small>${esc(o.s)}</small></button>`).join('')}</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin:10px 0"><button class="btn" data-action="tw-open" data-for="${esc(c.id)}">${icon('plus', 16)} เพิ่มแม่แบบใหม่จากภาพ</button><a class="btn" href="#/admin/certs" data-action="cr-goto-tpl">จัดการแม่แบบทั้งหมด / ตั้งทีละหลายหลักสูตร</a></div>`;
+  let detail;
+  if (D) detail = `<div class="callout ok">${icon('award')}<div class="grow"><b>ใช้แบบที่ออกแบบเฉพาะหลักสูตรนี้</b> — ${D.els.length} องค์ประกอบ · ${D.orient === 'p' ? 'แนวตั้ง' : 'แนวนอน'}${D.bgImage ? ` · ภาพพื้น ${fmtKB(Math.round(D.bgImage.length * 0.75))}` : ''}${D.fonts.length ? ` · ฟอนต์ที่อัปโหลด ${D.fonts.length} ไฟล์ (${fmtKB(fontBytes(D))})` : ''}<div class="small muted">ลากวางช่องข้อมูล เลือกฟอนต์ ปรับขนาดกรอบ และทดสอบด้วยข้อมูลจำลองได้ในตัวออกแบบ · เลือกแม่แบบอื่นด้านบนเพื่อเลิกใช้แบบเฉพาะ</div></div></div>
+      <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn primary" data-action="dz-open">${icon('edit', 18)} เปิดตัวออกแบบ</button><button class="btn" data-action="cert-to-tpl">บันทึกเป็นแม่แบบ…</button></div>
+      <div class="grid2 mt">${fld.color('สีหลัก', 'c.certificate.primary', C.primary)}${fld.color('สีทอง / สีเน้น', 'c.certificate.gold', C.gold)}</div>`;
+  else if (T) {
+    const vars = T.design.vars.map(v => fld.text(v.label || v.k, 'c.certificate.tplVars.' + v.k, (C.tplVars || {})[v.k] || '', { ph: v.val, help: 'เว้นว่าง = ใช้ข้อความมาตรฐานของแม่แบบ' })).join('');
+    detail = `<div class="callout ok">${icon('award')}<div class="grow"><b>ใช้แม่แบบ "${esc(T.name)}"</b>${tplById(C.tplId) ? '' : ' (ค่าเริ่มต้นของระบบ)'} — ${esc(tplOwnerLabel(T))} · ${T.design.orient === 'p' ? 'แนวตั้ง' : 'แนวนอน'}<div class="small muted">ระบบใส่ให้เฉพาะ: ${esc(tplFieldNames(T).join(' · ') || '—')}</div></div></div>
+      <div class="row" style="gap:8px;flex-wrap:wrap">${canEditTpl(T) ? `<button class="btn" data-action="tpl-edit" data-id="${esc(T.id)}">${icon('edit', 16)} ปรับตำแหน่งในแม่แบบ (มีผลทุกหลักสูตรที่ใช้)</button>` : ''}<button class="btn" data-action="tpl-pick" data-v="own">ปรับเฉพาะหลักสูตรนี้ (แยกเป็นสำเนา)</button></div>
+      ${vars ? `<h3 class="mt">ข้อความเพิ่มเติมของแม่แบบ</h3><div class="grid2">${vars}</div>` : ''}`;
+  } else detail = `<div class="grid3">${fld.select('แบบ', 'c.certificate.template', C.template, [['classic', 'คลาสสิก (ขอบทอง)'], ['modern', 'โมเดิร์น (แถบสี)'], ['minimal', 'เรียบง่าย']])}${fld.color('สีหลัก', 'c.certificate.primary', C.primary)}${fld.color('สีทอง / สีเน้น', 'c.certificate.gold', C.gold)}</div>
       <div class="grid2">${fld.text('หัวเรื่อง', 'c.certificate.title', C.title)}${fld.text('หัวเรื่องภาษาอังกฤษ (เว้นว่างได้)', 'c.certificate.subtitle', C.subtitle)}</div>
       ${fld.text('ข้อความก่อนชื่อผู้เรียน', 'c.certificate.preText', C.preText)}${fld.text('ข้อความหลังชื่อผู้เรียน (ก่อนชื่อคอร์ส)', 'c.certificate.postText', C.postText)}
       ${fld.text('ข้อความเพิ่มเติมท้ายชื่อคอร์ส (ไม่บังคับ)', 'c.certificate.note', C.note, { ph: 'เช่น จำนวน 6 ชั่วโมง' })}
-      <div class="callout">${icon('info')}<div class="grow"><b>อยากจัดวางเอง เลือกฟอนต์ไทยทันสมัย (Prompt, Kanit, DB Heavent ที่คุณมี) หรือเพิ่มช่องข้อมูลอื่น ๆ?</b><div class="small muted">ตัวออกแบบเริ่มจากแบบที่เลือกอยู่นี้ แล้วลากวางได้ทุกช่อง ข้อความจะย่อ/ตัดให้อยู่ในกรอบเสมอ</div></div><button class="btn primary" data-action="dz-open">${icon('edit', 18)} ออกแบบเอง</button></div>`;
-  return `<section class="panel">${fld.check('มอบเกียรติบัตรเมื่อเรียนจบคอร์ส', 'c.certificate.enabled', C.enabled)}<h2 class="mt">แบบเกียรติบัตร</h2>${style}</section>
+      <div class="callout">${icon('info')}<div class="grow"><b>อยากใช้ภาพเกียรติบัตรของหน่วยงาน (Template) แทนแบบสำเร็จรูป?</b><div class="small muted">กด "เพิ่มแม่แบบใหม่จากภาพ" ด้านบน — ระบบจะใส่เฉพาะเลขที่ ชื่อผู้ผ่านการอบรม ชื่อหลักสูตร วันที่ ฯลฯ ลงบนภาพให้ หรือกด "ออกแบบเอง" เพื่อจัดวางทุกช่อง เลือกฟอนต์ไทยทันสมัย (Prompt, Kanit, DB Heavent ที่คุณมี)</div></div><button class="btn primary" data-action="dz-open">${icon('edit', 18)} ออกแบบเอง</button></div>`;
+  const style = pick + detail;
+  return `<section class="panel">${fld.check('มอบเกียรติบัตรเมื่อเรียนจบคอร์ส', 'c.certificate.enabled', C.enabled)}<h2 class="mt">แม่แบบเกียรติบัตร</h2>${style}</section>
     <section class="panel"><h2>ข้อมูลบนเกียรติบัตร</h2><div class="grid2">${fld.text('ชื่อหน่วยงานบนเกียรติบัตร', 'c.certificate.orgName', C.orgName, { help: 'เว้นว่าง = ใช้ชื่อหน่วยงานจากหน้าตั้งค่าเว็บไซต์' })}${fld.text('อักษรนำหน้าเลขที่/รหัสเกียรติบัตร', 'c.certificate.idPrefix', C.idPrefix, { hook: 'numex' })}</div>
       ${fld.check('แสดงคะแนนก่อน/หลังเรียนบนเกียรติบัตร', 'c.certificate.showScores', C.showScores)}${fld.image('โลโก้หน่วยงาน', 'c.certificate.logo', C.logo, 400, '', { embed: true })}</section>
     <section class="panel"><h2>เลขที่เกียรติบัตร <small class="muted">ระบบออกให้อัตโนมัติ</small></h2>
@@ -4540,6 +4604,7 @@ function certTab() {
       <p class="small muted">ลองใส่ชื่อสั้น ชื่อยาวมาก ชื่อครู หรือชื่อหลักสูตรยาว ๆ เพื่อดูว่าข้อมูลยังอยู่ในกรอบเกียรติบัตรหรือไม่</p>
       <div class="cert-box"><canvas id="cert-prev" width="1754" height="1240"></canvas></div></section>`;
 }
+function certTabMounted() { drawPreview(); drawOptThumbs(); }
 async function drawPreview() {
   const cv = $('#cert-prev'); if (!cv || !ED.course) return;
   await drawCert(cv, simOpts(ED.course, ED.sim || 'normal'));
@@ -4750,7 +4815,7 @@ function inboxRow(it) {
   const warn = [older ? 'เก่ากว่าเวอร์ชันที่มีอยู่' : '', hasRoster() && !known ? 'ไม่พบอีเมลครูในรายชื่อผู้ใช้' : '', it.from.email && c.owner && normEmail(it.from.email) !== normEmail(c.owner) ? 'อีเมลผู้ส่งไม่ตรงกับเจ้าของคอร์ส' : ''].filter(Boolean);
   const qn = c.lessons.reduce((n, l) => n + l.quiz.questions.length, 0) + c.preTest.questions.length + c.postTest.questions.length;
   return `<div class="panel row between" style="gap:14px"><div style="min-width:0;flex:1 1 300px"><div class="row" style="gap:8px"><h3 class="mb-0">${esc(c.title)}</h3><span class="tag ${kind[1]}">${kind[0]}</span>${warn.map(w => `<span class="tag warn">${icon('alert', 13)} ${esc(w)}</span>`).join('')}</div>
-    <div class="small muted mt-s">จาก ${esc(it.from.name || '–')} (${esc(it.from.email || '–')}) · รับเมื่อ ${fmtDT(it.at)} · ${c.lessons.length} บทเรียน · ข้อสอบรวม ${qn} ข้อ${c.updatedAt ? ' · แก้ไขล่าสุด ' + fmtDT(c.updatedAt) : ''}</div></div>
+    <div class="small muted mt-s">จาก ${esc(it.from.name || '–')} (${esc(it.from.email || '–')}) · รับเมื่อ ${fmtDT(it.at)} · ${c.lessons.length} บทเรียน · ข้อสอบรวม ${qn} ข้อ${c.updatedAt ? ' · แก้ไขล่าสุด ' + fmtDT(c.updatedAt) : ''}${it.tpls && it.tpls.length ? ' · แนบแม่แบบเกียรติบัตร: ' + esc(it.tpls.map(t => t.name).join(', ')) : ''}</div></div>
     <div class="row" style="gap:6px"><button class="btn sm" data-action="inbox-accept" data-id="${it.id}">รับเข้า (ฉบับร่าง)</button><button class="btn primary sm" data-action="inbox-publish" data-id="${it.id}">รับเข้าและเผยแพร่</button><button class="icon-btn" title="ลบออกจากกล่อง" aria-label="ลบออกจากกล่อง" data-action="inbox-del" data-id="${it.id}" style="color:var(--bad)">${icon('trash', 18)}</button></div></div>`;
 }
 function requestRow(it) {
@@ -4818,10 +4883,11 @@ actions['inbox-import'] = async () => {
       const raw = await readText(f), d = JSON.parse(raw);
       if (d && d.kind === 'teacher-request') { addRequest(reqFromText(raw)); n++; continue; }
       if (!d || d.app !== 'prommamooc' || d.kind !== 'course-package' || !Array.isArray(d.courses)) throw new Error('ไม่ใช่ไฟล์คอร์สหรือคำขอสมัครครูของ PrommaMooc');
+      const tpls = (Array.isArray(d.templates) ? d.templates : []).slice(0, 6).map(normTpl).filter(Boolean);   // certificate templates the courses use
       d.courses.forEach(raw => {
         const c = normCourse(raw), from = d.from && typeof d.from === 'object' ? { email: String(d.from.email || ''), name: String(d.from.name || '') } : {};
         DATA.inbox = DATA.inbox.filter(x => !(x.course.id === c.id && normEmail(x.from.email) === normEmail(from.email)));
-        DATA.inbox.push({ id: uid('in-'), at: Date.now(), from, course: c }); n++;
+        DATA.inbox.push({ id: uid('in-'), at: Date.now(), from, course: c, tpls: tpls.filter(t => t.id === c.certificate.tplId) }); n++;
       });
     } catch (e) { bad++; toast(`${f.name}: ${e.message}`, 'bad', 5000); }
   }
@@ -4836,7 +4902,9 @@ async function acceptInbox(id, publish) {
   c.published = publish ? true : (sameOwner ? ex.published : false);
   if (sameOwner) DATA.courses[idx] = c; else DATA.courses.push(c);
   HASH[c.id] = courseHash(c);   // keep the teacher's own timestamp
+  const nt = adoptTpls(it.tpls, it.from && it.from.email);
   DATA.inbox.splice(i, 1); saveData();
+  if (nt) toast(`เพิ่มแม่แบบเกียรติบัตรที่ครูแนบมา ${nt} แบบ`, 'ok', 4000);
   toast(publish ? `เผยแพร่ "${c.title}" แล้ว — อย่าลืมดาวน์โหลด index.html` : `รับ "${c.title}" เข้าระบบเป็นฉบับร่างแล้ว`, 'ok', 5000); rerender();
 }
 actions['inbox-accept'] = el => acceptInbox(el.dataset.id, false);
@@ -6059,7 +6127,7 @@ actions['ann-preview'] = el => { const a = DATA.announcements[+el.dataset.i]; if
    Certificate designer — full-screen editor: drag, resize and style the frames of a certificate.
    Everything is stored in course.certificate.design (see 42_certdraw.js) and saved as you work.
    ===================================================================== */
-const DZ = { c: null, open: false, sel: null, tab: 'els', sim: 'normal', over: {}, tok: false, snap: true, undo: [], redo: [], lastKey: '', lastAt: 0, drag: null, busy: false, again: false, raf: 0, boxes: [], sig: '', pool: {}, scratch: null, pop: false };
+const DZ = { c: null, tpl: null, open: false, sel: null, tab: 'els', sim: 'normal', over: {}, tok: false, snap: true, undo: [], redo: [], lastKey: '', lastAt: 0, drag: null, busy: false, again: false, raf: 0, boxes: [], sig: '', pool: {}, scratch: null, pop: false };
 const dzC = () => (DZ.c && DZ.c.certificate) || null;
 const dzD = () => { const C = dzC(); return C ? C.design : null; };
 const dzDims = () => certDims(dzC());
@@ -6073,17 +6141,17 @@ const SIZE_FIELD = { name: { size: 84, wt: 600, w: 1100 }, course: { size: 50, w
   s1title: { size: 24, w: 420, ml: 2, va: 't', color: '@grey' }, s2title: { size: 24, w: 420, ml: 2, va: 't', color: '@grey' }, role: { size: 30, w: 600, color: '@grey' }, lorg: { size: 30, w: 1000, ml: 2, color: '@grey' }, hours: { text: 'จำนวน {hours}', size: 30, w: 800, color: '@grey' }, post: { text: 'คะแนนหลังเรียน {post}%', size: 28, w: 700 }, pre: { text: 'คะแนนก่อนเรียน {pre}%', size: 28, w: 700 } };
 
 /* ---------- open / close ---------- */
-actions['dz-open'] = () => {
+actions['dz-open'] = async () => {
   const c = ED.course; if (!c || !canEditCourse(c)) return;
-  if (!c.certificate.design) { c.certificate.design = designFromPreset(c.certificate); saveData(); }
+  if (!c.certificate.design) { await tplSwitch(c, 'own'); saveData(); }   // start from whatever the course uses now (a template or a ready-made style)
   dzOpen(c);
 };
-function dzOpen(c) {
+function dzOpen(c, tpl) {   // tpl: editing a certificate template (c is then a stand-in course, see tplHost)
   if (DZ.open) return;
-  Object.assign(DZ, { c, open: true, sel: null, tab: 'els', undo: [], redo: [], lastKey: '', sim: (ED && ED.sim) || 'normal', over: {}, tok: false, boxes: [], sig: '', pool: {}, pop: false });
+  Object.assign(DZ, { c, tpl: tpl || null, open: true, sel: null, tab: 'els', undo: [], redo: [], lastKey: '', sim: (ED && ED.sim) || 'normal', over: {}, tok: false, boxes: [], sig: '', pool: {}, pop: false });
   const el = document.createElement('div'); el.id = 'dz'; el.className = 'dz'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'ตัวออกแบบเกียรติบัตร');
   el.innerHTML = `<header class="dz-top">
-      <button class="btn sm" data-action="dz-close">${icon('left', 16)} กลับ</button><b class="dz-title">ออกแบบเกียรติบัตร</b><span class="muted small dz-sub">${esc(c.title)} · บันทึกอัตโนมัติ</span><span class="dz-sp"></span>
+      <button class="btn sm" data-action="dz-close">${icon('left', 16)} กลับ</button><b class="dz-title">${tpl ? 'แก้ไขแม่แบบ' : 'ออกแบบเกียรติบัตร'}</b><span class="muted small dz-sub">${esc(c.title)}${tpl ? ' · มีผลกับทุกหลักสูตรที่ใช้แม่แบบนี้' : ''} · บันทึกอัตโนมัติ</span><span class="dz-sp"></span>
       <button class="icon-btn" data-action="dz-undo" title="ย้อนกลับ (Ctrl+Z)" aria-label="ย้อนกลับ">${icon('refresh', 18)}</button>
       <label class="dz-simsel"><span>ข้อมูลจำลอง</span><select id="dz-sim" data-dz="sim">${SIM_SETS.map(s => `<option value="${s.k}" ${s.k === DZ.sim ? 'selected' : ''}>${esc(s.label)}</option>`).join('')}<option value="custom">กำหนดเอง (แท็บ "ข้อมูล")</option></select></label>
       <button class="btn sm" data-action="dz-board">ทดสอบทุกกรณี</button><button class="btn sm primary" data-action="dz-close">เสร็จสิ้น</button></header>
@@ -6103,7 +6171,7 @@ function dzCloseNow() {
   if (!DZ.open) return;
   const el = $('#dz'); if (el) el.remove();
   document.removeEventListener('keydown', dzKey); window.removeEventListener('resize', dzResize); document.removeEventListener('click', dzOutside, true);
-  DZ.open = false; DZ.drag = null; if (!$('#overlay').children.length) document.body.classList.remove('modal-open');
+  DZ.open = false; DZ.drag = null; DZ.tpl = null; if (!$('#overlay').children.length) document.body.classList.remove('modal-open');
   if (ED) ED.sim = DZ.sim === 'custom' ? 'normal' : DZ.sim;
   flushSave(); if ($('#ed')) refreshEditor(); else rerender();
 }
@@ -6412,7 +6480,7 @@ function dzTabPage() {
     <div class="dz-two"><label class="dzf"><span>สีหลัก</span><input type="color" data-dzp="page.p" data-dzt="pcol" value="${C.primary}"></label><label class="dzf"><span>สีทอง / สีเน้น</span><input type="color" data-dzp="page.g" data-dzt="gcol" value="${C.gold}"></label></div></section>
     <section class="dz-sec"><h4>เริ่มจากแบบสำเร็จรูป</h4><p class="small muted">เลือกแล้วระบบจะแทนที่องค์ประกอบทั้งหมดด้วยแบบนั้น (ย้อนกลับได้ด้วยปุ่มย้อนกลับ) — ภาพตัวอย่างด้านล่างใช้ข้อมูลจำลองของคุณ</p>
     <div class="dz-starters">${STARTERS.map(s => `<button type="button" class="dz-st" data-action="dz-start" data-k="${s.k}"><canvas data-th="${s.k}" width="320" height="226"></canvas><b>${esc(s.name)}</b><small>${esc(s.desc)}</small></button>`).join('')}</div>
-    <div class="row mt-s"><button class="btn sm" data-action="dz-to-lib">${icon('plus', 14)} บันทึกแบบนี้ไว้ในคลังแบบ</button><button class="btn sm" data-action="dz-from-lib">นำแบบจากคลัง / คอร์สอื่นมาใช้</button></div></section>`;
+    <div class="row mt-s">${DZ.tpl ? '' : `<button class="btn sm" data-action="dz-to-lib">${icon('plus', 14)} บันทึกเป็นแม่แบบ…</button>`}<button class="btn sm" data-action="dz-from-lib">นำแม่แบบ / แบบของคอร์สอื่นมาใช้</button></div></section>`;
 }
 const dzSegPage = (label, prop, val, opts) => `<div class="dzf"><span>${label}</span><div class="dz-seg">${opts.map(([v, t]) => `<button type="button" class="${val === v ? 'on' : ''}" data-action="dz-orient" data-v="${v}">${t}</button>`).join('')}</div></div>`;
 async function dzThumbs() {
@@ -6604,7 +6672,7 @@ function applyRec(r, rec) {
 route(/^\/admin\/certs(?:\/([^/]+))?$/, cid => staffGuard(() => {
   if (cid && getCourse(cid)) CR.cid = cid; else if (!cid && CR.cid !== 'all' && !visibleCertCourses().some(c => c.id === CR.cid)) CR.cid = 'all';
   CR.sel = new Set(); CR.limit = 100;
-  return { title: 'เกียรติบัตร', admin: true, html: certPageHtml(), mount() { if (CR.tab === 'lib') drawLibThumbs(); } };
+  return { title: 'เกียรติบัตร', admin: true, html: certPageHtml(), mount() { if (CR.tab === 'tpl') drawTplThumbs(); } };
 }));
 function dbCertNote() {
   if (!pubDb()) return `<div class="callout warn">${icon('alert')}<div><b>ยังไม่ได้เชื่อมฐานข้อมูล Google Sheets</b> — เลขที่เกียรติบัตรจะออกโดยเครื่องนี้เท่านั้น (ไม่ซ้ำกันในเครื่องนี้ แต่เครื่องอื่นอาจได้เลขซ้ำ) ถ้าต้องการให้ระบบออกเลขที่ให้ผู้เรียนอัตโนมัติทุกเครื่อง ให้เชื่อมฐานข้อมูลที่หน้า "ตั้งค่า"</div></div>`;
@@ -6612,10 +6680,10 @@ function dbCertNote() {
   return `<div class="callout ok">${icon('checkc')}<div>ระบบออกเลขที่ให้อัตโนมัติผ่านฐานข้อมูลเมื่อผู้เรียนเรียนจบ — ไม่ซ้ำกันทุกเครื่อง${isAdmin() && dbReady() ? ` · <button class="btn sm" data-action="cr-sync">${icon('refresh', 14)} ดึงทะเบียนจากฐานข้อมูล</button>${REG.db.at ? ` <span class="muted small">ดึงล่าสุด ${fmtDT(REG.db.at)} · ${REG.db.rows.length} รายการ</span>` : ''}` : ''}</div></div>`;
 }
 function certPageHtml() {
-  const courses = visibleCertCourses(), tabs = [['reg', 'ทะเบียนผู้ผ่านการอบรม'], ['lib', 'คลังแบบเกียรติบัตร']];
-  return `<div class="wrap mt"><div class="row between mb"><div><h1 class="mb-0">เกียรติบัตร</h1><div class="muted small">ผู้ผ่านการอบรม · เลขที่เกียรติบัตรที่ระบบออกให้ · แบบเกียรติบัตร</div></div></div>
+  const courses = visibleCertCourses(), tabs = [['reg', 'ทะเบียนผู้ผ่านการอบรม'], ['tpl', 'แม่แบบเกียรติบัตร']];
+  return `<div class="wrap mt"><div class="row between mb"><div><h1 class="mb-0">เกียรติบัตร</h1><div class="muted small">ผู้ผ่านการอบรม · เลขที่เกียรติบัตรที่ระบบออกให้ · แม่แบบเกียรติบัตร</div></div></div>
     <div class="tabs" role="tablist">${tabs.map(([k, t]) => `<button role="tab" class="tab ${CR.tab === k ? 'on' : ''}" data-action="cr-tab" data-k="${k}">${t}</button>`).join('')}</div>
-    <div id="cr-body">${CR.tab === 'lib' ? libHtml() : regHtml(courses)}</div></div>`;
+    <div id="cr-body">${CR.tab === 'tpl' ? tplHtml() : regHtml(courses)}</div></div>`;
 }
 actions['cr-tab'] = el => { CR.tab = el.dataset.k; rerender(); };
 function regHtml(courses) {
@@ -6704,7 +6772,7 @@ async function bulkImages(rows, upd) {
 async function bulkRows() {
   let rows = pickedRows(); const nv = rows.filter(r => r.status === 'void').length; rows = rows.filter(r => r.status !== 'void');
   if (!rows.length) { toast('ไม่มีรายการให้สร้าง', 'bad'); return null; }
-  const needNo = rows.filter(r => !r.no && numCfg(r.c.certificate).on !== false && r.c.certificate.design && /\{no\}/.test(JSON.stringify(r.c.certificate.design.els))).length;
+  const needNo = rows.filter(r => !r.no && numCfg(r.c.certificate).on !== false && usesNoField(r.c.certificate)).length;
   if (needNo && !(await confirmDlg(`${needNo} รายการยังไม่มีเลขที่ — แบบเกียรติบัตรมีช่องเลขที่ ซึ่งจะว่างไว้ ต้องการสร้างต่อหรือไม่? (กดยกเลิกแล้วใช้ "ออกเลขที่ให้…" ก่อนได้)`, { ok: 'สร้างต่อ' }))) return null;
   if (nv) toast(`ข้าม ${nv} รายการที่ยกเลิก`);
   return rows;
@@ -6768,49 +6836,18 @@ actions['cr-add'] = async () => {
   toast(`เพิ่ม ${items.length} รายการแล้ว`, 'ok'); rerender();
 };
 
-/* ---------- design library ---------- */
-function libHtml() {
-  const lib = DATA.certLib || [], admin = isAdmin(), own = DATA.courses.filter(c => canEditCourse(c) && c.certificate.design);
-  return `<p class="muted small mt">แบบที่บันทึกไว้ใช้ซ้ำได้กับทุกคอร์ส — เมื่อนำไปใช้ ระบบทำสำเนาลงคอร์ส (แก้ในคอร์สไม่กระทบแบบในคลัง) ${admin ? '· บันทึกแบบเข้าคลังได้จากตัวออกแบบ (แท็บ "หน้ากระดาษ")' : '· เฉพาะผู้ดูแลระบบที่เพิ่มแบบเข้าคลังได้'}</p>
-    ${lib.length ? `<div class="lib-grid">${lib.map(x => `<article class="lib-card"><canvas data-lib="${esc(x.id)}" width="420" height="300" aria-label="${esc(x.name)}"></canvas><div class="lb-b"><b>${esc(x.name)}</b><div class="small muted">${x.design.orient === 'p' ? 'แนวตั้ง' : 'แนวนอน'} · ${x.design.els.length} องค์ประกอบ${x.design.fonts.length ? ` · ฟอนต์ที่อัปโหลด ${x.design.fonts.length} ไฟล์ (${fmtKB(fontBytes(x.design))})` : ''}${x.at ? ' · ' + fmtDate(x.at) : ''}</div>
-      <div class="row" style="gap:6px;margin-top:8px"><button class="btn sm primary" data-action="lib-use" data-id="${esc(x.id)}">นำไปใช้กับคอร์ส…</button>${admin ? `<button class="btn sm" data-action="lib-rename" data-id="${esc(x.id)}">ตั้งชื่อ</button><button class="btn sm danger" data-action="lib-del" data-id="${esc(x.id)}">ลบ</button>` : ''}</div></div></article>`).join('')}</div>`
-    : `<div class="empty mt">${icon('award', 30)}<p>ยังไม่มีแบบในคลัง${admin ? ' — เปิดตัวออกแบบของคอร์สใดก็ได้ แล้วกด "บันทึกแบบนี้ไว้ในคลังแบบ"' : ''}</p></div>`}
-    ${own.length ? `<h3 class="mt">แบบที่ใช้อยู่ในคอร์ส</h3><div class="small muted">คอร์สที่ออกแบบเกียรติบัตรเองแล้ว: ${own.map(c => `<a href="#/admin/course/${c.id}">${esc(c.title)}</a>`).join(' · ')}</div>` : ''}`;
-}
-async function drawLibThumbs() {
-  const cvs = $$('canvas[data-lib]'); if (!cvs.length) return;
-  const fake = normCourse({ title: 'การใช้สื่อดิจิทัลเพื่อการเรียนการสอน', duration: '6 ชั่วโมง' });
-  for (const cv of cvs) { const x = (DATA.certLib || []).find(l => l.id === cv.dataset.lib); if (!x || !cv.isConnected) continue; fake.certificate.design = x.design; fake.certificate.primary = x.colors.p; fake.certificate.gold = x.colors.g; fake.certificate.signers[0].name = 'ผู้อำนวยการ'; try { await drawCert(cv, certSample(fake)); } catch (e) { /* ignore */ } }
-}
-function applyDesignTo(c, design, colors) {
-  const C = c.certificate; C.design = cloneDesign(design); if (colors) { C.primary = colors.p; C.gold = colors.g; }
-}
-actions['lib-use'] = async el => {
-  const x = (DATA.certLib || []).find(l => l.id === el.dataset.id); if (!x) return;
-  const mine = DATA.courses.filter(c => canEditCourse(c)); if (!mine.length) return toast('ไม่มีคอร์สที่คุณแก้ไขได้', 'bad');
-  const r = await openModal({ title: `นำแบบ "${x.name}" ไปใช้`, body: `<label class="field"><span class="lb">คอร์สที่จะใช้แบบนี้</span><select id="lu-c">${mine.map(c => `<option value="${esc(c.id)}">${esc(c.title)}${c.certificate.design ? ' (มีแบบที่ออกแบบไว้แล้ว — จะถูกแทนที่)' : ''}</option>`).join('')}</select></label>`, actions: [{ label: 'ยกเลิก', value: false, cls: 'ghost' }, { label: 'ใช้แบบนี้', cls: 'primary', collect: m => $('#lu-c', m).value }] });
-  if (!r) return; const c = getCourse(r); if (!c) return; applyDesignTo(c, x.design, x.colors); saveData(); toast(`ใช้แบบ "${x.name}" กับ "${c.title}" แล้ว`, 'ok'); location.hash = '#/admin/course/' + c.id;
-  setTimeout(() => { if (ED.course && ED.course.id === c.id) { ED.tab = 'cert'; refreshEditor(); } }, 50);
-};
-actions['lib-del'] = async el => { const x = (DATA.certLib || []).find(l => l.id === el.dataset.id); if (!x || !isAdmin()) return; if (!(await confirmDlg(`ลบแบบ "${x.name}" ออกจากคลัง? (คอร์สที่ใช้แบบนี้ไม่ได้รับผลกระทบ)`, { ok: 'ลบ', danger: true }))) return; DATA.certLib = DATA.certLib.filter(l => l.id !== x.id); saveData(); rerender(); };
-actions['lib-rename'] = async el => {
-  const x = (DATA.certLib || []).find(l => l.id === el.dataset.id); if (!x || !isAdmin()) return;
-  const n = await openModal({ title: 'ตั้งชื่อแบบ', body: `<label class="field"><span class="lb">ชื่อแบบ</span><input type="text" id="lr-n" value="${esc(x.name)}" maxlength="80"></label>`, actions: [{ label: 'ยกเลิก', value: false, cls: 'ghost' }, { label: 'บันทึก', cls: 'primary', collect: m => $('#lr-n', m).value.trim() || false }] });
-  if (n) { x.name = n; saveData(); rerender(); }
-};
-/* from the designer */
-actions['dz-to-lib'] = async () => {
-  if (!isAdmin()) return toast('เฉพาะผู้ดูแลระบบที่บันทึกแบบเข้าคลังได้ — ครูใช้ "คัดลอกจากคอร์สอื่น" ได้', 'bad', 5000);
-  const D = dzD(), C = dzC(), n = await openModal({ title: 'บันทึกแบบเข้าคลัง', body: `<label class="field"><span class="lb">ชื่อแบบ</span><input type="text" id="tl-n" value="${esc(DZ.c.title)}" maxlength="80"></label><p class="small muted">แบบนี้มี ${D.els.length} องค์ประกอบ${D.fonts.length ? ` และฟอนต์ที่อัปโหลด ${fmtKB(fontBytes(D))}` : ''} — ลายเซ็น โลโก้ และข้อมูลของคอร์สไม่ถูกรวมไปด้วย</p>`, actions: [{ label: 'ยกเลิก', value: false, cls: 'ghost' }, { label: 'บันทึก', cls: 'primary', collect: m => $('#tl-n', m).value.trim() || false }] });
-  if (!n) return; if (!Array.isArray(DATA.certLib)) DATA.certLib = [];
-  const copy = cloneDesign(D);
-  DATA.certLib.push({ id: uid('lb-'), name: n, at: Date.now(), colors: { p: C.primary, g: C.gold }, design: copy }); saveData(); toast('บันทึกแบบเข้าคลังแล้ว', 'ok');
+/* ---------- from the designer ---------- */
+actions['dz-to-lib'] = async () => {   // the course's own layout → a template anybody (who may) can reuse
+  if (DZ.tpl) return;
+  if ((DATA.certTpl || []).length >= TPL_MAX) return toast(`มีแม่แบบครบ ${TPL_MAX} แบบแล้ว — ลบแม่แบบที่ไม่ใช้ก่อน`, 'bad', 5000);
+  const D = dzD(), C = dzC(), n = await openModal({ title: 'บันทึกเป็นแม่แบบ', body: `<label class="field"><span class="lb">ชื่อแม่แบบ</span><input type="text" id="tl-n" value="${esc(DZ.c.title)}" maxlength="80"></label><p class="small muted">แบบนี้มี ${D.els.length} องค์ประกอบ${D.fonts.length ? ` และฟอนต์ที่อัปโหลด ${fmtKB(fontBytes(D))}` : ''}${D.bgImage ? ` และภาพพื้น ${fmtKB(Math.round(D.bgImage.length * 0.75))}` : ''} — ลายเซ็น โลโก้ และข้อมูลของหลักสูตรไม่ถูกรวมไปด้วย · หลักสูตรนี้ยังใช้แบบเฉพาะของตัวเองต่อไป</p>`, actions: [{ label: 'ยกเลิก', value: false, cls: 'ghost' }, { label: 'บันทึก', cls: 'primary', collect: m => $('#tl-n', m).value.trim() || false }] });
+  if (!n) return; tplCreate({ name: n, design: cloneDesign(D), colors: { p: C.primary, g: C.gold } }); saveData(); toast('บันทึกเป็นแม่แบบแล้ว — เลือกใช้กับหลักสูตรอื่นได้ที่เมนู "เกียรติบัตร" → "แม่แบบเกียรติบัตร"', 'ok', 6000);
 };
 actions['dz-from-lib'] = async () => {
-  const lib = DATA.certLib || [], others = DATA.courses.filter(c => c.id !== DZ.c.id && c.certificate.design && canEditCourse(c));
-  if (!lib.length && !others.length) return toast('ยังไม่มีแบบในคลังหรือคอร์สอื่นที่ออกแบบไว้', '', 4500);
-  const r = await openModal({ title: 'นำแบบอื่นมาใช้', body: `<p class="small muted">แบบที่เลือกจะแทนที่องค์ประกอบทั้งหมดในแบบปัจจุบัน (ย้อนกลับได้)</p><label class="field"><span class="lb">เลือกแบบ</span><select id="fl-s">${lib.length ? `<optgroup label="คลังแบบ">${lib.map(x => `<option value="lib:${esc(x.id)}">${esc(x.name)}</option>`).join('')}</optgroup>` : ''}${others.length ? `<optgroup label="คัดลอกจากคอร์สอื่น">${others.map(c => `<option value="c:${esc(c.id)}">${esc(c.title)}</option>`).join('')}</optgroup>` : ''}</select></label>`, actions: [{ label: 'ยกเลิก', value: false, cls: 'ghost' }, { label: 'ใช้แบบนี้', cls: 'primary', collect: m => $('#fl-s', m).value }] });
-  if (!r) return; const src = r.indexOf('lib:') === 0 ? (lib.find(x => x.id === r.slice(4)) || {}) : { design: (getCourse(r.slice(2)) || { certificate: {} }).certificate.design, colors: null };
+  const lib = visibleTpls().filter(t => !DZ.tpl || t.id !== DZ.tpl.id), others = DATA.courses.filter(c => c.id !== DZ.c.id && c.certificate.design && canEditCourse(c));
+  if (!lib.length && !others.length) return toast('ยังไม่มีแม่แบบหรือหลักสูตรอื่นที่ออกแบบไว้', '', 4500);
+  const r = await openModal({ title: 'นำแบบอื่นมาใช้', body: `<p class="small muted">แบบที่เลือกจะแทนที่องค์ประกอบทั้งหมดในแบบปัจจุบัน (ย้อนกลับได้)</p><label class="field"><span class="lb">เลือกแบบ</span><select id="fl-s">${lib.length ? `<optgroup label="แม่แบบ">${lib.map(x => `<option value="lib:${esc(x.id)}">${esc(x.name)}</option>`).join('')}</optgroup>` : ''}${others.length ? `<optgroup label="คัดลอกจากหลักสูตรอื่น">${others.map(c => `<option value="c:${esc(c.id)}">${esc(c.title)}</option>`).join('')}</optgroup>` : ''}</select></label>`, actions: [{ label: 'ยกเลิก', value: false, cls: 'ghost' }, { label: 'ใช้แบบนี้', cls: 'primary', collect: m => $('#fl-s', m).value }] });
+  if (!r) return; const src = r.indexOf('lib:') === 0 ? (tplById(r.slice(4)) || {}) : { design: (getCourse(r.slice(2)) || { certificate: {} }).certificate.design, colors: null };
   if (!src.design) return; const n = cloneDesign(src.design), D = dzD(); dzPush();
   D.orient = n.orient; D.deco = n.deco; D.bgColor = n.bgColor; D.bgImage = n.bgImage; D.els = n.els; D.vars = n.vars;
   n.fonts.forEach(f => { if (!D.fonts.some(x => x.name === f.name && x.w === f.w)) D.fonts.push(f); });
@@ -7073,6 +7110,485 @@ actions['ts-make'] = async () => {
 actions['ts-download'] = () => { if (!TS_DONE) return; downloadText('teacher-request-' + TS_DONE.email.replace(/[^a-z0-9]+/g, '_') + '.pmooc.json', JSON.stringify({ app: 'prommamooc', kind: 'teacher-request', v: 1, at: new Date().toISOString(), person: TS_DONE }), 'application/json'); toast('ดาวน์โหลดไฟล์คำขอแล้ว — ส่งให้ผู้ดูแลระบบ', 'ok', 5000); };
 actions['ts-copy'] = async () => { if (!TS_DONE) return; toast((await copyText(reqToText(TS_DONE))) ? 'คัดลอกรหัสคำขอแล้ว — วางส่งให้ผู้ดูแลได้เลย' : 'คัดลอกไม่สำเร็จ ใช้ปุ่มดาวน์โหลดไฟล์แทน', 'ok', 5000); };
 actions['ts-again'] = () => { TS_DONE = null; TS_STATE = ''; rerender(); };
+
+/* =====================================================================
+   Certificate templates (แม่แบบเกียรติบัตร)
+   A template = the artwork (a picture of a blank certificate) + where each piece of data goes.
+   Many courses can share one template; a course picks one of:
+     ''        follow the system default (a template chosen by the administrator, otherwise the ready-made style)
+     'preset'  the ready-made style (classic / modern / minimal) with its own editable wording
+     <id>      a template (DATA.certTpl)
+   …or has its own layout (course.certificate.design), which wins over everything.
+   Editing a template changes every course that uses it.  Only the template's id is stored in the course.
+   ===================================================================== */
+const TPL_IMG_KB = 420;                    // size budget of one template picture
+const TPL_MAX = 40;                        // templates per site
+const TPL_TOTAL_WARN = 3.6 * 1048576;      // all template pictures together (the published data may not exceed ~8 MB)
+const TPL_TOTAL_MAX = 6 * 1048576;
+const TP = { fresh: '' };
+
+/* ---------- data ---------- */
+function normTpl(x) {
+  if (!x || typeof x !== 'object' || !x.design || typeof x.design !== 'object') return null;
+  const col = (v, d) => (/^#[0-9a-f]{6}$/i.test(String(v || '')) ? String(v) : d), c = x.colors && typeof x.colors === 'object' ? x.colors : {};
+  return {
+    id: String(x.id || '').replace(/[^\w\-]/g, '').slice(0, 40) || uid('tp-'), name: String(x.name || 'แม่แบบเกียรติบัตร').slice(0, 80), desc: String(x.desc || '').slice(0, 240),
+    at: num(x.at, 0), owner: String(x.owner || '').slice(0, 160), ownerName: String(x.ownerName || '').slice(0, 80),
+    colors: { p: col(c.p, '#26418f'), g: col(c.g, '#b88a2e') }, design: normDesign(x.design)
+  };
+}
+const tplById = id => (id && (DATA.certTpl || []).find(t => t.id === id)) || null;
+const tplDefault = () => tplById(DATA.settings.certTplDefault);
+const tplMine = t => !!SESS && !!t.owner && (normEmail(t.owner) === normEmail(SESS.email) || t.owner === 'h:' + SESS.id);
+const canEditTpl = t => !!t && (isAdmin() || (isTeacher() && tplMine(t)));
+const tplVisible = t => isAdmin() || !t.owner || tplMine(t);
+const visibleTpls = () => (DATA.certTpl || []).filter(tplVisible);
+const tplOwnerLabel = t => (!t.owner ? 'ส่วนกลาง' : tplMine(t) ? 'ของฉัน' : 'ครู: ' + (t.ownerName || '—'));
+const tplBytes = t => (t.design.bgImage ? Math.round(t.design.bgImage.length * 0.75) : 0) + fontBytes(t.design);
+const tplTotalBytes = () => (DATA.certTpl || []).reduce((s, t) => s + tplBytes(t), 0);
+/* the template that applies to a certificate setting (null = own layout, or the ready-made style) */
+function certTplOf(C) {
+  if (!C || C.design || C.tplId === 'preset') return null;
+  return tplById(C.tplId) || tplDefault();
+}
+/* the certificate setting exactly as it is painted: always carries the design to draw (a ready-made style is converted on the fly, never saved) */
+function effCert(C) {
+  if (!C || C.design) return C;
+  const t = certTplOf(C);
+  if (!t) return Object.assign({}, C, { design: normDesign(designFromPreset(C)) });
+  const ov = C.tplVars || {};
+  return Object.assign({}, C, { primary: t.colors.p, gold: t.colors.g, design: Object.assign({}, t.design, { vars: t.design.vars.map(v => (ov[v.k] ? Object.assign({}, v, { val: ov[v.k] }) : v)) }) });
+}
+const tplFieldNames = t => { const seen = {}, out = []; t.design.els.forEach(e => { if (e.t !== 'text') return; (String(e.text).match(/\{[a-z0-9]+\}/gi) || []).forEach(k => { k = k.slice(1, -1).toLowerCase(); if (!seen[k]) { seen[k] = 1; out.push(FIELD_LABEL[k] ? shortField(k) : (t.design.vars.find(v => v.k === k) || { label: k }).label || k); } }); }); return out; };
+const usesNoField = C => { const E = C && (C.design || certTplOf(C)) ? effCert(C) : null; return !!E && /\{no\}/.test(JSON.stringify(E.design.els)); };
+const tplUsers = t => DATA.courses.filter(c => certTplOf(c.certificate) === t);
+function tplCreate(o) {
+  const t = normTpl({ id: uid('tp-'), name: o.name, desc: o.desc || '', at: Date.now(), owner: isAdmin() ? '' : (SESS ? SESS.email : ''), ownerName: isAdmin() ? '' : (SESS ? SESS.name : ''), colors: o.colors, design: o.design });
+  if (!Array.isArray(DATA.certTpl)) DATA.certTpl = [];
+  DATA.certTpl.push(t); TP.fresh = t.id; return t;
+}
+/* a stand-in course so the designer / thumbnails can show a template with realistic data. The template's colours are linked, not copied. */
+function tplHost(t) {
+  const c = normCourse({ title: 'การใช้สื่อดิจิทัลเพื่อการเรียนการสอน', duration: '6 ชั่วโมง', instructor: 'ครูตัวอย่าง ใจดี' }), C = c.certificate;
+  c.id = 'tpl:' + t.id; c.title = t.name; C.design = t.design;
+  C.signers[0] = { name: 'นายสมศักดิ์ ใจดี', title: 'ผู้อำนวยการโรงเรียน', image: '' }; C.signers[1] = { name: 'นางสาวสมหญิง รักเรียน', title: 'หัวหน้ากลุ่มสาระ', image: '' };
+  ['primary:p', 'gold:g'].forEach(s => { const [k, m] = s.split(':'); Object.defineProperty(C, k, { get: () => t.colors[m], set: v => { t.colors[m] = v; }, enumerable: true, configurable: true }); });
+  return c;
+}
+async function tplThumb(cv, o) {   // paint at full size off-screen, keep only a small copy (many thumbnails stay light)
+  const big = document.createElement('canvas'); await drawCert(big, o);
+  cv.width = 420; cv.height = Math.round(420 * big.height / big.width); cv.getContext('2d').drawImage(big, 0, 0, cv.width, cv.height);
+}
+
+/* ---------- switching a course between templates ---------- */
+async function tplSwitch(c, v) {   // v: '' | 'preset' | 'own' | template id
+  const C = c.certificate;
+  if (v === 'own') {
+    if (!C.design) { const E = effCert(C); C.design = cloneDesign(E.design); C.primary = E.primary || C.primary; C.gold = E.gold || C.gold; C.tplId = ''; }
+    return true;
+  }
+  if (C.design) {
+    const r = await openModal({ title: 'เปลี่ยนแบบเกียรติบัตร', body: `<p>หลักสูตร <b>${esc(c.title)}</b> มีแบบที่ออกแบบเฉพาะหลักสูตรไว้ — ถ้าเปลี่ยนไปใช้แบบอื่น แบบเฉพาะนี้จะหายไป</p><p class="small muted">แนะนำให้บันทึกเป็นแม่แบบก่อน จะได้นำกลับมาใช้ได้อีก</p>`,
+      actions: [{ label: 'ยกเลิก', value: false, cls: 'ghost' }, { label: 'ทิ้งแบบเฉพาะแล้วเปลี่ยน', value: 'drop', cls: 'danger' }, { label: 'บันทึกเป็นแม่แบบ แล้วเปลี่ยน', value: 'save', cls: 'primary' }] });
+    if (!r) return false;
+    if (r === 'save') {
+      if ((DATA.certTpl || []).length >= TPL_MAX) { toast(`มีแม่แบบครบ ${TPL_MAX} แบบแล้ว — ลบแม่แบบที่ไม่ใช้ก่อน`, 'bad', 5000); return false; }
+      const t = tplCreate({ name: `${c.title} (แบบเฉพาะ)`.slice(0, 80), design: cloneDesign(C.design), colors: { p: C.primary, g: C.gold } }); toast(`บันทึกเป็นแม่แบบ "${t.name}" แล้ว`, 'ok', 4000);
+    }
+    C.design = null;
+  }
+  C.tplId = v; return true;
+}
+const tplChoiceName = v => (v === 'own' ? 'ออกแบบเฉพาะหลักสูตร' : v === 'preset' ? 'แบบสำเร็จรูป' : v === '' ? 'ตามค่าเริ่มต้นของระบบ' : (tplById(v) || { name: 'แม่แบบ' }).name);
+function courseTplName(c) {
+  const C = c.certificate; if (C.design) return 'ออกแบบเฉพาะหลักสูตร';
+  if (C.tplId === 'preset') return 'แบบสำเร็จรูป';
+  const t = certTplOf(C); return t ? t.name + (tplById(C.tplId) ? '' : ' (ค่าเริ่มต้น)') : 'แบบสำเร็จรูป';
+}
+actions['tpl-pick'] = async el => {
+  const c = ED.course; if (!c || !canEditCourse(c)) return;
+  if (!(await tplSwitch(c, el.dataset.v))) return;
+  saveData(); refreshEditor();
+};
+actions['cert-to-tpl'] = async () => {   // the course's own layout → a shared template
+  const c = ED.course, C = c && c.certificate; if (!c || !C.design) return;
+  if ((DATA.certTpl || []).length >= TPL_MAX) return toast(`มีแม่แบบครบ ${TPL_MAX} แบบแล้ว — ลบแม่แบบที่ไม่ใช้ก่อน`, 'bad', 5000);
+  const n = await openModal({ title: 'บันทึกเป็นแม่แบบ', body: `<label class="field"><span class="lb">ชื่อแม่แบบ</span><input type="text" id="tl-n" value="${esc(c.title)}" maxlength="80"></label><p class="small muted">นำไปใช้กับหลักสูตรอื่นได้ — ลายเซ็น โลโก้ และข้อมูลของหลักสูตรไม่ถูกรวมไปด้วย หลักสูตรนี้ยังใช้แบบเฉพาะของตัวเองต่อไป</p>`,
+    actions: [{ label: 'ยกเลิก', value: false, cls: 'ghost' }, { label: 'บันทึก', cls: 'primary', collect: m => $('#tl-n', m).value.trim() || false }] });
+  if (!n) return; tplCreate({ name: n, design: cloneDesign(C.design), colors: { p: C.primary, g: C.gold } }); saveData(); toast('บันทึกเป็นแม่แบบแล้ว — เลือกใช้ได้ที่หลักสูตรอื่น', 'ok', 4500); refreshEditor();
+};
+actions['cr-goto-tpl'] = () => { CR.tab = 'tpl'; };
+actions['tpl-edit'] = el => tplEdit(el.dataset.id || (ED.course && certTplOf(ED.course.certificate) ? certTplOf(ED.course.certificate).id : ''));
+function tplEdit(id) {
+  const t = tplById(id); if (!t) return;
+  if (!canEditTpl(t)) return toast('แก้ไขแม่แบบนี้ไม่ได้ — ทำสำเนาแล้วแก้สำเนาแทน', 'bad', 4500);
+  dzOpen(tplHost(t), t);
+}
+
+/* ---------- the page: templates tab ---------- */
+function tplCardHtml(t) {
+  const use = tplUsers(t), isDef = DATA.settings.certTplDefault === t.id, edit = canEditTpl(t), admin = isAdmin(), B = tplBytes(t);
+  return `<article class="lib-card tp-card${TP.fresh === t.id ? ' fresh' : ''}"><canvas data-tpl="${esc(t.id)}" width="420" height="300" aria-label="${esc(t.name)}"></canvas>
+    <div class="lb-b"><div class="row" style="gap:6px;flex-wrap:wrap"><b>${esc(t.name)}</b>${isDef ? '<span class="tag ok">ค่าเริ่มต้น</span>' : ''}${TP.fresh === t.id ? '<span class="tag gold">ใหม่</span>' : ''}</div>
+      <div class="small muted">${t.design.orient === 'p' ? 'แนวตั้ง' : 'แนวนอน'} · ${t.design.els.filter(e => e.t === 'text').length} ช่องข้อมูล · ${fmtKB(B)} · ${esc(tplOwnerLabel(t))}</div>
+      <div class="small">${use.length ? `ใช้ใน <b>${use.length}</b> หลักสูตร` : '<span class="muted">ยังไม่มีหลักสูตรใช้</span>'}</div>
+      <div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><button class="btn sm primary" data-action="tpl-use" data-id="${esc(t.id)}">ใช้กับหลักสูตร…</button>${edit ? `<button class="btn sm" data-action="tpl-edit" data-id="${esc(t.id)}">ปรับตำแหน่ง</button>` : ''}<button class="btn sm" data-action="tpl-dup" data-id="${esc(t.id)}">ทำสำเนา</button></div>
+      ${edit || admin ? `<div class="row tp-more" style="gap:6px;margin-top:6px;flex-wrap:wrap">${edit ? `<button class="btn sm ghost" data-action="tpl-rename" data-id="${esc(t.id)}">ตั้งชื่อ</button>` : ''}${admin ? `<button class="btn sm ghost" data-action="tpl-def" data-id="${esc(t.id)}">${isDef ? 'เลิกใช้เป็นค่าเริ่มต้น' : 'ตั้งเป็นค่าเริ่มต้น'}</button>` : ''}${admin && t.owner ? `<button class="btn sm ghost" data-action="tpl-share" data-id="${esc(t.id)}" title="ให้ครูทุกคนเลือกใช้ได้">เปิดให้ครูทุกคนใช้</button>` : ''}${edit ? `<button class="btn sm ghost danger" data-action="tpl-del" data-id="${esc(t.id)}">ลบ</button>` : ''}</div>` : ''}</div></article>`;
+}
+function tplHtml() {
+  const list = visibleTpls(), admin = isAdmin(), tot = tplTotalBytes(), cs = DATA.courses.filter(canEditCourse), def = tplDefault();
+  return `<div class="row between mt" style="gap:10px;flex-wrap:wrap"><p class="muted small grow mb-0">แม่แบบคือภาพเกียรติบัตรเปล่า (ออกแบบจาก Canva / PowerPoint ฯลฯ) ที่ระบบจะใส่เฉพาะข้อมูลสำคัญลงไปให้ — เลขที่เกียรติบัตร ชื่อผู้ผ่านการอบรม ชื่อหลักสูตร วันที่ และอื่น ๆ ตามที่เลือก แก้แม่แบบครั้งเดียว ทุกหลักสูตรที่ใช้เปลี่ยนตาม</p>
+      <button class="btn primary" data-action="tw-open">${icon('plus', 16)} เพิ่มแม่แบบจากภาพ</button></div>
+    ${tot > TPL_TOTAL_WARN ? `<div class="callout warn mt">${icon('alert')}<div>ภาพแม่แบบรวมกัน ${fmtKB(tot)} — ใกล้ขีดจำกัดของข้อมูลเว็บไซต์ (ประมาณ 8 MB) ควรลบแม่แบบที่ไม่ใช้</div></div>` : ''}
+    ${list.length ? `<div class="lib-grid">${list.map(tplCardHtml).join('')}</div>` : `<div class="empty mt">${icon('award', 30)}<p><b>ยังไม่มีแม่แบบ</b></p><p class="small muted">เตรียมภาพเกียรติบัตรเปล่า (PNG / JPG สัดส่วน A4) → กด "เพิ่มแม่แบบจากภาพ" → เลือกข้อมูลที่จะให้ระบบใส่ → ใช้กับหลักสูตร<br>ระหว่างนี้หลักสูตรจะใช้แบบสำเร็จรูปของระบบ</p><button class="btn primary" data-action="tw-open">${icon('plus', 16)} เพิ่มแม่แบบจากภาพ</button></div>`}
+    ${admin ? `<section class="panel mt"><h3 class="mt-0">แม่แบบเริ่มต้นของระบบ</h3><div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-end"><label class="field grow" style="min-width:240px;margin:0"><span class="lb">หลักสูตรที่ไม่ได้เลือกแม่แบบเอง (ตั้งเป็น "ตามค่าเริ่มต้นของระบบ") จะใช้</span><select data-on="tpl-default"><option value="">แบบสำเร็จรูป (คลาสสิก / โมเดิร์น / เรียบง่าย)</option>${(DATA.certTpl || []).map(t => `<option value="${esc(t.id)}" ${def && def.id === t.id ? 'selected' : ''}>${esc(t.name)}</option>`).join('')}</select></label><span class="small muted">${DATA.courses.filter(c => !c.certificate.design && !c.certificate.tplId).length} หลักสูตรตามค่าเริ่มต้น</span></div></section>` : ''}
+    <section class="panel mt"><h3 class="mt-0">หลักสูตรไหนใช้แม่แบบใด</h3>
+      ${cs.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>หลักสูตร</th><th>แม่แบบที่ใช้</th><th></th></tr></thead><tbody>${cs.map(c => {
+        const C = c.certificate, cur = C.design ? 'own' : C.tplId === 'preset' ? 'preset' : tplById(C.tplId) ? C.tplId : '';
+        return `<tr><td><b>${esc(c.title)}</b>${C.enabled ? '' : ' <span class="tag gray">ปิดเกียรติบัตร</span>'}<div class="small muted">${c.published ? 'เผยแพร่แล้ว' : 'ฉบับร่าง'}</div></td>
+          <td><select data-on="tpl-assign" data-cid="${esc(c.id)}" aria-label="แม่แบบของ ${esc(c.title)}"><option value="" ${cur === '' ? 'selected' : ''}>ตามค่าเริ่มต้นของระบบ (${esc(def ? def.name : 'แบบสำเร็จรูป')})</option><option value="preset" ${cur === 'preset' ? 'selected' : ''}>แบบสำเร็จรูป</option>${visibleTpls().map(t => `<option value="${esc(t.id)}" ${cur === t.id ? 'selected' : ''}>${esc(t.name)}</option>`).join('')}${C.design ? `<option value="own" selected>ออกแบบเฉพาะหลักสูตรนี้</option>` : ''}</select></td>
+          <td class="nw"><button class="icon-btn" title="ดูตัวอย่าง" aria-label="ดูตัวอย่างของ ${esc(c.title)}" data-action="tpl-prev" data-cid="${esc(c.id)}">${icon('eye', 16)}</button><a class="icon-btn" title="ตั้งค่าเกียรติบัตรของหลักสูตรนี้" aria-label="ตั้งค่าเกียรติบัตรของ ${esc(c.title)}" href="#/admin/course/${esc(c.id)}" data-action="tpl-open-course" data-cid="${esc(c.id)}">${icon('edit', 16)}</a></td></tr>`;
+      }).join('')}</tbody></table></div>` : `<div class="muted small">ยังไม่มีหลักสูตรที่คุณแก้ไขได้</div>`}</section>`;
+}
+actions['tpl-open-course'] = el => { ED.course = getCourse(el.dataset.cid) || ED.course; ED.tab = 'cert'; };   // the link goes on: the course editor opens on the certificate tab
+async function drawTplThumbs() {
+  for (const cv of $$('canvas[data-tpl]')) {
+    const t = tplById(cv.dataset.tpl); if (!t || !cv.isConnected) continue;
+    try { await tplThumb(cv, certSample(tplHost(t))); } catch (e) { /* ignore */ }
+  }
+}
+handlers['tpl-default'] = async el => {
+  if (!isAdmin()) return;
+  const id = el.value, n = DATA.courses.filter(c => !c.certificate.design && !c.certificate.tplId).length;
+  if (n && !(await confirmDlg(`${n} หลักสูตรที่ตั้งเป็น "ตามค่าเริ่มต้นของระบบ" จะเปลี่ยนไปใช้ ${id ? `แม่แบบ "${(tplById(id) || {}).name}"` : 'แบบสำเร็จรูป'}`, { ok: 'เปลี่ยน' }))) { rerender(); return; }
+  DATA.settings.certTplDefault = id; saveData(); toast('ตั้งแม่แบบเริ่มต้นแล้ว', 'ok'); rerender();
+};
+handlers['tpl-assign'] = async el => {
+  const c = getCourse(el.dataset.cid); if (!c || !canEditCourse(c)) return;
+  const ok = await tplSwitch(c, el.value);
+  if (!ok) { rerender(); return; }
+  saveData(); toast(`"${c.title}" ใช้: ${courseTplName(c)}`, 'ok', 3000); rerender();
+};
+actions['tpl-prev'] = async el => {
+  const c = getCourse(el.dataset.cid); if (!c) return;
+  await openModal({ title: `ตัวอย่างเกียรติบัตร — ${c.title}`, wide: true, body: `<div class="small muted mb-s">แบบที่ใช้: <b>${esc(courseTplName(c))}</b> · ข้อมูลในภาพเป็นข้อมูลจำลอง</div><canvas id="tp-pv" class="tp-pv" width="420" height="300"></canvas>`,
+    actions: [{ label: 'ปิด', value: true, cls: 'primary' }], onMount: m => { const cv = $('#tp-pv', m); if (cv) drawCert(cv, certSample(c)).catch(() => {}); } });
+};
+actions['tpl-use'] = async el => {
+  const t = tplById(el.dataset.id); if (!t) return;
+  const cs = DATA.courses.filter(canEditCourse); if (!cs.length) return toast('ไม่มีหลักสูตรที่คุณแก้ไขได้', 'bad');
+  const rows = cs.map(c => { const own = !!c.certificate.design, here = !own && certTplOf(c.certificate) === t && c.certificate.tplId === t.id; return `<label class="tp-pick"><input type="checkbox" value="${esc(c.id)}" data-own="${own ? 1 : 0}" ${here ? 'checked' : ''}><span><b>${esc(c.title)}</b><small>${own ? 'มีแบบที่ออกแบบเฉพาะหลักสูตร (ถ้าติ๊กจะถูกแทนที่)' : here ? 'ใช้แม่แบบนี้อยู่ (เอาติ๊กออก = กลับไปใช้ค่าเริ่มต้นของระบบ)' : 'ตอนนี้: ' + esc(courseTplName(c))}</small></span></label>`; }).join('');
+  const r = await openModal({ title: `ใช้แม่แบบ "${t.name}" กับหลักสูตร`, wide: true, body: `<div class="row between mb-s"><span class="small muted">ติ๊กหลักสูตรที่จะใช้แม่แบบนี้</span><button class="btn sm" type="button" data-tp="all">เลือก/ยกเลิกทั้งหมด</button></div><div class="tp-picks">${rows}</div>`,
+    actions: [{ label: 'ยกเลิก', value: false, cls: 'ghost' }, { label: 'ตกลง', cls: 'primary', collect: m => $$('input[type=checkbox]', m).map(i => ({ id: i.value, on: i.checked, own: i.dataset.own === '1' })) }],
+    onMount: m => { const b = $('[data-tp="all"]', m); if (b) b.onclick = () => { const all = $$('input[type=checkbox]', m), on = all.some(i => !i.checked); all.forEach(i => { i.checked = on; }); }; } });
+  if (!r) return;
+  const rep = r.filter(x => x.on && x.own).length;
+  if (rep && !(await confirmDlg(`${rep} หลักสูตรมีแบบที่ออกแบบเฉพาะไว้ — จะถูกแทนที่ด้วยแม่แบบนี้ (ไม่สามารถกู้คืนได้)`, { ok: 'แทนที่', danger: true }))) return;
+  let n = 0;
+  r.forEach(x => { const c = getCourse(x.id); if (!c || !canEditCourse(c)) return; const C = c.certificate;
+    if (x.on) { if (C.design || C.tplId !== t.id) { C.design = null; C.tplId = t.id; n++; } }
+    else if (!C.design && C.tplId === t.id) { C.tplId = ''; n++; } });
+  saveData(); toast(n ? `ปรับแล้ว ${n} หลักสูตร` : 'ไม่มีการเปลี่ยนแปลง', n ? 'ok' : '', 3500); rerender();
+};
+actions['tpl-dup'] = async el => {
+  const t = tplById(el.dataset.id); if (!t) return;
+  if (DATA.certTpl.length >= TPL_MAX) return toast(`มีแม่แบบครบ ${TPL_MAX} แบบแล้ว — ลบแม่แบบที่ไม่ใช้ก่อน`, 'bad', 5000);
+  const n = tplCreate({ name: (t.name + ' (สำเนา)').slice(0, 80), desc: t.desc, design: cloneDesign(t.design), colors: Object.assign({}, t.colors) });
+  saveData(); toast(`ทำสำเนาเป็น "${n.name}" แล้ว`, 'ok'); rerender();
+};
+actions['tpl-rename'] = async el => {
+  const t = tplById(el.dataset.id); if (!canEditTpl(t)) return;
+  const n = await openModal({ title: 'ตั้งชื่อแม่แบบ', body: `<label class="field"><span class="lb">ชื่อแม่แบบ</span><input type="text" id="lr-n" value="${esc(t.name)}" maxlength="80"></label>`, actions: [{ label: 'ยกเลิก', value: false, cls: 'ghost' }, { label: 'บันทึก', cls: 'primary', collect: m => $('#lr-n', m).value.trim() || false }] });
+  if (n) { t.name = n.slice(0, 80); saveData(); rerender(); }
+};
+actions['tpl-def'] = async el => {
+  const t = tplById(el.dataset.id); if (!t || !isAdmin()) return;
+  const off = DATA.settings.certTplDefault === t.id, n = DATA.courses.filter(c => !c.certificate.design && !c.certificate.tplId).length;
+  if (n && !(await confirmDlg(off ? `${n} หลักสูตรที่ตามค่าเริ่มต้นของระบบ จะกลับไปใช้แบบสำเร็จรูป` : `${n} หลักสูตรที่ตั้งเป็น "ตามค่าเริ่มต้นของระบบ" จะเปลี่ยนไปใช้แม่แบบ "${t.name}"`, { ok: 'ตกลง' }))) return;
+  DATA.settings.certTplDefault = off ? '' : t.id; saveData(); toast(off ? 'เลิกใช้เป็นค่าเริ่มต้นแล้ว' : `ตั้ง "${t.name}" เป็นค่าเริ่มต้นแล้ว`, 'ok'); rerender();
+};
+actions['tpl-share'] = async el => {
+  const t = tplById(el.dataset.id); if (!t || !isAdmin() || !t.owner) return;
+  if (!(await confirmDlg(`เปิดให้ครูทุกคนเลือกใช้แม่แบบ "${t.name}"? (เจ้าของเดิมยังแก้ไขไม่ได้อีกต่อไป — ผู้ดูแลระบบเป็นผู้ดูแลแม่แบบนี้)`, { ok: 'เปิดให้ทุกคนใช้' }))) return;
+  t.owner = ''; t.ownerName = ''; saveData(); toast('แม่แบบนี้เป็นของส่วนกลางแล้ว', 'ok'); rerender();
+};
+actions['tpl-del'] = async el => {
+  const t = tplById(el.dataset.id); if (!canEditTpl(t)) return;
+  if (isTeacher() && !isAdmin() && EMBEDDED.certTpl.some(x => x.id === t.id)) return toast('ลบไม่ได้ — แม่แบบนี้อยู่ในระบบที่เผยแพร่แล้ว โปรดแจ้งผู้ดูแลระบบ', 'bad', 5000);
+  const use = DATA.courses.filter(c => c.certificate.tplId === t.id), viaDef = DATA.settings.certTplDefault === t.id;
+  const total = tplUsers(t).length, msg = `ลบแม่แบบ "${t.name}"?${total ? ` ตอนนี้มี ${total} หลักสูตรใช้แม่แบบนี้` : ''}${use.length ? ` · ${use.length} หลักสูตรที่เลือกไว้เองจะกลับไปใช้ค่าเริ่มต้นของระบบ` : ''}${viaDef ? ' · แม่แบบนี้เป็นค่าเริ่มต้นของระบบ หลักสูตรที่ตามค่าเริ่มต้นจะกลับไปใช้แบบสำเร็จรูป' : ''}`;
+  if (!(await confirmDlg(msg, { ok: 'ลบ', danger: true }))) return;
+  use.forEach(c => { c.certificate.tplId = ''; }); if (viaDef) DATA.settings.certTplDefault = '';
+  DATA.certTpl = DATA.certTpl.filter(x => x.id !== t.id); saveData(); toast('ลบแม่แบบแล้ว', 'ok'); rerender();
+};
+
+/* ---------- the course editor: thumbnails of the choices ---------- */
+async function drawOptThumbs() {
+  const c = ED && ED.course; if (!c) return;
+  for (const cv of $$('canvas[data-opt]')) {
+    if (!cv.isConnected) return;
+    const v = cv.dataset.opt, C = v === 'own' ? c.certificate : Object.assign({}, c.certificate, { design: null, tplId: v });
+    try { await tplThumb(cv, Object.assign(certSample(c), { cert: C })); } catch (e) { /* ignore */ }
+  }
+}
+
+/* ---------- carrying templates with a teacher's package ---------- */
+function pkgTemplates(courses) {
+  const ids = {}; courses.forEach(c => { const t = certTplOf(c.certificate); if (t && t.owner && tplMine(t)) ids[t.id] = 1; });
+  return (DATA.certTpl || []).filter(t => ids[t.id]).map(t => { const x = deep(t); x.owner = SESS.email; x.ownerName = SESS.name; return x; });
+}
+function adoptTpls(list, email) {   // from an accepted package: add what is new, refresh what the same teacher already sent
+  if (!Array.isArray(DATA.certTpl)) DATA.certTpl = []; let n = 0;
+  (Array.isArray(list) ? list : []).forEach(x => {
+    const t = normTpl(deep(x)); if (!t) return; if (email) t.owner = normEmail(email);
+    const i = DATA.certTpl.findIndex(y => y.id === t.id);
+    if (i < 0) { if (DATA.certTpl.length < TPL_MAX) { DATA.certTpl.push(t); n++; } }
+    else if (DATA.certTpl[i].owner && ownerIs(DATA.certTpl[i], t.owner) && (t.at || 0) >= (DATA.certTpl[i].at || 0)) { DATA.certTpl[i] = t; n++; }
+  });
+  return n;
+}
+
+/* =====================================================================
+   Import wizard: a picture of the blank certificate → choose the data → the system places it
+   ===================================================================== */
+let TW = null;
+const TW_FIELDS = [
+  { k: 'no', t: 'เลขที่เกียรติบัตร', s: 'ลำดับที่ระบบออกให้อัตโนมัติ', on: 1 },
+  { k: 'name', t: 'ชื่อ–นามสกุลผู้ผ่านการอบรม', s: 'นักเรียน / ครู', on: 1 },
+  { k: 'course', t: 'ชื่อหลักสูตร / รายการอบรม', s: 'ย่อหรือขึ้นบรรทัดใหม่ให้พอดีกรอบ', on: 1 },
+  { k: 'date', t: 'วันที่ผ่านการอบรม', s: 'ให้ไว้ ณ วันที่ 17 พฤศจิกายน 2569', on: 1 },
+  { k: 'id', t: 'รหัสตรวจสอบ', s: 'รหัสอ้างอิงเฉพาะแต่ละใบ', on: 1 },
+  { k: 'hours', t: 'ระยะเวลาอบรม', s: 'จำนวน 6 ชั่วโมง' },
+  { k: 'lorg', t: 'โรงเรียน / หน่วยงานของผู้รับ', s: 'จากข้อมูลผู้เรียน' },
+  { k: 'scores', t: 'คะแนนก่อน/หลังเรียน', s: 'คะแนนหลังเรียน 90% · ก่อนเรียน 45%' },
+  { k: 'instructor', t: 'ชื่อผู้สอน / วิทยากร', s: 'จากข้อมูลหลักสูตร' },
+  { k: 'org', t: 'ชื่อหน่วยงานที่ออกเกียรติบัตร', s: 'จากการตั้งค่า' },
+  { k: 'signers', t: 'ผู้ลงนาม 2 คน', s: 'ชื่อ ตำแหน่ง ลายเซ็น (ตั้งในแต่ละหลักสูตร)' }
+];
+const TW_NUMPOS = [['tr', 'มุมขวาบน'], ['tl', 'มุมซ้ายบน'], ['tc', 'กลางบน'], ['bl', 'มุมซ้ายล่าง'], ['br', 'มุมขวาล่าง']];
+const TW_DATEPOS = [['under', 'ใต้ชื่อหลักสูตร'], ['bl', 'ซ้ายล่าง'], ['bc', 'กลางล่าง'], ['br', 'ขวาล่าง']];
+const TW_SCALE = [[0.85, 'เล็ก'], [1, 'กลาง'], [1.2, 'ใหญ่']];
+const twDims = o => (o === 'p' ? { W: 1240, H: 1754 } : { W: CW, H: CH });
+const twPick = (list, w) => list.reduce((a, b) => (Math.abs(b - w) < Math.abs(a - w) ? b : a));
+
+/* turns the chosen fields into frames. Fractions of the page, so it works for any picture; the designer fine-tunes afterwards. */
+function tplLayout(o) {
+  const P = o.orient === 'p', { W, H } = twDims(o.orient), cx = W / 2, mx = Math.round(W * 0.085), fw = Math.round(W * (P ? 0.78 : 0.72)), fx = Math.round((W - fw) / 2), S = o.scale || 1, sel = o.sel || {};
+  const f = o.font, spec = FONT_BY[f], wt = w => (spec ? twPick(spec.w, w) : w), E = [], ink = o.ink, grey = o.grey, acc = o.accent;
+  const T = (x, y, w, text, size, weight, color, al, ml) => { const e = mkT({ x, y, w, text, font: f, wt: wt(weight), size, color, al: al || 'c', ml: ml || 1, minp: 45 }); if ((ml || 1) > 1) e.va = 't'; E.push(e); return e; };
+  const rowTop = Math.round(H * 0.075), rowBot = Math.round(H * 0.915);
+  const slot = p => ({ tr: [W - mx - 520, rowTop, 'r', 520], tl: [mx, rowTop, 'l', 520], tc: [Math.round(cx - 310), rowTop, 'c', 620], bl: [mx, rowBot, 'l', 520], br: [W - mx - 520, rowBot, 'r', 520] })[p];
+  const opp = { tr: 'tl', tl: 'tr', tc: 'tl', bl: 'br', br: 'bl' };
+  let np = o.numPos || 'tr';
+  if (sel.no) { const s = slot(np); T(s[0], s[1], s[3], 'เลขที่ {no}', Math.round(26 * S), 600, grey, s[2]); }
+  if (sel.id) { const s = slot(sel.no ? opp[np] : 'tr'); T(s[0], s[1], 440, 'รหัสตรวจสอบ {id}', Math.round(22 * S), 400, '#8a93a6', s[2]); }
+  if (sel.org) T(fx, Math.round(H * 0.11), fw, '{org}', Math.round(30 * S), 500, grey);
+  let y = 0;
+  if (sel.name) {
+    const size = Math.round((P ? 84 : 92) * S), base = Math.round(o.nameY * H), top = yBase(base, size); T(fx, top, fw, '{name}', size, 600, ink).minp = 40; y = top + Math.round(size * 1.25) + 18;
+  } else y = Math.round(o.nameY * H);
+  if (sel.lorg) { T(fx, y, fw, '{lorg}', Math.round(30 * S), 400, grey); y += Math.round(30 * S * 1.25) + 12; }
+  if (sel.course) { const size = Math.round((P ? 42 : 46) * S), e = T(fx, y, fw, '{course}', size, 600, acc, 'c', 2); y += e.h + 12; }
+  if (sel.hours) { T(fx, y, fw, 'จำนวน {hours}', Math.round(30 * S), 400, grey); y += Math.round(30 * S * 1.25) + 8; }
+  if (sel.scores) { T(fx, y, fw, '{scores}', Math.round(26 * S), 400, grey); y += Math.round(26 * S * 1.25) + 8; }
+  if (sel.instructor) { T(fx, y, fw, 'วิทยากร {instructor}', Math.round(28 * S), 400, grey); y += Math.round(28 * S * 1.25) + 8; }
+  if (sel.date) {
+    const size = Math.round(30 * S), dp = o.datePos || 'under';
+    if (dp === 'under') T(fx, y + 6, fw, 'ให้ไว้ ณ วันที่ {date}', size, 400, ink);
+    else { const dy = sel.signers ? Math.round(H * 0.77) : rowBot - 70, s = { bl: [mx, 'l', 620], bc: [Math.round(cx - 310), 'c', 620], br: [W - mx - 620, 'r', 620] }[dp]; T(s[0], dy, s[2], 'ให้ไว้ ณ วันที่ {date}', size, 400, ink, s[1]); }
+  }
+  if (sel.signers) { const sy = Math.round(H * 0.875), dx = Math.round(W * 0.17), so = { ink, grey, head: f, body: f }; signerEls(0, cx - dx, sy, so).concat(signerEls(1, cx + dx, sy, so)).forEach(e => E.push(e)); }
+  return E;
+}
+const twFont = () => (TW.font === '__local' ? 'local:' + (String(TW.localFont || '').trim() || 'Prompt') : TW.font);
+function twDesign() {
+  const D = newDesign(TW.orient, 'none'); D.bgImage = TW.dataUrl || '';
+  D.els = tplLayout({ orient: TW.orient, sel: TW.sel, nameY: TW.nameY / 100, numPos: TW.numPos, datePos: TW.datePos, font: twFont(), ink: TW.ink, grey: '#5b6477', accent: TW.accent, scale: TW.scale });
+  return D;
+}
+function twHost() {
+  if (!TW.host) { const c = normCourse({ title: 'การใช้สื่อดิจิทัลเพื่อการเรียนการสอน', duration: '6 ชั่วโมง', instructor: 'ครูตัวอย่าง ใจดี' }), C = c.certificate; c.id = 'tw-sample';
+    C.signers[0] = { name: 'นายสมศักดิ์ ใจดี', title: 'ผู้อำนวยการโรงเรียน', image: '' }; C.signers[1] = { name: 'นางสาวสมหญิง รักเรียน', title: 'หัวหน้ากลุ่มสาระ', image: '' }; TW.host = c; }
+  const C = TW.host.certificate; C.design = twDesign(); C.primary = TW.accent; C.gold = '#b88a2e'; return TW.host;
+}
+const twCtx = () => (TW.ctx || (TW.ctx = document.createElement('canvas').getContext('2d')));
+actions['tw-open'] = el => {
+  if (!SESS || !(isAdmin() || isTeacher())) return;
+  if (TW) return;
+  if ((DATA.certTpl || []).length >= TPL_MAX) return toast(`มีแม่แบบครบ ${TPL_MAX} แบบแล้ว — ลบแม่แบบที่ไม่ใช้ก่อน`, 'bad', 5000);
+  const forId = el && el.dataset && el.dataset.for || '';
+  TW = { for: forId && getCourse(forId) && canEditCourse(getCourse(forId)) ? forId : '', file: null, img: null, orient: 'l', fit: 'cover', ratio: 1.414, dataUrl: '', bytes: 0, mime: '', ver: 0, name: '', sel: {}, nameY: 47, numPos: 'tr', datePos: 'under', font: 'Prompt', localFont: '', scale: 1, ink: '#1d2433', accent: '#26418f', sim: 'normal', asDef: false, frames: true, busy: false, again: false, boxes: [], host: null, ctx: null };
+  TW_FIELDS.forEach(f => { TW.sel[f.k] = !!f.on; });
+  const el2 = document.createElement('div'); el2.id = 'tw'; el2.className = 'dz tw'; el2.setAttribute('role', 'dialog'); el2.setAttribute('aria-label', 'เพิ่มแม่แบบเกียรติบัตร');
+  el2.innerHTML = `<header class="dz-top"><button class="btn sm" data-action="tw-close">${icon('left', 16)} ยกเลิก</button><b class="dz-title">เพิ่มแม่แบบเกียรติบัตร</b><span class="dz-sp"></span>
+      <label class="dz-simsel"><span>ข้อมูลจำลอง</span><select id="tw-sim" data-on="tw-sim">${SIM_SETS.map(s => `<option value="${s.k}">${esc(s.label)}</option>`).join('')}</select></label>
+      <button class="btn sm primary" id="tw-ok" data-action="tw-create" disabled>สร้างแม่แบบ</button></header>
+    <div class="dz-body"><div class="dz-main"><div class="dz-stage-wrap" id="tw-wrap"></div><div class="dz-status" id="tw-st" role="status" aria-live="polite"></div></div><aside class="dz-side"><div class="dz-panel" id="tw-panel"></div></aside></div>`;
+  document.body.appendChild(el2); document.body.classList.add('modal-open');
+  document.addEventListener('keydown', twKey); window.addEventListener('resize', twFit);
+  twStage(); twPanel();
+};
+const twKey = e => { if (e.key === 'Escape' && TW && !$('#overlay').children.length) { e.stopPropagation(); twClose(); } };
+async function twClose() {
+  if (!TW) return;
+  if (TW.dataUrl && !(await confirmDlg('ยกเลิกการเพิ่มแม่แบบ? ภาพและการตั้งค่าที่ทำไว้จะหายไป', { ok: 'ยกเลิกการเพิ่ม', danger: true }))) return;
+  twCloseNow();
+}
+function twCloseNow() {
+  const el = $('#tw'); if (el) el.remove(); document.removeEventListener('keydown', twKey); window.removeEventListener('resize', twFit);
+  if (!$('#overlay').children.length) document.body.classList.remove('modal-open'); TW = null;
+}
+actions['tw-close'] = () => twClose();
+
+/* stage: the drop zone first, then the certificate preview */
+function twStage() {
+  const w = $('#tw-wrap'); if (!w || !TW) return;
+  if (!TW.dataUrl) {
+    w.innerHTML = `<div class="tw-drop" id="tw-drop" tabindex="0" role="button" aria-label="เลือกไฟล์ภาพแม่แบบ" data-action="tw-pick"><div class="big">${icon('upload', 34)}</div><b>ลากไฟล์ภาพแม่แบบมาวางที่นี่</b><span>หรือกดเพื่อเลือกไฟล์ — PNG / JPG / WebP</span>
+      <small>ภาพเกียรติบัตร "เปล่า" ที่เว้นที่ว่างไว้สำหรับชื่อ หลักสูตร วันที่ และเลขที่ · สัดส่วน A4 จะพอดีที่สุด</small></div>`;
+    const d = $('#tw-drop'); ['dragenter', 'dragover'].forEach(n => d.addEventListener(n, e => { e.preventDefault(); d.classList.add('over'); })); ['dragleave', 'drop'].forEach(n => d.addEventListener(n, e => { e.preventDefault(); d.classList.remove('over'); }));
+    d.addEventListener('drop', e => { const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) twLoad(f); });
+    d.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); actions['tw-pick'](); } });
+    return;
+  }
+  w.innerHTML = `<div class="dz-stage" id="tw-stage"><canvas id="tw-cv" aria-label="ตัวอย่างเกียรติบัตร"></canvas><div class="dz-ov tw-ov" id="tw-ov"></div></div>`;
+  twFit(); twDraw();
+}
+function twFit() {
+  const w = $('#tw-wrap'), st = $('#tw-stage'); if (!w || !st || !TW) return;
+  const { W, H } = twDims(TW.orient), k = Math.max(0.08, Math.min((w.clientWidth - 28) / W, (w.clientHeight - 28) / H));
+  st.style.width = Math.round(W * k) + 'px'; st.style.height = Math.round(H * k) + 'px';
+}
+actions['tw-pick'] = async () => { const f = await pickFile('image/png,image/jpeg,image/webp'); if (f) twLoad(f); };
+async function twLoad(f) {
+  if (!TW) return;
+  if (/pdf/i.test(f.type) || /\.pdf$/i.test(f.name)) return toast('ยังไม่รองรับไฟล์ PDF — ส่งออกแม่แบบเป็น PNG หรือ JPG จาก Canva / PowerPoint ก่อน (File → Download → PNG)', 'bad', 7000);
+  if (!/^image\/(png|jpe?g|webp)$/i.test(f.type)) return toast('ใช้ไฟล์ภาพ PNG, JPG หรือ WebP เท่านั้น', 'bad', 5000);
+  if (f.size > 25 * 1048576) return toast('ไฟล์ใหญ่เกิน 25 MB — ลดขนาดภาพก่อน', 'bad', 5000);
+  try {
+    const im = await withProgress('กำลังอ่านภาพ…', () => loadBitmap(f)); if (!TW) return;
+    const iw = im.naturalWidth || im.width, ih = im.naturalHeight || im.height; if (!iw || !ih) throw new Error('อ่านไฟล์รูปไม่ได้');
+    TW.file = f; TW.img = im; TW.orient = iw >= ih ? 'l' : 'p'; TW.ratio = Math.max(iw, ih) / Math.min(iw, ih); TW.fit = 'cover'; TW.host = null;
+    if (!TW.name) TW.name = f.name.replace(/\.[a-z0-9]+$/i, '').replace(/[_\-]+/g, ' ').trim().slice(0, 80) || 'แม่แบบเกียรติบัตร';
+    await withProgress('กำลังเตรียมภาพ…', () => twProcess());
+    twStage(); twPanel();
+  } catch (e) { toast(e.message || 'อ่านภาพไม่ได้', 'bad', 5000); }
+}
+/* the picture is placed on an A4 page and kept under the size budget (the page data travels with every visitor) */
+async function twProcess() {
+  const v = ++TW.ver, im = TW.img, { W, H } = twDims(TW.orient), cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const x = cv.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H); x.imageSmoothingQuality = 'high';
+  const iw = im.naturalWidth || im.width, ih = im.naturalHeight || im.height, k = TW.fit === 'contain' ? Math.min(W / iw, H / ih) : Math.max(W / iw, H / ih);
+  x.drawImage(im, (W - iw * k) / 2, (H - ih * k) / 2, iw * k, ih * k);
+  const budget = TPL_IMG_KB * 1024; let out = '', mime = 'image/jpeg';
+  if (/png|webp/i.test(TW.file.type)) { const p = cv.toDataURL('image/png'); if (dataUrlBytes(p) <= budget) { out = p; mime = 'image/png'; } }
+  if (!out) {
+    let q = 0.92, c2 = cv, sc = 1;
+    for (let i = 0; i < 14; i++) {
+      out = c2.toDataURL('image/jpeg', q); if (dataUrlBytes(out) <= budget) break;
+      if (q > 0.6) q -= 0.08; else { sc *= 0.86; c2 = document.createElement('canvas'); c2.width = Math.max(300, Math.round(W * sc)); c2.height = Math.max(300, Math.round(H * sc)); const x2 = c2.getContext('2d'); x2.imageSmoothingQuality = 'high'; x2.drawImage(cv, 0, 0, c2.width, c2.height); }
+    }
+  }
+  if (v !== TW.ver) return false;
+  TW.dataUrl = out; TW.bytes = dataUrlBytes(out); TW.mime = mime; return true;
+}
+async function twReprocess() { if (!TW || !TW.img) return; await withProgress('กำลังเตรียมภาพ…', () => twProcess()); twStage(); twPanel(); }
+actions['tw-orient'] = async el => { if (!TW || TW.orient === el.dataset.v) return; TW.orient = el.dataset.v; TW.host = null; await twReprocess(); };
+actions['tw-fit'] = async el => { if (!TW || TW.fit === el.dataset.v) return; TW.fit = el.dataset.v; await twReprocess(); };
+
+/* side panel */
+const twSeg = (k, cur, opts) => `<div class="dz-seg">${opts.map(([v, t]) => `<button type="button" class="${String(cur) === String(v) ? 'on' : ''}" data-action="tw-seg" data-k="${k}" data-v="${v}">${t}</button>`).join('')}</div>`;
+function twPanel() {
+  const p = $('#tw-panel'); if (!p || !TW) return;
+  const ok = $('#tw-ok'); if (ok) ok.disabled = !TW.dataUrl;
+  if (!TW.dataUrl) {
+    p.innerHTML = `<section class="dz-sec"><h4>วิธีเพิ่มแม่แบบ</h4><ol class="tw-steps"><li><b>เตรียมภาพ</b> เกียรติบัตรเปล่า — ออกแบบใน Canva / PowerPoint ฯลฯ ปล่อยที่ว่างไว้ แล้วส่งออกเป็น PNG หรือ JPG</li><li><b>อัปโหลดภาพ</b> ที่นี่</li><li><b>เลือกข้อมูล</b> ที่จะให้ระบบใส่ (เลขที่ ชื่อ หลักสูตร วันที่ …) ระบบวางให้เอง ดูตัวอย่างได้ทันที</li><li><b>ปรับตำแหน่ง</b> ถ้าต้องการละเอียดกว่านี้ ใน "ตัวออกแบบ"</li></ol></section>
+      <section class="dz-sec"><h4>คำแนะนำ</h4><ul class="tw-tips"><li>สัดส่วน A4 (แนวนอน 297×210 มม. หรือแนวตั้ง) จะพอดีที่สุด — ภาพสัดส่วนอื่นระบบจะตัดขอบหรือเติมขอบขาวให้เลือกได้</li><li>ไฟล์ PDF ใช้ไม่ได้โดยตรง ให้ส่งออกเป็นภาพก่อน</li><li>ระบบย่อภาพให้ไม่เกิน ~${TPL_IMG_KB} KB เพื่อไม่ให้เว็บไซต์ช้า</li></ul></section>
+      <button class="btn primary" data-action="tw-pick">${icon('upload', 16)} เลือกไฟล์ภาพ</button>`;
+    twStatus(); return;
+  }
+  const mismatch = Math.abs(TW.ratio / 1.4142 - 1) > 0.04, ownT = TW_FIELDS.filter(f => f.on), more = TW_FIELDS.filter(f => !f.on);
+  const chk = f => `<label class="tw-chk"><input type="checkbox" data-on="tw-set" data-k="sel:${f.k}" ${TW.sel[f.k] ? 'checked' : ''}><span><b>${esc(f.t)}</b><small>${esc(f.s)}</small></span></label>`;
+  p.innerHTML = `<section class="dz-sec"><h4>ภาพแม่แบบ <small>(${fmtKB(TW.bytes)})</small></h4><div class="small muted" style="word-break:break-all">${esc(TW.file ? TW.file.name : '')}</div>
+      <div class="row mt-s" style="gap:6px;flex-wrap:wrap"><button class="btn sm" data-action="tw-pick">${icon('upload', 14)} เปลี่ยนภาพ</button></div>
+      <div class="dzf mt-s"><span>แนวกระดาษ</span>${twSeg('orient', TW.orient, [['l', 'แนวนอน'], ['p', 'แนวตั้ง']]).replace(/data-action="tw-seg" data-k="orient"/g, 'data-action="tw-orient"')}</div>
+      ${mismatch ? `<div class="callout warn" style="margin:6px 0">${icon('alert')}<div class="small">ภาพมีสัดส่วน ${TW.ratio.toFixed(2)} : 1 ไม่ใช่ A4 (1.41 : 1)</div></div><div class="dzf"><span>การวางภาพบนกระดาษ A4</span>${twSeg('fit', TW.fit, [['cover', 'ตัดขอบให้เต็มหน้า'], ['contain', 'ใส่ทั้งภาพ (เติมขอบขาว)']]).replace(/data-action="tw-seg" data-k="fit"/g, 'data-action="tw-fit"')}</div>` : ''}</section>
+    <section class="dz-sec"><h4>ข้อมูลที่ระบบจะใส่ให้</h4><p class="small muted">เลือกเฉพาะข้อมูลที่ภาพแม่แบบยังไม่มี</p>${ownT.map(chk).join('')}<div class="small muted" style="margin:8px 0 4px">เพิ่มเติม (ถ้าต้องการ)</div>${more.map(chk).join('')}</section>
+    <section class="dz-sec"><h4>ตำแหน่ง</h4>
+      <label class="dzf"><span>ความสูงของชื่อผู้รับ <b id="tw-ny">${TW.nameY}%</b> <small>จากขอบบน (ข้อมูลอื่นเรียงต่อลงมา)</small></span><input type="range" min="25" max="75" step="1" value="${TW.nameY}" data-on="tw-set" data-k="nameY" aria-label="ความสูงของชื่อผู้รับ"></label>
+      <label class="dzf"><span>เลขที่เกียรติบัตร</span><select data-on="tw-set" data-k="numPos">${TW_NUMPOS.map(([v, t]) => `<option value="${v}" ${TW.numPos === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+      <label class="dzf"><span>วันที่</span><select data-on="tw-set" data-k="datePos">${TW_DATEPOS.map(([v, t]) => `<option value="${v}" ${TW.datePos === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label></section>
+    <section class="dz-sec"><h4>ตัวอักษร</h4>
+      <label class="dzf"><span>ฟอนต์</span><select data-on="tw-set" data-k="font">${FONT_GROUPS.map(([g, n]) => `<optgroup label="${esc(n)}">${FONTS.filter(x => x.g === g).map(x => `<option value="${esc(x.f)}" ${TW.font === x.f ? 'selected' : ''}>${esc(x.f)}</option>`).join('')}</optgroup>`).join('')}<option value="__local" ${TW.font === '__local' ? 'selected' : ''}>ฟอนต์ที่ติดตั้งในเครื่อง (เช่น DB Heavent)…</option></select></label>
+      ${TW.font === '__local' ? `<label class="dzf"><span>ชื่อฟอนต์ที่ติดตั้งไว้ <small>เห็นเฉพาะเครื่องที่ติดตั้งฟอนต์นี้</small></span><input type="text" data-on="tw-set" data-k="localFont" value="${esc(TW.localFont)}" placeholder="DB Heavent"></label>` : ''}
+      <div class="dzf"><span>ขนาดตัวอักษร</span>${twSeg('scale', TW.scale, TW_SCALE)}</div>
+      <div class="dz-two"><label class="dzf"><span>สีตัวอักษร</span><input type="color" data-on="tw-set" data-k="ink" value="${TW.ink}"></label><label class="dzf"><span>สีชื่อหลักสูตร</span><input type="color" data-on="tw-set" data-k="accent" value="${TW.accent}"></label></div></section>
+    <section class="dz-sec"><h4>บันทึก</h4><label class="dzf"><span>ชื่อแม่แบบ</span><input type="text" id="tw-name" data-on="tw-set" data-k="name" value="${esc(TW.name)}" maxlength="80"></label>
+      ${isAdmin() ? `<label class="tw-chk"><input type="checkbox" data-on="tw-set" data-k="asDef" ${TW.asDef ? 'checked' : ''}><span><b>ใช้เป็นแม่แบบเริ่มต้นของระบบ</b><small>หลักสูตรที่ยังไม่ได้เลือกแม่แบบจะใช้แบบนี้</small></span></label>` : ''}
+      ${TW.for ? `<div class="callout" style="margin:6px 0">${icon('info')}<div class="small">จะใช้แม่แบบนี้กับหลักสูตร <b>${esc((getCourse(TW.for) || {}).title || '')}</b> ทันที</div></div>` : ''}
+      <div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn primary" data-action="tw-create">สร้างแม่แบบ</button><button class="btn" data-action="tw-create" data-edit="1">สร้าง แล้วปรับตำแหน่งต่อ</button></div></section>`;
+  twStatus();
+}
+actions['tw-seg'] = el => { if (!TW) return; const k = el.dataset.k; TW[k] = k === 'scale' ? Number(el.dataset.v) : el.dataset.v; twPanel(); twDraw(); };
+handlers['tw-set'] = el => {
+  if (!TW) return; const k = el.dataset.k;
+  if (k.indexOf('sel:') === 0) TW.sel[k.slice(4)] = el.checked;
+  else if (k === 'asDef') TW.asDef = el.checked;
+  else if (k === 'nameY') { TW.nameY = Number(el.value); const n = $('#tw-ny'); if (n) n.textContent = TW.nameY + '%'; }
+  else if (k === 'font') { TW.font = el.value; twPanel(); }
+  else TW[k] = el.value;
+  if (k !== 'name' && k !== 'asDef') twDraw();
+};
+handlers['tw-sim'] = el => { if (!TW) return; TW.sim = el.value; twDraw(); };
+
+/* preview + checks */
+async function twDraw() {
+  if (!TW || !TW.dataUrl) return;
+  if (TW.busy) { TW.again = true; return; }
+  TW.busy = true; const st = $('#tw-st'), slow = setTimeout(() => { if (st && TW && TW.busy) st.textContent = 'กำลังโหลดฟอนต์…'; }, 400);
+  try {
+    do { TW.again = false; const cv = $('#tw-cv'); if (!cv) break; await drawCert(cv, simOpts(twHost(), TW.sim)); } while (TW && TW.again);
+    if (TW) { const h = twHost(); TW.boxes = designBoxes(twCtx(), h.certificate, simOpts(h, TW.sim)); twBoxes(); twStatus(); }
+  } catch (e) { console.error(e); } finally { clearTimeout(slow); if (TW) TW.busy = false; }
+}
+function twBoxes() {
+  const ov = $('#tw-ov'); if (!ov || !TW) return; const { W, H } = twDims(TW.orient);
+  ov.style.display = TW.frames ? '' : 'none';
+  ov.innerHTML = TW.boxes.filter(b => !b.hidden).map(b => `<div class="dz-box ${b.clipped ? 'bad' : b.shrunk ? 'warn' : ''}" style="left:${(b.x / W * 100).toFixed(3)}%;top:${(b.y / H * 100).toFixed(3)}%;width:${(b.w / W * 100).toFixed(3)}%;height:${(b.h / H * 100).toFixed(3)}%"></div>`).join('');
+}
+function twOverlaps() {   // pairs of visible frames that sit on top of each other
+  const bs = TW.boxes.filter(b => !b.hidden && b.w > 4 && b.h > 4); let n = 0;
+  for (let i = 0; i < bs.length; i++) for (let j = i + 1; j < bs.length; j++) { const a = bs[i], b = bs[j]; if (a.x + a.w - 6 > b.x && b.x + b.w - 6 > a.x && a.y + a.h - 6 > b.y && b.y + b.h - 6 > a.y) n++; }
+  return n;
+}
+function twStatus() {
+  const st = $('#tw-st'); if (!st || !TW) return;
+  if (!TW.dataUrl) { st.innerHTML = '<span class="muted small">อัปโหลดภาพแม่แบบเพื่อเริ่ม</span>'; return; }
+  const bad = TW.boxes.filter(b => b.clipped).length, small = TW.boxes.filter(b => b.shrunk && !b.clipped).length, ov = twOverlaps(), parts = [];
+  parts.push(bad ? `<span class="tag bad">⚠ ข้อความยาวเกินกรอบ ${bad} ช่อง (ตัดท้ายด้วย …)</span>` : small ? `<span class="tag warn">ย่อตัวอักษร ${small} ช่องให้พอดีกรอบ</span>` : '<span class="tag ok">✓ ข้อมูลทุกช่องอยู่ในกรอบ</span>');
+  if (ov) parts.push(`<span class="tag warn" title="ลองเลื่อนความสูงของชื่อ หรือย้ายเลขที่/วันที่">⚠ กรอบข้อมูลซ้อนกัน ${ov} คู่</span>`);
+  const fonts = Object.keys(designFonts(TW.host.certificate.design)).map(parseFont).filter(p => p.k === 'g' && !localFontExists(p.name)).map(p => p.name);
+  if (fonts.length) parts.push(`<span class="tag warn" title="ต้องต่ออินเทอร์เน็ตเพื่อโหลดฟอนต์จาก Google">โหลดฟอนต์ ${esc(fonts.join(', '))} ไม่ได้ — ใช้ฟอนต์สำรองแทน</span>`);
+  parts.push(`<label class="dz-chk"><input type="checkbox" id="tw-frames" ${TW.frames ? 'checked' : ''}> แสดงกรอบข้อมูล</label>`);
+  st.innerHTML = parts.join(' ');
+  const c = $('#tw-frames'); if (c) c.onchange = () => { TW.frames = c.checked; twBoxes(); };
+}
+
+/* create */
+actions['tw-create'] = async el => {
+  if (!TW || !TW.dataUrl) return;
+  if (!Object.keys(TW.sel).some(k => TW.sel[k])) return toast('เลือกข้อมูลที่จะใส่อย่างน้อย 1 อย่าง', 'bad');
+  if (tplTotalBytes() + TW.bytes > TPL_TOTAL_MAX) return toast(`ภาพแม่แบบรวมกันจะใหญ่เกินไป (${fmtKB(tplTotalBytes() + TW.bytes)}) — ลบแม่แบบที่ไม่ใช้ก่อน`, 'bad', 6000);
+  const name = (TW.name || '').trim() || 'แม่แบบเกียรติบัตร', edit = el && el.dataset && el.dataset.edit === '1', forId = TW.for;
+  const t = tplCreate({ name, design: normDesign(twDesign()), colors: { p: TW.accent, g: '#b88a2e' } });
+  if (TW.asDef && isAdmin()) DATA.settings.certTplDefault = t.id;
+  let c = null; if (forId) { c = getCourse(forId); if (c && canEditCourse(c)) { c.certificate.design = null; c.certificate.tplId = t.id; } else c = null; }
+  twCloseNow(); saveData();
+  toast(`สร้างแม่แบบ "${t.name}" แล้ว${c ? ` และใช้กับ "${c.title}"` : ' — กด "ใช้กับหลักสูตร…" เพื่อเลือกหลักสูตรที่จะใช้'}`, 'ok', 6000);
+  if (edit) { if (!c && !/^#\/admin\/certs/.test(location.hash)) { CR.tab = 'tpl'; location.hash = '#/admin/certs'; await sleep(120); } tplEdit(t.id); return; }
+  if (c && $('#ed')) { refreshEditor(); return; }
+  CR.tab = 'tpl'; if (/^#\/admin\/certs/.test(location.hash)) rerender(); else location.hash = '#/admin/certs';
+};
 
 
 /* =====================================================================
